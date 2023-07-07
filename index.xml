@@ -5,12 +5,20 @@
     <link>https://yiming-m.github.io/</link>
       <atom:link href="https://yiming-m.github.io/index.xml" rel="self" type="application/rss+xml" />
     <description>Yiming&#39;s Pages</description>
-    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Tue, 18 Oct 2022 00:00:00 +0000</lastBuildDate>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Sun, 18 Jun 2023 00:00:00 +0000</lastBuildDate>
     <image>
       <url>https://yiming-m.github.io/media/logo_huf4c088f55eae3b3aaa3cbde9831c6d89_36381_300x300_fit_lanczos_3.png</url>
       <title>Yiming&#39;s Pages</title>
       <link>https://yiming-m.github.io/</link>
     </image>
+    
+    <item>
+      <title>Robust Multiview Multimodal Driver Monitoring System Using Masked Multi-Head Self-Attention</title>
+      <link>https://yiming-m.github.io/publication/cvprw2023/</link>
+      <pubDate>Sun, 18 Jun 2023 00:00:00 +0000</pubDate>
+      <guid>https://yiming-m.github.io/publication/cvprw2023/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>FusionCount: Efficient Crowd Counting via Multiscale Feature Fusion</title>
