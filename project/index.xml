@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects | 一铭の家</title>
+    <link>http://localhost:1313/project/</link>
+      <atom:link href="http://localhost:1313/project/index.xml" rel="self" type="application/rss+xml" />
+    <description>Projects</description>
+    <generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en-us</language><lastBuildDate>Tue, 04 Apr 2023 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>http://localhost:1313/media/icon_hu0183fa1bf3633e082418de20e3871eb9_28352_512x512_fill_lanczos_center_3.png</url>
+      <title>Projects</title>
+      <link>http://localhost:1313/project/</link>
+    </image>
+    
+    <item>
+      <title>Multi-View Multimodal Driver Monitoring Systems</title>
+      <link>http://localhost:1313/project/dms/</link>
+      <pubDate>Tue, 04 Apr 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/project/dms/</guid>
+      <description>&lt;p&gt;In this project, we developed a multi-view multimodal driver monitoring system (&lt;strong&gt;DMS&lt;/strong&gt;) using masked multi-head self-attention. The system aims to detect drivers&amp;rsquo; actions that are irrelevant to driving, such as drinking and texting. Our DMS (called &lt;strong&gt;MHSA&lt;/strong&gt;) achieves the state-of-the-art performance on the DAD dataset, and it is also robust against view/modality collapse. For more details, please refer to our paper &lt;a href=&#34;https://arxiv.org/abs/2304.06370&#34;&gt;&lt;em&gt;Robust Multiview Multimodal Driver Monitoring System Using Masked Multi-Head Self-Attention&lt;/em&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;We have also designed a real-time DMS through assessing how informative each view or modality is and reached the conclusion that the top view infrared modality is more helpful than any other view/modality in DMS. The paper &lt;a href=&#34;https://arxiv.org/abs/2210.09441&#34;&gt;&lt;em&gt;Real-Time Driver Monitoring Systems through Modality and View Analysis&lt;/em&gt;&lt;/a&gt; provides more details.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Digital Twins of Urban Crowds</title>
+      <link>http://localhost:1313/project/icc/</link>
+      <pubDate>Mon, 13 Sep 2021 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/project/icc/</guid>
+      <description>&lt;p&gt;This individual research project was conducted during the end of my MSc study at the University of Warwick. It aims to address the most prominent issue in crowd counting - the scale variation. We proposed a novel crowd counting method, named ICC, which leverages the multiscale feature maps produced by Inception-V3 to account for varying scales. More details for this early attempt can be found in our paper &lt;a href=&#34;https://arxiv.org/abs/2210.09796&#34;&gt;&lt;em&gt;Inception-Based Crowd Counting — Being Fast while Remaining Accurate&lt;/em&gt;&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
