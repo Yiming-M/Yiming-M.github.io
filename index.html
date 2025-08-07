@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
 <head>
-	<meta name="generator" content="Hugo 0.148.2"><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=57669&amp;path=livereload" data-no-instant defer></script>
+	<meta name="generator" content="Hugo 0.148.2"><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=58793&amp;path=livereload" data-no-instant defer></script>
   <meta charset="utf-8">
 <meta name="viewport" content="width=device-width">
 <title>Yiming&#39;s Portfolio</title>
@@ -294,6 +294,47 @@ document.addEventListener("DOMContentLoaded", function() {
         
         <article class="post-card" data-post-id="1">
           <div class="post-header" data-post-id="1">
+            <h2>ZIP: Scalable Crowd Counting via Zero-Inflated Poisson Modeling</h2>
+            <div class="post-meta">
+              <time>Jul 31, 2025</time>
+              
+                
+                  • <span class="tag tag-venue">Preprint</span>
+                
+              
+            </div>
+            
+              <div class="post-keywords">
+                  
+                    
+                      <span class="tag tag-keyword">Crowd Counting</span>
+                    
+                  
+                    
+                      <span class="tag tag-keyword">Zero-Inflated Poisson</span>
+                    
+                  
+                    
+                      <span class="tag tag-keyword">Scalability</span>
+                    
+                  
+                </div>
+              
+            </div>
+          
+          <div class="post-content" id="content-1" style="display: none;">
+            <div class="post-full-content">
+              <p><strong>Authors</strong>: <strong>Yiming Ma</strong>, Victor Sanchez, Tanaya Guha</p>
+<p>Most crowd counting methods directly regress blockwise density maps using Mean Squared Error (MSE) losses. This practice has two key limitations: (1) it fails to account for the extreme spatial sparsity of annotations - over 95% of 8x8 blocks are empty across standard benchmarks, so supervision signals in informative regions are diluted by the predominant zeros; (2) MSE corresponds to a Gaussian error model that poorly matches discrete, non-negative count data. To address these issues, we introduce ZIP, a scalable crowd counting framework that models blockwise counts with a Zero-Inflated Poisson likelihood: a zero-inflation term learns the probability a block is structurally empty (handling excess zeros), while the Poisson component captures expected counts when people are present (respecting discreteness). We provide a generalization analysis showing a tighter risk bound for ZIP than MSE-based losses and DMCount provided that the training resolution is moderately large. To assess the scalability of ZIP, we instantiate it on backbones spanning over 100x in parameters/compute. Experiments on ShanghaiTech A &amp; B, UCF-QNRF, and NWPU-Crowd demonstrate that ZIP consistently surpasses state-of-the-art methods across all model scales.</p>
+<img src="posts/zip/image.png" alt=""><p><a href="https://arxiv.org/abs/2506.19955">paper</a> | <a href="https://github.com/Yiming-M/EBC-ZIP">Code</a> | <a href="https://huggingface.co/spaces/Yiming-M/ZIP">HF Space</a></p>
+
+            </div>
+          </div>
+        </article>
+      
+        
+        <article class="post-card" data-post-id="2">
+          <div class="post-header" data-post-id="2">
             <h2>Interact with me: Joint Egocentric Forecasting of Intent to Interact, Attitude and Social Actions</h2>
             <div class="post-meta">
               <time>Dec 21, 2024</time>
@@ -322,7 +363,7 @@ document.addEventListener("DOMContentLoaded", function() {
               
             </div>
           
-          <div class="post-content" id="content-1" style="display: none;">
+          <div class="post-content" id="content-2" style="display: none;">
             <div class="post-full-content">
               <p><strong>Authors</strong>: Tongfei Bian, <strong>Yiming Ma</strong>, Mathieu Chollet, Victor Sanchez, Tanaya Guha</p>
 <img src="posts/interact-with-me/image.png" alt=""><p>For efficient human-agent interaction, an agent should proactively recognize their target user and prepare for upcoming interactions. We formulate this challenging problem as the novel task of jointly forecasting a person's intent to interact with the agent, their attitude towards the agent and the action they will perform, from the agent's (egocentric) perspective. So we propose \emph{SocialEgoNet} - a graph-based spatiotemporal framework that exploits task dependencies through a hierarchical multitask learning approach. SocialEgoNet uses whole-body skeletons (keypoints from face, hands and body) extracted from only 1 second of video input for high inference speed. For evaluation, we augment an existing egocentric human-agent interaction dataset with new class labels and bounding box annotations. Extensive experiments on this augmented dataset, named JPL-Social, demonstrate \emph{real-time} inference and superior performance (average accuracy across all tasks: 83.15%) of our model outperforming several competitive baselines. The additional annotations and code will be available upon acceptance.</p>
@@ -333,8 +374,8 @@ document.addEventListener("DOMContentLoaded", function() {
         </article>
       
         
-        <article class="post-card" data-post-id="2">
-          <div class="post-header" data-post-id="2">
+        <article class="post-card" data-post-id="3">
+          <div class="post-header" data-post-id="3">
             <h2>CLIP-EBC: CLIP Can Count Accurately through Enhanced Blockwise Classification</h2>
             <div class="post-meta">
               <time>Mar 14, 2024</time>
@@ -359,53 +400,12 @@ document.addEventListener("DOMContentLoaded", function() {
               
             </div>
           
-          <div class="post-content" id="content-2" style="display: none;">
+          <div class="post-content" id="content-3" style="display: none;">
             <div class="post-full-content">
               <p><strong>Authors</strong>: <strong>Yiming Ma</strong>, Victor Sanchez, Tanaya Guha</p>
 <p>We propose CLIP-EBC, the first fully CLIP-based model for accurate crowd density estimation. While the CLIP model has demonstrated remarkable success in addressing recognition tasks such as zero-shot image classification, its potential for counting has been largely unexplored due to the inherent challenges in transforming a regression problem, such as counting, into a recognition task. In this work, we investigate and enhance CLIP's ability to count, focusing specifically on the task of estimating crowd sizes from images. Existing classification-based crowd-counting frameworks have significant limitations, including the quantization of count values into bordering real-valued bins and the sole focus on classification errors. These practices result in label ambiguity near the shared borders and inaccurate prediction of count values. Hence, directly applying CLIP within these frameworks may yield suboptimal performance.</p>
 <p>To address these challenges, we first propose the Enhanced Blockwise Classification (EBC) framework. Unlike previous methods, EBC utilizes integer-valued bins, effectively reducing ambiguity near bin boundaries. Additionally, it incorporates a regression loss based on density maps to improve the prediction of count values. Within our backbone-agnostic EBC framework, we then introduce CLIP-EBC to fully leverage CLIP's recognition capabilities for this task. Extensive experiments demonstrate the effectiveness of EBC and the competitive performance of CLIP-EBC. Specifically, our EBC framework can improve existing classification-based methods by up to 44.5% on the UCF-QNRF dataset, and CLIP-EBC achieves state-of-the-art performance on the NWPU-Crowd test set, with an MAE of 58.2 and an RMSE of 268.5, representing improvements of 8.6% and 13.3% over the previous best method, STEERER. The code and weights are available at this https URL.</p>
-<img src="posts/clip-ebc/image.png" alt=""><p><a href="https://arxiv.org/abs/2403.09281">Paper</a> | <a href="https://github.com/Yiming-M/CLIP-EBC">Code</a> | <a href="https://huggingface.co/spaces/Yiming-M/CLIP-EBC">Hugging Face Space</a></p>
-
-            </div>
-          </div>
-        </article>
-      
-        
-        <article class="post-card" data-post-id="3">
-          <div class="post-header" data-post-id="3">
-            <h2>ZIP: Scalable Crowd Counting via Zero-Inflated Poisson Modeling</h2>
-            <div class="post-meta">
-              <time>Jul 31, 2023</time>
-              
-                
-                  • <span class="tag tag-venue">Preprint</span>
-                
-              
-            </div>
-            
-              <div class="post-keywords">
-                  
-                    
-                      <span class="tag tag-keyword">Crowd Counting</span>
-                    
-                  
-                    
-                      <span class="tag tag-keyword">Zero-Inflated Poisson</span>
-                    
-                  
-                    
-                      <span class="tag tag-keyword">Scalability</span>
-                    
-                  
-                </div>
-              
-            </div>
-          
-          <div class="post-content" id="content-3" style="display: none;">
-            <div class="post-full-content">
-              <p><strong>Authors</strong>: <strong>Yiming Ma</strong>, Victor Sanchez, Tanaya Guha</p>
-<p>Most crowd counting methods directly regress blockwise density maps using Mean Squared Error (MSE) losses. This practice has two key limitations: (1) it fails to account for the extreme spatial sparsity of annotations - over 95% of 8x8 blocks are empty across standard benchmarks, so supervision signals in informative regions are diluted by the predominant zeros; (2) MSE corresponds to a Gaussian error model that poorly matches discrete, non-negative count data. To address these issues, we introduce ZIP, a scalable crowd counting framework that models blockwise counts with a Zero-Inflated Poisson likelihood: a zero-inflation term learns the probability a block is structurally empty (handling excess zeros), while the Poisson component captures expected counts when people are present (respecting discreteness). We provide a generalization analysis showing a tighter risk bound for ZIP than MSE-based losses and DMCount provided that the training resolution is moderately large. To assess the scalability of ZIP, we instantiate it on backbones spanning over 100x in parameters/compute. Experiments on ShanghaiTech A &amp; B, UCF-QNRF, and NWPU-Crowd demonstrate that ZIP consistently surpasses state-of-the-art methods across all model scales.</p>
-<img src="posts/zip/image.png" alt=""><p><a href="https://arxiv.org/abs/2506.19955">paper</a> | <a href="https://github.com/Yiming-M/EBC-ZIP">Code</a> | <a href="https://huggingface.co/spaces/Yiming-M/ZIP">Hugging Face Space</a></p>
+<img src="posts/clip-ebc/image.png" alt=""><p><a href="https://arxiv.org/abs/2403.09281">Paper</a> | <a href="https://github.com/Yiming-M/CLIP-EBC">Code</a> | <a href="https://huggingface.co/spaces/Yiming-M/CLIP-EBC">HF Space</a></p>
 
             </div>
           </div>
@@ -569,13 +569,18 @@ document.addEventListener("DOMContentLoaded", function() {
             
               
                 <div class="archive-year">
+                  <a href="javascript:void(0);" data-year="2025">2025</a>
+                  <span class="count">(1)</span>
+                </div>
+              
+                <div class="archive-year">
                   <a href="javascript:void(0);" data-year="2024">2024</a>
                   <span class="count">(2)</span>
                 </div>
               
                 <div class="archive-year">
                   <a href="javascript:void(0);" data-year="2023">2023</a>
-                  <span class="count">(2)</span>
+                  <span class="count">(1)</span>
                 </div>
               
                 <div class="archive-year">
@@ -630,11 +635,11 @@ document.addEventListener("DOMContentLoaded", function() {
               
                 
               
+                
+              
             
           
             
-              
-                
               
                 
               

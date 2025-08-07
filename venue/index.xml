@@ -2,38 +2,38 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Venue on Yiming&#39;s Portfolio</title>
-    <link>http://localhost:57669/venue/</link>
+    <link>http://localhost:58793/venue/</link>
     <description>Recent content in Venue on Yiming&#39;s Portfolio</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 21 Dec 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:57669/venue/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 31 Jul 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:58793/venue/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>ICME</title>
-      <link>http://localhost:57669/venue/icme/</link>
-      <pubDate>Sat, 21 Dec 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:57669/venue/icme/</guid>
+      <title>Preprint</title>
+      <link>http://localhost:58793/venue/preprint/</link>
+      <pubDate>Thu, 31 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:58793/venue/preprint/</guid>
       <description></description>
     </item>
     <item>
-      <title>Preprint</title>
-      <link>http://localhost:57669/venue/preprint/</link>
-      <pubDate>Mon, 31 Jul 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:57669/venue/preprint/</guid>
+      <title>ICME</title>
+      <link>http://localhost:58793/venue/icme/</link>
+      <pubDate>Sat, 21 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:58793/venue/icme/</guid>
       <description></description>
     </item>
     <item>
       <title>CVPR</title>
-      <link>http://localhost:57669/venue/cvpr/</link>
+      <link>http://localhost:58793/venue/cvpr/</link>
       <pubDate>Tue, 21 Mar 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:57669/venue/cvpr/</guid>
+      <guid>http://localhost:58793/venue/cvpr/</guid>
       <description></description>
     </item>
     <item>
       <title>ICIP</title>
-      <link>http://localhost:57669/venue/icip/</link>
+      <link>http://localhost:58793/venue/icip/</link>
       <pubDate>Mon, 28 Feb 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:57669/venue/icip/</guid>
+      <guid>http://localhost:58793/venue/icip/</guid>
       <description></description>
     </item>
   </channel>

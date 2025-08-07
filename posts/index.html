@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=57669&amp;path=livereload" data-no-instant defer></script>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=58793&amp;path=livereload" data-no-instant defer></script>
   <meta charset="utf-8">
 <meta name="viewport" content="width=device-width">
 <title>Posts | Yiming&#39;s Portfolio</title>
@@ -287,6 +287,10 @@ document.addEventListener("DOMContentLoaded", function() {
   <h1>Posts</h1>
   
   
+    <h2><a href="/posts/zip/">ZIP: Scalable Crowd Counting via Zero-Inflated Poisson Modeling</a></h2>
+    <p><strong>Authors</strong>: <strong>Yiming Ma</strong>, Victor Sanchez, Tanaya Guha</p>
+<p>Most crowd counting methods directly regress blockwise density maps using Mean Squared Error (MSE) losses. This practice has two key limitations: (1) it fails to account for the extreme spatial sparsity of annotations - over 95% of 8x8 blocks are empty across standard benchmarks, so supervision signals in informative regions are diluted by the predominant zeros; (2) MSE corresponds to a Gaussian error model that poorly matches discrete, non-negative count data. To address these issues, we introduce ZIP, a scalable crowd counting framework that models blockwise counts with a Zero-Inflated Poisson likelihood: a zero-inflation term learns the probability a block is structurally empty (handling excess zeros), while the Poisson component captures expected counts when people are present (respecting discreteness). We provide a generalization analysis showing a tighter risk bound for ZIP than MSE-based losses and DMCount provided that the training resolution is moderately large. To assess the scalability of ZIP, we instantiate it on backbones spanning over 100x in parameters/compute. Experiments on ShanghaiTech A &amp; B, UCF-QNRF, and NWPU-Crowd demonstrate that ZIP consistently surpasses state-of-the-art methods across all model scales.</p>
+  
     <h2><a href="/posts/interact-with-me/">Interact with me: Joint Egocentric Forecasting of Intent to Interact, Attitude and Social Actions</a></h2>
     <p><strong>Authors</strong>: Tongfei Bian, <strong>Yiming Ma</strong>, Mathieu Chollet, Victor Sanchez, Tanaya Guha</p>
 <img src="posts/interact-with-me/image.png" alt=""><p>For efficient human-agent interaction, an agent should proactively recognize their target user and prepare for upcoming interactions. We formulate this challenging problem as the novel task of jointly forecasting a person's intent to interact with the agent, their attitude towards the agent and the action they will perform, from the agent's (egocentric) perspective. So we propose \emph{SocialEgoNet} - a graph-based spatiotemporal framework that exploits task dependencies through a hierarchical multitask learning approach. SocialEgoNet uses whole-body skeletons (keypoints from face, hands and body) extracted from only 1 second of video input for high inference speed. For evaluation, we augment an existing egocentric human-agent interaction dataset with new class labels and bounding box annotations. Extensive experiments on this augmented dataset, named JPL-Social, demonstrate \emph{real-time} inference and superior performance (average accuracy across all tasks: 83.15%) of our model outperforming several competitive baselines. The additional annotations and code will be available upon acceptance.</p>
@@ -294,10 +298,6 @@ document.addEventListener("DOMContentLoaded", function() {
     <h2><a href="/posts/clip-ebc/">CLIP-EBC: CLIP Can Count Accurately through Enhanced Blockwise Classification</a></h2>
     <p><strong>Authors</strong>: <strong>Yiming Ma</strong>, Victor Sanchez, Tanaya Guha</p>
 <p>We propose CLIP-EBC, the first fully CLIP-based model for accurate crowd density estimation. While the CLIP model has demonstrated remarkable success in addressing recognition tasks such as zero-shot image classification, its potential for counting has been largely unexplored due to the inherent challenges in transforming a regression problem, such as counting, into a recognition task. In this work, we investigate and enhance CLIP's ability to count, focusing specifically on the task of estimating crowd sizes from images. Existing classification-based crowd-counting frameworks have significant limitations, including the quantization of count values into bordering real-valued bins and the sole focus on classification errors. These practices result in label ambiguity near the shared borders and inaccurate prediction of count values. Hence, directly applying CLIP within these frameworks may yield suboptimal performance.</p>
-  
-    <h2><a href="/posts/zip/">ZIP: Scalable Crowd Counting via Zero-Inflated Poisson Modeling</a></h2>
-    <p><strong>Authors</strong>: <strong>Yiming Ma</strong>, Victor Sanchez, Tanaya Guha</p>
-<p>Most crowd counting methods directly regress blockwise density maps using Mean Squared Error (MSE) losses. This practice has two key limitations: (1) it fails to account for the extreme spatial sparsity of annotations - over 95% of 8x8 blocks are empty across standard benchmarks, so supervision signals in informative regions are diluted by the predominant zeros; (2) MSE corresponds to a Gaussian error model that poorly matches discrete, non-negative count data. To address these issues, we introduce ZIP, a scalable crowd counting framework that models blockwise counts with a Zero-Inflated Poisson likelihood: a zero-inflation term learns the probability a block is structurally empty (handling excess zeros), while the Poisson component captures expected counts when people are present (respecting discreteness). We provide a generalization analysis showing a tighter risk bound for ZIP than MSE-based losses and DMCount provided that the training resolution is moderately large. To assess the scalability of ZIP, we instantiate it on backbones spanning over 100x in parameters/compute. Experiments on ShanghaiTech A &amp; B, UCF-QNRF, and NWPU-Crowd demonstrate that ZIP consistently surpasses state-of-the-art methods across all model scales.</p>
   
     <h2><a href="/posts/dms2/">Robust Multiview Multimodal Driver Monitoring System Using Masked Multi-Head Self-Attention</a></h2>
     <p><strong>Authors</strong>: <strong>Yiming Ma</strong>, Victor Sanchez, Soodeh Nikan, Devesh Upadhyay, Bhushan Atote, Tanaya Guha</p>
@@ -335,13 +335,18 @@ document.addEventListener("DOMContentLoaded", function() {
             
               
                 <div class="archive-year">
+                  <a href="javascript:void(0);" data-year="2025">2025</a>
+                  <span class="count">(1)</span>
+                </div>
+              
+                <div class="archive-year">
                   <a href="javascript:void(0);" data-year="2024">2024</a>
                   <span class="count">(2)</span>
                 </div>
               
                 <div class="archive-year">
                   <a href="javascript:void(0);" data-year="2023">2023</a>
-                  <span class="count">(2)</span>
+                  <span class="count">(1)</span>
                 </div>
               
                 <div class="archive-year">
@@ -396,11 +401,11 @@ document.addEventListener("DOMContentLoaded", function() {
               
                 
               
+                
+              
             
           
             
-              
-                
               
                 
               
