@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>CVPR on Yiming&#39;s Portfolio</title>
-    <link>http://localhost:56750/venue/cvpr/</link>
+    <link>http://localhost:57669/venue/cvpr/</link>
     <description>Recent content in CVPR on Yiming&#39;s Portfolio</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 21 Mar 2023 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:56750/venue/cvpr/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:57669/venue/cvpr/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Robust Multiview Multimodal Driver Monitoring System Using Masked Multi-Head Self-Attention</title>
-      <link>http://localhost:56750/posts/dms2/</link>
+      <link>http://localhost:57669/posts/dms2/</link>
       <pubDate>Tue, 21 Mar 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:56750/posts/dms2/</guid>
+      <guid>http://localhost:57669/posts/dms2/</guid>
       <description>&lt;p&gt;&lt;strong&gt;Authors&lt;/strong&gt;: &lt;strong&gt;Yiming Ma&lt;/strong&gt;, Victor Sanchez, Soodeh Nikan, Devesh Upadhyay, Bhushan Atote, Tanaya Guha&lt;/p&gt;&#xA;&lt;p&gt;Driver Monitoring Systems (DMSs) are crucial for safe hand-over actions in Level-2+ self-driving vehicles. State-of-the-art DMSs leverage multiple sensors mounted at different locations to monitor the driver and the vehicle&#39;s interior scene and employ decision-level fusion to integrate these heterogenous data. However, this fusion method may not fully utilize the complementarity of different data sources and may overlook their relative importance. To address these limitations, we propose a novel multiview multimodal driver monitoring system based on feature-level fusion through multi-head self-attention (MHSA). We demonstrate its effectiveness by comparing it against four alternative fusion strategies (Sum, Conv, SE, and AFF). We also present a novel GPU-friendly supervised contrastive learning framework SuMoCo to learn better representations. Furthermore, We fine-grained the test split of the DAD dataset to enable the multi-class recognition of drivers&#39; activities. Experiments on this enhanced database demonstrate that 1) the proposed MHSA-based fusion method (AUC-ROC: 97.0%) outperforms all baselines and previous approaches, and 2) training MHSA with patch masking can improve its robustness against modality/view collapses. The code and annotations are publicly available.&lt;/p&gt;</description>
     </item>
   </channel>
