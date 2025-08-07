@@ -1,2276 +1,713 @@
-<!doctype html>
-<!-- This site was created with Hugo Blox. https://hugoblox.com -->
-<!-- Last Published: June 12, 2024 --><html lang="en-us" dir="ltr"
-      data-wc-theme-default="system">
-  
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="Hugo Blox Builder 0.2.0" />
-
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-  
-  
-  
-    
-    
-    
-  
-  
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head>
+	<meta name="generator" content="Hugo 0.148.2"><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Yiming&#39;s Portfolio</title>
 
-  <meta name="author" content="Yiming Ma" />
 
-  
-  
-  
-    
-  
-  <meta name="description" content="Researcher at University of Warwick" />
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
-  
-  <link rel="alternate" hreflang="en-us" href="http://localhost:1313/" />
 
-  
-  
-  
-  
-    
-    <link rel="stylesheet" href="/css/themes/cyan.min.css" />
-  
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/main.css">
 
-  
-  
-    
-    <link href="/dist/wc.min.css" rel="stylesheet" />
-  
 
-  
-  
-  
+    <link rel="stylesheet" href="/css/tablet.css">
 
-  
 
-  <script>
-     
-    window.hbb = {
-       defaultTheme: document.documentElement.dataset.wcThemeDefault,
-       setDarkTheme: () => {
-        document.documentElement.classList.add("dark");
-        document.documentElement.style.colorScheme = "dark";
-      },
-       setLightTheme: () => {
-        document.documentElement.classList.remove("dark");
-        document.documentElement.style.colorScheme = "light";
-      }
-    }
+    <link rel="stylesheet" href="/css/mobile.css">
 
-    console.debug(`Default Hugo Blox Builder theme is ${window.hbb.defaultTheme}`);
 
-    if ("wc-color-theme" in localStorage) {
-      localStorage.getItem("wc-color-theme") === "dark" ? window.hbb.setDarkTheme() : window.hbb.setLightTheme();
-    } else {
-      window.hbb.defaultTheme === "dark" ? window.hbb.setDarkTheme() : window.hbb.setLightTheme();
-      if (window.hbb.defaultTheme === "system") {
-        window.matchMedia("(prefers-color-scheme: dark)").matches ? window.hbb.setDarkTheme() : window.hbb.setLightTheme();
-      }
-    }
-  </script>
+    <link rel="stylesheet" href="/css/columns.css">
 
-  <script>
-    
-    document.addEventListener('DOMContentLoaded', function () {
-      
-      let checkboxes = document.querySelectorAll('li input[type=\'checkbox\'][disabled]');
-      checkboxes.forEach(e => {
-        e.parentElement.parentElement.classList.add('task-list');
-      });
 
-      
-      const liNodes = document.querySelectorAll('.task-list li');
-      liNodes.forEach(nodes => {
-        let textNodes = Array.from(nodes.childNodes).filter(node => node.nodeType === 3 && node.textContent.trim().length > 1);
-        if (textNodes.length > 0) {
-          const span = document.createElement('label');
-          textNodes[0].after(span);  
-          span.appendChild(nodes.querySelector('input[type=\'checkbox\']'));
-          span.appendChild(textNodes[0]);
-        }
-      });
-    });
-  </script>
+    <link rel="stylesheet" href="/css/tables.css">
 
-  
-  
-  
 
+    <link rel="stylesheet" href="/css/image-controls.css">
 
 
+    <link rel="stylesheet" href="/css/code-blocks.css">
 
 
+    <link rel="stylesheet" href="/css/chroma-light.css">
+    <link rel="stylesheet" href="/css/chroma-dracula.css">
 
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
 
 
+      <script src="/js/main.js"></script>
 
 
+    <script src="/js/code-copy.js"></script>
 
 
+    <script src="/js/favicon-loader.js"></script>
 
 
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
 
 
+    <script src="/js/filter.js"></script>
 
 
+    <script src="/js/tag-colors.js"></script>
 
 
+    <script src="/js/image-controls.js"></script>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-    <link rel="alternate" href="/index.xml" type="application/rss+xml" title="一铭の家" />
-  
-
-  
-  <link rel="icon" type="image/png" href="/media/icon_hu0183fa1bf3633e082418de20e3871eb9_28352_32x32_fill_lanczos_center_3.png" />
-  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu0183fa1bf3633e082418de20e3871eb9_28352_180x180_fill_lanczos_center_3.png" />
-
-  <link rel="canonical" href="http://localhost:1313/" />
-
-  
-  
-  
-  
-  
-  
-  
-  
-    
-    
-  
-  
-
-  
-  
-    
-    
-  
-  <meta property="twitter:card" content="summary" />
-  
-    <meta property="twitter:site" content="@yiming_ma_" />
-    <meta property="twitter:creator" content="@yiming_ma_" />
-  
-  <meta property="og:site_name" content="一铭の家" />
-  <meta property="og:url" content="http://localhost:1313/" />
-  <meta property="og:title" content="一铭の家" />
-  <meta property="og:description" content="Researcher at University of Warwick" /><meta property="og:image" content="http://localhost:1313/media/icon_hu0183fa1bf3633e082418de20e3871eb9_28352_512x512_fill_lanczos_center_3.png" />
-    <meta property="twitter:image" content="http://localhost:1313/media/icon_hu0183fa1bf3633e082418de20e3871eb9_28352_512x512_fill_lanczos_center_3.png" /><meta property="og:locale" content="en-us" />
-  
-    
-      <meta property="og:updated_time" content="2022-10-24T00:00:00&#43;00:00" />
-    
-  
-
-  
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite","url": "http://localhost:1313/"
-}
-</script>
-
-
-  
-
-
-  <title>一铭の家</title>
-
-  
-  
-  
-  
-  
-    
-    
-  
-  
-  <style>
-    @font-face {
-      font-family: 'Inter var';
-      font-style: normal;
-      font-weight: 100 900;
-      font-display: swap;
-      src: url(/dist/font/Inter.var.woff2) format(woff2);
-    }
-  </style>
-
-  
-
-  
-  
-
-  
-  
-  
-  
-  
-    
-      
-      
-        
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-        
-        
-      
-    
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-    
-      
-      
-        
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-        
-        
-      
-    
-      
-      
-        
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-        
-        
-      
-    
-  
-  
-  
-  
-  
-    
-      
-      
-        
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-        
-        
-      
-    
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-    
-      
-      
-        
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-        
-        
-      
-    
-      
-      
-        
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-        
-        
-      
-    
-      
-      
-        
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-        
-        
-      
-    
-  
-  
-  
-  
-  
-  
-  
-
-
-
-
-
-
-
-<link type="text/css" rel="stylesheet" href="/dist/pagefind/pagefind-ui.be766eb419317a14ec769d216e9779bfe8f3737c80e780f4ba0dafb57a41a482.css" integrity="sha256-vnZutBkxehTsdp0hbpd5v&#43;jzc3yA54D0ug2vtXpBpII=" />
-
-
-<script src="/dist/pagefind/pagefind-ui.87693d7c6f2b3b347ce359d0ede762c033419f0a32b22ce508c335a81d841f1b.js" integrity="sha256-h2k9fG8rOzR841nQ7ediwDNBnwoysizlCMM1qB2EHxs="></script>
-
-<style>
-  html.dark {
-    --pagefind-ui-primary: #eeeeee;
-    --pagefind-ui-text: #eeeeee;
-    --pagefind-ui-background: #152028;
-    --pagefind-ui-border: #152028;
-    --pagefind-ui-tag: #152028;
-  }
-</style>
 
 <script>
-  window.addEventListener('DOMContentLoaded', (event) => {
-    new PagefindUI({ element: "#search", showSubResults: true });
-  });
-  document.addEventListener('DOMContentLoaded', () => {
-    let element = document.getElementById('search');
-    let trigger = document.getElementById('search_toggle');
-
-    if (trigger) {
-      trigger.addEventListener('click', () => {
-        element.classList.toggle('hidden');
-        element.querySelector("input").value = ""
-        element.querySelector("input").focus()
-
-        if (!element.classList.contains('hidden')) {
-          let clear_trigger = document.querySelector('.pagefind-ui__search-clear');
-
-          if (clear_trigger && !clear_trigger.hasAttribute('listenerOnClick')) {
-            clear_trigger.setAttribute('listenerOnClick', 'true');
-
-            clear_trigger.addEventListener('click', () => {
-              element.classList.toggle('hidden');
-            });
-          }
-        }
-
-      });
-    }
-  });
+document.addEventListener("DOMContentLoaded", function() {
+    
+    renderMathInElement(document.body, {
+        delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+        ],
+        throwOnError: false
+    });
+});
 </script>
-
-
-
-
-
-
-
-
-
-
-  
-  
-  <link type="text/css" rel="stylesheet" href="/dist/lib/katex/katex.min.505d5f829022bb7b4f24dfee0aa1141cd7bba67afe411d1240335f820960b5c3.css" integrity="sha256-UF1fgpAiu3tPJN/uCqEUHNe7pnr&#43;QR0SQDNfgglgtcM=" />
-  
-  
-  <script defer src="/dist/lib/katex/katex.min.dc84b296ec3e884de093158f760fd9d45b6c7abe58b5381557f4e138f46a58ae.js" integrity="sha256-3ISyluw&#43;iE3gkxWPdg/Z1Ftser5YtTgVV/ThOPRqWK4="></script>
-  
-  
-  
-  
-  <script defer src="/js/katex-renderer.6579ec9683211cfb952064aedf3a3baea5eeb17a061775b32b70917474637c80.js" integrity="sha256-ZXnsloMhHPuVIGSu3zo7rqXusXoGF3WzK3CRdHRjfIA="></script>
-  
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-
-
-
-
-
-
-  
-  
-  
-  
-  
-  
-  
-  <script
-    defer
-    src="/js/hugo-blox-en.min.js"
-    integrity=""
-  ></script>
-
-  
-  
-
-
-
-
-
-
-
-
-  
-    
-      
-      <script async defer src="https://buttons.github.io/buttons.js"></script>
-
-      
-    
-  
-
-
 
 
 </head>
-
-  <body class="dark:bg-hb-dark dark:text-white page-wrapper" id="top">
-    <div id="page-bg"></div>
-    <div class="page-header sticky top-0 z-30">
-      
-      
-      
-        
-        
-        
-          <header id="site-header" class="header">
-  <nav class="navbar px-3 flex justify-left">
-    <div class="order-0 h-100">
-      
-      <a class="navbar-brand" href="/" title="一铭の家">
-        Home
-      </a>
-    </div>
-    
-    <input id="nav-toggle" type="checkbox" class="hidden" />
-    <label
-      for="nav-toggle"
-      class="order-3 cursor-pointer flex items-center lg:hidden text-dark dark:text-white lg:order-1">
-      <svg id="show-button" class="h-6 fill-current block" viewBox="0 0 20 20">
-        <title>Open Menu</title>
-        <path d="M0 3h20v2H0V3z m0 6h20v2H0V9z m0 6h20v2H0V0z"></path>
-      </svg>
-      <svg id="hide-button" class="h-6 fill-current hidden" viewBox="0 0 20 20">
-        <title>Close Menu</title>
-        <polygon
-          points="11 9 22 9 22 11 11 11 11 22 9 22 9 11 -2 11 -2 9 9 9 9 -2 11 -2"
-          transform="rotate(45 10 10)"></polygon>
-      </svg>
-    </label>
-    
-
-    
-    
-    <ul
-      id="nav-menu"
-      class="navbar-nav order-3 hidden lg:flex w-full pb-6 lg:order-1 lg:w-auto lg:space-x-2 lg:pb-0 xl:space-x-8 justify-left
-      ">
-      
-      
-      
-      
-      
-      
-      <li class="nav-item">
-        <a
-          class="nav-link "
-          
-          href="/#papers"
-        >Papers</a
-        >
-      </li>
-      
-      
-      
-      
-      
-      
-      <li class="nav-item">
-        <a
-          class="nav-link "
-          
-          href="/experience/"
-        >Experience</a
-        >
-      </li>
-      
-      
-      
-      
-      
-      
-      <li class="nav-item">
-        <a
-          class="nav-link "
-          
-          href="/projects/"
-        >Projects</a
-        >
-      </li>
-      
-      
-      
-      
-      
-      
-      <li class="nav-item">
-        <a
-          class="nav-link "
-          
-          href="/teaching/"
-        >Teaching</a
-        >
-      </li>
-      
-      
-      
-    </ul>
-
-    <div class="order-1 ml-auto flex items-center md:order-2 lg:ml-0">
-
-      
-      
-      
-      <button
-        aria-label="search"
-        class="text-black hover:text-primary  inline-block px-3 text-xl dark:text-white"
-        id="search_toggle">
-        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512" fill="currentColor"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>
-      </button>
-      
-
-      
-      
-      <div class="px-3 text-black hover:text-primary-700 dark:text-white dark:hover:text-primary-300
-            [&.active]:font-bold [&.active]:text-black/90 dark:[&.active]:text-white">
-        <button class="theme-toggle mt-1" accesskey="t" title="appearance">
-          <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
-               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-               stroke-linejoin="round" class="dark:hidden">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-          </svg>
-          <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
-               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-               stroke-linejoin="round" class=" dark:block [&:not(dark)]:hidden">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-          </svg>
-        </button>
-      </div>
-      
-
-      
-      
-
-      
-      
-    </div>
-  </nav>
-</header>
-
-
-<div id="search" class="hidden p-3"></div>
-
-
-        
-      
-    </div>
-    <div class="page-body ">
-      
+<body>
+  
+  <button class="clear-filters-btn" id="clear-filters-btn" aria-label="Clear all filters" title="Clear all filters">
+    <span>🗑</span>
+  </button>
 
   
-  
-    
-
-
-
-
-
-
-
+  <button class="search-toggle" id="search-toggle" aria-label="Search" title="Search">
+    <span>🔍</span>
+  </button>
 
   
-
-  
-
-  
-
-  
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-    
-    
-    
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section id="section-resume-biography-3" class="relative hbb-section blox-resume-biography-3  " style="padding: 3rem 0 3rem 0;" >
- <div class="home-section-bg " >
-   
- </div>
-  
-
-  
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="resume-biography px-3 flex flex-col md:flex-row justify-center gap-12">
-  <div class="flex-none m-w-[130px] mx-auto md:mx-0">
-
-  
-  
-
-  <div id="profile" class="flex justify-center items-center flex-col">
-    
-
-    <div class="avatar-wrapper mt-10">
-      
-      <img class="avatar rounded-full bg-white dark:bg-gray-800 p-1" src="/author/yiming-ma/avatar_hu2e688a0d6539f597ddfcda77dd638bdc_11860409_150x150_fill_q80_lanczos_center.jpg" alt="Yiming Ma"
-           width="150" height="150">
-      <span class="avatar-emoji">🎓</span>
-    </div>
-    
-
-    <div class="portrait-title dark:text-white">
-
-      <div class="text-3xl font-bold mb-2 mt-6">Yiming Ma</div>
-
-      <h3 class="font-semibold mb-1">PhD Candidate</h3>
-
-      
-      <div class="mb-2">
-        <a href="https://warwick.ac.uk/fac/sci/mathsys/" target="_blank" rel="noopener">
-        <div>MathSys CDT, University of Warwick</div>
-        </a>
-      </div>
-      
-    </div>
-
-    <ul class="network-icon dark:text-zinc-100">
-      
-      
-      
-      
-        
-      
-      
-      
-      
-      
-      <li>
-        <a href="mailto:yiming.ma.cv@gmail.com"  aria-label="at-symbol"
-            data-toggle="tooltip" data-placement="top" title="E-mail Me">
-          <svg style="height: 1.5rem;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M16.5 12a4.5 4.5 0 1 1-9 0a4.5 4.5 0 0 1 9 0Zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 1 0-2.636 6.364M16.5 12V8.25"/></svg>
-        </a>
-      </li>
-      
-      
-      
-      
-        
-      
-      
-      
-      
-      
-        
-      
-      <li>
-        <a href="https://x.com/yiming_ma_" target="_blank" rel="noopener" aria-label="brands/x"
-           >
-          <svg style="height: 1.5rem;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/></svg>
-        </a>
-      </li>
-      
-      
-      
-      
-        
-      
-      
-      
-      
-      
-        
-      
-      <li>
-        <a href="https://www.instagram.com/yimingma0112358" target="_blank" rel="noopener" aria-label="brands/instagram"
-           >
-          <svg style="height: 1.5rem;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15"><path fill="currentColor" fill-rule="evenodd" d="M12.91 12.909c.326-.327.582-.72.749-1.151c.16-.414.27-.886.302-1.578c.032-.693.04-.915.04-2.68c0-1.765-.008-1.987-.04-2.68c-.032-.692-.142-1.164-.302-1.578a3.185 3.185 0 0 0-.75-1.151a3.187 3.187 0 0 0-1.151-.75c-.414-.16-.886-.27-1.578-.302C9.487 1.007 9.265 1 7.5 1c-1.765 0-1.987.007-2.68.04c-.692.03-1.164.14-1.578.301a3.2 3.2 0 0 0-1.151.75a3.2 3.2 0 0 0-.75 1.151c-.16.414-.27.886-.302 1.578C1.007 5.513 1 5.735 1 7.5c0 1.765.007 1.987.04 2.68c.03.692.14 1.164.301 1.578c.164.434.42.826.75 1.151c.325.33.718.586 1.151.75c.414.16.886.27 1.578.302c.693.031.915.039 2.68.039c1.765 0 1.987-.008 2.68-.04c.692-.03 1.164-.14 1.578-.301a3.323 3.323 0 0 0 1.151-.75ZM2 6.735v1.53c-.002.821-.002 1.034.02 1.5c.026.586.058 1.016.156 1.34c.094.312.199.63.543 1.012c.344.383.675.556 1.097.684c.423.127.954.154 1.415.175c.522.024.73.024 1.826.024H8.24c.842.001 1.054.002 1.526-.02c.585-.027 1.015-.059 1.34-.156c.311-.094.629-.2 1.011-.543c.383-.344.556-.676.684-1.098c.127-.422.155-.953.176-1.414C13 9.247 13 9.04 13 7.947v-.89c0-1.096 0-1.303-.023-1.826c-.021-.461-.049-.992-.176-1.414c-.127-.423-.3-.754-.684-1.098c-.383-.344-.7-.449-1.011-.543c-.325-.097-.755-.13-1.34-.156A27.29 27.29 0 0 0 8.24 2H7.057c-1.096 0-1.304 0-1.826.023c-.461.021-.992.049-1.415.176c-.422.128-.753.301-1.097.684c-.344.383-.45.7-.543 1.012c-.098.324-.13.754-.156 1.34c-.022.466-.022.679-.02 1.5ZM7.5 5.25a2.25 2.25 0 1 0 0 4.5a2.25 2.25 0 0 0 0-4.5ZM4.25 7.5a3.25 3.25 0 1 1 6.5 0a3.25 3.25 0 0 1-6.5 0Zm6.72-2.72a.75.75 0 1 0 0-1.5a.75.75 0 0 0 0 1.5Z" clip-rule="evenodd"/></svg>
-        </a>
-      </li>
-      
-      
-      
-      
-        
-      
-      
-      
-      
-      
-        
-      
-      <li>
-        <a href="https://github.com/Yiming-M" target="_blank" rel="noopener" aria-label="brands/github"
-           >
-          <svg style="height: 1.5rem;" fill="currentColor" viewBox="3 3 18 18"><path d="M12 3C7.0275 3 3 7.12937 3 12.2276C3 16.3109 5.57625 19.7597 9.15374 20.9824C9.60374 21.0631 9.77249 20.7863 9.77249 20.5441C9.77249 20.3249 9.76125 19.5982 9.76125 18.8254C7.5 19.2522 6.915 18.2602 6.735 17.7412C6.63375 17.4759 6.19499 16.6569 5.8125 16.4378C5.4975 16.2647 5.0475 15.838 5.80124 15.8264C6.51 15.8149 7.01625 16.4954 7.18499 16.7723C7.99499 18.1679 9.28875 17.7758 9.80625 17.5335C9.885 16.9337 10.1212 16.53 10.38 16.2993C8.3775 16.0687 6.285 15.2728 6.285 11.7432C6.285 10.7397 6.63375 9.9092 7.20749 9.26326C7.1175 9.03257 6.8025 8.08674 7.2975 6.81794C7.2975 6.81794 8.05125 6.57571 9.77249 7.76377C10.4925 7.55615 11.2575 7.45234 12.0225 7.45234C12.7875 7.45234 13.5525 7.55615 14.2725 7.76377C15.9937 6.56418 16.7475 6.81794 16.7475 6.81794C17.2424 8.08674 16.9275 9.03257 16.8375 9.26326C17.4113 9.9092 17.76 10.7281 17.76 11.7432C17.76 15.2843 15.6563 16.0687 13.6537 16.2993C13.98 16.5877 14.2613 17.1414 14.2613 18.0065C14.2613 19.2407 14.25 20.2326 14.25 20.5441C14.25 20.7863 14.4188 21.0746 14.8688 20.9824C16.6554 20.364 18.2079 19.1866 19.3078 17.6162C20.4077 16.0457 20.9995 14.1611 21 12.2276C21 7.12937 16.9725 3 12 3Z"></path></svg>
-        </a>
-      </li>
-      
-      
-      
-      
-        
-      
-      
-      
-      
-      
-        
-      
-      <li>
-        <a href="https://scholar.google.com/citations?user=gC0aZsAAAAAJ" target="_blank" rel="noopener" aria-label="academicons/google-scholar"
-           >
-          <svg style="height: 1.5rem;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M343.759 106.662V79.43L363.524 64h-213.89L20.476 176.274h85.656a82.339 82.339 0 0 0-.219 6.225c0 20.845 7.22 38.087 21.672 51.861c14.453 13.797 32.252 20.648 53.327 20.648c4.923 0 9.75-.368 14.438-1.024c-2.907 6.5-4.374 12.523-4.374 18.142c0 9.875 4.499 20.43 13.467 31.642c-39.234 2.67-68.061 9.732-86.437 21.163c-10.531 6.5-19 14.704-25.39 24.531c-6.391 9.9-9.578 20.515-9.578 31.962c0 9.648 2.062 18.336 6.219 26.062c4.156 7.726 9.578 14.07 16.312 18.984c6.718 4.968 14.469 9.101 23.219 12.469c8.734 3.344 17.406 5.718 26.061 7.062A167.052 167.052 0 0 0 180.555 448c13.469 0 26.953-1.734 40.547-5.187c13.562-3.485 26.28-8.642 38.171-15.493c11.86-6.805 21.515-16.086 28.922-27.718c7.39-11.68 11.094-24.805 11.094-39.336c0-11.016-2.25-21.039-6.75-30.14c-4.468-9.073-9.938-16.542-16.452-22.345c-6.501-5.813-13-11.155-19.516-15.968c-6.5-4.845-12-9.75-16.468-14.813c-4.485-5.046-6.735-10.054-6.735-14.984c0-4.921 1.734-9.672 5.216-14.265c3.455-4.61 7.674-9.048 12.61-13.306c4.937-4.25 9.875-8.968 14.796-14.133c4.922-5.147 9.141-11.827 12.61-20.008c3.485-8.18 5.203-17.445 5.203-27.757c0-13.453-2.547-24.46-7.547-33.314c-.594-1.022-1.218-1.803-1.875-3.022l56.907-46.672v17.119c-7.393.93-6.624 5.345-6.624 10.635V245.96c0 5.958 4.875 10.834 10.834 10.834h3.989c5.958 0 10.833-4.875 10.833-10.834V117.293c0-5.277.778-9.688-6.561-10.63zm-107.36 222.48c1.14.75 3.704 2.78 7.718 6.038c4.05 3.243 6.797 5.695 8.266 7.414a443.553 443.553 0 0 1 6.376 7.547c2.813 3.375 4.718 6.304 5.718 8.734c1 2.477 2.016 5.461 3.047 8.946a38.27 38.27 0 0 1 1.485 10.562c0 17.048-6.564 29.68-19.656 37.859c-13.125 8.18-28.767 12.274-46.938 12.274c-9.187 0-18.203-1.093-27.063-3.196c-8.843-2.116-17.311-5.336-25.39-9.601c-8.078-4.258-14.577-10.204-19.5-17.797c-4.938-7.64-7.407-16.415-7.407-26.25c0-10.32 2.797-19.29 8.422-26.906c5.594-7.625 12.938-13.391 22.032-17.315c9.063-3.946 18.25-6.742 27.562-8.398a157.865 157.865 0 0 1 28.438-2.555c4.47 0 7.936.25 10.405.696c.455.219 3.032 2.07 7.735 5.563c4.704 3.462 7.625 5.595 8.75 6.384zm-3.359-100.579c-7.406 8.86-17.734 13.288-30.953 13.288c-11.86 0-22.298-4.764-31.266-14.312c-9-9.523-15.422-20.328-19.344-32.43c-3.937-12.109-5.906-23.984-5.906-35.648c0-13.694 3.596-25.352 10.781-34.976c7.187-9.65 17.5-14.485 30.938-14.485c11.875 0 22.374 5.038 31.437 15.157c9.094 10.085 15.61 21.413 19.517 33.968c3.922 12.54 5.873 24.53 5.873 35.984c0 13.446-3.702 24.61-11.076 33.454z"/></svg>
-        </a>
-      </li>
-      
-      
-      
-      
-        
-      
-      
-      
-      
-      
-        
-      
-      <li>
-        <a href="https://orcid.org/orcid=0000-0001-8893-6492" target="_blank" rel="noopener" aria-label="academicons/orcid"
-           >
-          <svg style="height: 1.5rem;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M336.62 194.538c-7.13-3.328-13.866-5.56-20.253-6.614c-6.365-1.095-16.574-1.612-30.71-1.612h-36.704v152.747h37.634c14.673 0 26.081-1.013 34.224-3.017c8.142-2.004 14.921-4.526 20.356-7.626a69.448 69.448 0 0 0 14.942-11.388c14.488-14.714 21.742-33.273 21.742-55.717c0-22.052-7.44-40.052-22.341-53.982c-5.498-5.166-11.822-9.444-18.89-12.793zM256 8C119.022 8 8 119.042 8 256s111.022 248 248 248s248-111.042 248-248S392.978 8 256 8Zm-82.336 357.513h-29.389V160.148h29.389zM158.95 138.696c-11.14 0-20.213-9.01-20.213-20.212c0-11.118 9.052-20.191 20.213-20.191c11.18 0 20.232 9.052 20.232 20.191a20.194 20.194 0 0 1-20.232 20.212zm241.386 163.597c-5.29 12.545-12.834 23.581-22.65 33.088c-9.982 9.837-21.597 17.194-34.844 22.196c-7.75 3.017-14.839 5.063-21.307 6.117c-6.49 1.013-18.828 1.509-37.076 1.509h-64.956V160.148h69.233c27.962 0 50.034 4.154 66.32 12.545c16.265 8.37 29.181 20.728 38.792 36.972c9.61 16.265 14.425 34.018 14.425 53.196c.023 13.765-2.666 26.908-7.936 39.432z"/></svg>
-        </a>
-      </li>
-      
-    </ul>
-  </div>
-  </div>
-
-  <div class="flex-auto max-w-prose md:mt-12">
-    
-    <div class="pt-2 justify-content-center prose prose-slate dark:prose-invert">
-      <div class="bio-text" >
-        Hi, I&rsquo;m Yiming Ma (Chinese name: 马一铭), a computer vision researcher. I&rsquo;m interested in many CV areas, including crowd counting, object counting, and multimodality. I&rsquo;ve also got some experience in multi-view multimodal driver anomaly detection. Currently, I am on my 3rd year of PhD in the MathSys CDT at the University of Warwick.
+  <div class="mobile-search-overlay" id="mobile-search-overlay">
+    <div class="mobile-search-container">
+      <button class="mobile-search-close" id="mobile-search-close">&times;</button>
+      <div class="search-box">
+        <input type="text" id="mobile-search-input" placeholder="Search posts..." />
+        <div id="mobile-search-results"></div>
       </div>
     </div>
-    
-
-    
-    <a href="uploads/resume.pdf" target="_blank" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-200 focus:text-primary-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700"><svg class="w-3.5 h-3.5 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-      <path d="M14.707 7.793a1 1 0 0 0-1.414 0L11 10.086V1.5a1 1 0 0 0-2 0v8.586L6.707 7.793a1 1 0 1 0-1.414 1.414l4 4a1 1 0 0 0 1.416 0l4-4a1 1 0 0 0-.002-1.414Z"/>
-      <path d="M18 12h-2.55l-2.975 2.975a3.5 3.5 0 0 1-4.95 0L4.55 12H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2Zm-3 5a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/>
-    </svg> Download CV</a>
-    
-
-
-
-
-  <div class="grid grid-cols-2 gap-4 justify-between mt-6 dark:text-gray-300">
-
-    
-    <div class="">
-      <div class="section-subheading mb-3">Interests</div>
-      <ul class="list-disc list-inside space-y-1 pl-5">
-        
-        <li>
-          Computer Vision
-        </li>
-        
-        <li>
-          Crowd Counting
-        </li>
-        
-        <li>
-          Object Counting
-        </li>
-        
-        <li>
-          Multimodality
-        </li>
-        
-      </ul>
-    </div>
-    
-
-    
-    <div class="">
-      <div class="section-subheading mb-3">Education</div>
-      <ul class="">
-        
-        <li class="flex items-start gap-3">
-          <svg style="" class='flex-shrink-0 w-5 h-5 me-2 mt-1' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.26 10.147a60.436 60.436 0 0 0-.491 6.347A48.627 48.627 0 0 1 12 20.904a48.627 48.627 0 0 1 8.232-4.41a60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.57 50.57 0 0 0-2.658-.813A59.905 59.905 0 0 1 12 3.493a59.902 59.902 0 0 1 10.399 5.84a51.39 51.39 0 0 0-2.658.814m-15.482 0A50.697 50.697 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5a.75.75 0 0 0 0 1.5m0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"/></svg>
-          <div class="description">
-            <p class="course">(Current) PhD in Mathematics of Systems</p>
-            <p class="text-sm">University of Warwick</p>
-          </div>
-        </li>
-        
-        <li class="flex items-start gap-3">
-          <svg style="" class='flex-shrink-0 w-5 h-5 me-2 mt-1' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.26 10.147a60.436 60.436 0 0 0-.491 6.347A48.627 48.627 0 0 1 12 20.904a48.627 48.627 0 0 1 8.232-4.41a60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.57 50.57 0 0 0-2.658-.813A59.905 59.905 0 0 1 12 3.493a59.902 59.902 0 0 1 10.399 5.84a51.39 51.39 0 0 0-2.658.814m-15.482 0A50.697 50.697 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5a.75.75 0 0 0 0 1.5m0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"/></svg>
-          <div class="description">
-            <p class="course">MSc in Mathematics of Systems</p>
-            <p class="text-sm">University of Warwick</p>
-          </div>
-        </li>
-        
-        <li class="flex items-start gap-3">
-          <svg style="" class='flex-shrink-0 w-5 h-5 me-2 mt-1' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.26 10.147a60.436 60.436 0 0 0-.491 6.347A48.627 48.627 0 0 1 12 20.904a48.627 48.627 0 0 1 8.232-4.41a60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.57 50.57 0 0 0-2.658-.813A59.905 59.905 0 0 1 12 3.493a59.902 59.902 0 0 1 10.399 5.84a51.39 51.39 0 0 0-2.658.814m-15.482 0A50.697 50.697 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5a.75.75 0 0 0 0 1.5m0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"/></svg>
-          <div class="description">
-            <p class="course">BSc in Mathematics and Applied Mathematics</p>
-            <p class="text-sm">Souther University of Science and Technology</p>
-          </div>
-        </li>
-        
-      </ul>
-    </div>
-    
-
   </div>
 
-</div>
-</div>
-
-
-  
-
-  
-</section>
-
-  
-
-  
-  
+  <div class="container">
     
-
-
-
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-    
-    
-    
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section id="papers" class="relative hbb-section blox-collection  " style="padding: 3rem 0 3rem 0;" >
- <div class="home-section-bg " >
-   
- </div>
-  
-
-  
-
-    
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-  
-  
-  
-  
-  
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-<div class="flex flex-col items-center max-w-prose mx-auto gap-3 justify-center">
-
-  <div class="mb-6 text-3xl font-bold text-gray-900 dark:text-white">
-    Featured Publications
-  </div>
-
-  
-</div>
-
-
-<div class="flex flex-col items-center">
-
-  
-  
-
-
-<div class="container px-8 mx-auto xl:px-5 py-5 lg:py-8 max-w-screen-lg ">
-  <div class="grid gap-10 md:grid-cols-2 lg:gap-10">
-
-
-  
-    
-
-
-
-
-
-
-
-
-
-<div class="group cursor-pointer">
-
-  
-  
-  
-    
-  
-  
-  <div class="overflow-hidden rounded-md bg-gray-100 transition-all hover:scale-105 dark:bg-gray-800">
-
-    <a
-      class="relative block aspect-video"
-      href="/publication/clip_ebc/" >
-
-      <img alt="CLIP-EBC: CLIP Can Count Accurately through Enhanced Blockwise Classification"
-           class="object-fill transition-all"
-           data-nimg="fill"
-           decoding="async"
-           fetchpriority="high" height="540" loading="lazy" src="/publication/clip_ebc/featured_huf7a627df0b1d9239c3cc4755cbc30db9_8621136_eaa52b609b54241322d3b1a4a9e15933.webp"
-           style="position: absolute; height: 100%; width: 100%; inset: 0px; color: transparent;"
-           width="960"></a>
-  </div>
-  
-  <div class="">
-    <div class="">
-      <div class="flex gap-3">
+    <aside class="sidebar-left">
+      <div class="profile-section">
+        <div class="profile-header">
+          <img src="/images/profile.jpg" alt="Profile Photo" class="profile-img">
+          <h1>Yiming&#39;s Portfolio</h1>
+        </div>
         
-        <a href="/tags/crowd-counting/"><span
-          class="inline-block text-xs font-medium tracking-wider uppercase mt-5 text-primary-700 dark:text-primary-300">Crowd Counting</span></a>
+        <div class="profile-bio">
+          <p><strong>Affiliation</strong> : <a href="https://warwick.ac.uk/fac/sci/dcs/research/siplab/">SIPLab</a> &amp; <a href="https://warwick.ac.uk/fac/sci/mathsys/">MathSys</a></p>
+<p><strong>Interests</strong>: Crowd Counting, Driver Monitoring System, Multimodality</p>
+<p><strong>Base</strong>: Watford, England, UK.</p>
+
+        </div>
         
-      </div>
-      
-      <h2 class="text-lg font-semibold leading-snug tracking-tight mt-2 dark:text-white"><a
-        href="/publication/clip_ebc/" ><span
-        class="bg-gradient-to-r from-primary-200 to-primary-100 bg-[length:0px_10px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 hover:bg-[length:100%_3px] group-hover:bg-[length:100%_10px] dark:from-primary-800 dark:to-primary-900">CLIP-EBC: CLIP Can Count Accurately through Enhanced Blockwise Classification
-          </span></a>
-      </h2>
-      
-      <div class="grow"><p class="mt-2 line-clamp-3 text-sm text-gray-500 dark:text-gray-400"><a
-        href="/publication/clip_ebc/" >
-         </a></p>
-      </div>
-      <div class="flex-none">
-        <div class="mt-3 flex items-center space-x-3 text-gray-500 dark:text-gray-400 cursor-default">
+        
+        <div class="social-links">
           
+            <a href="https://scholar.google.com/citations?user=gC0aZsAAAAAJ&amp;hl=en" target="_blank" class="social-link" title="Google Scholar">
+              
+                <svg class="social-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5.242 13.769L0 9.5 12 0l12 9.5-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269zM12 10a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/>
+                  <path d="M12 10a7 7 0 1 0 0 14 7 7 0 0 0 0-14zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"/>
+                </svg>
+              
+            </a>
           
-          <time class="truncate text-sm" datetime="2024-03-14">Thu, 14 Mar 2024</time>
+            <a href="https://github.com/Yiming-M" target="_blank" class="social-link" title="GitHub">
+              
+                <svg class="social-icon" width="800" height="800" viewBox="4 4 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24.92 12.183c0-1.586-.604-2.864-1.585-3.83.172-.547.398-1.763-.229-3.321 0 0-1.114-.348-3.628 1.315a12.695 12.695 0 0 0-3.081-.366c-1.154 0-2.322.143-3.409.44-2.596-1.747-3.74-1.391-3.74-1.391-.748 1.847-.287 3.215-.145 3.554-.883.936-1.414 2.133-1.414 3.594 0 1.111.128 2.099.44 2.964l.325.732c.879 1.614 2.606 2.655 5.677 2.983-.434.289-.885.779-1.062 1.612-.594.28-2.475.966-3.603-.944 0 0-.633-1.148-1.842-1.235 0 0-1.174-.017-.08.722 0 0 .782.367 1.326 1.738 0 0 .705 2.342 4.114 1.593v2.417s-.076.857-.867 1.143c0 0-.469.312.034.497 0 0 2.205.174 2.205-1.604v-2.643s-.09-1.047.429-1.404v4.332s-.032 1.031-.576 1.421c0 0-.362.646.433.468 0 0 1.517-.211 1.584-1.967l.035-4.383h.363l.033 4.383c.076 1.748 1.59 1.967 1.59 1.967.793.179.429-.468.429-.468-.54-.389-.579-1.421-.579-1.421v-4.297c.52.402.436 1.369.436 1.369v2.643c0 1.777 2.2 1.604 2.2 1.604.505-.186.036-.498.036-.498-.793-.286-.867-1.143-.867-1.143v-3.461c0-1.346-.574-2.056-1.137-2.435 3.277-.318 4.845-1.368 5.572-2.99-.015.027.26-.726.26-.726.25-.859.325-1.855.325-2.963h-.002z"/></svg>
+              
+            </a>
+          
+            <a href="https://www.linkedin.com/in/yiming-ma-5b401a201/" target="_blank" class="social-link" title="LinkedIn">
+              
+                <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" width="2500" height="2389" viewBox="0 5 1036 990"><path d="M0 120c0-33.334 11.667-60.834 35-82.5C58.333 15.833 88.667 5 126 5c36.667 0 66.333 10.666 89 32 23.333 22 35 50.666 35 86 0 32-11.333 58.666-34 80-23.333 22-54 33-92 33h-1c-36.667 0-66.333-11-89-33S0 153.333 0 120zm13 875V327h222v668H13zm345 0h222V622c0-23.334 2.667-41.334 8-54 9.333-22.667 23.5-41.834 42.5-57.5 19-15.667 42.833-23.5 71.5-23.5 74.667 0 112 50.333 112 151v357h222V612c0-98.667-23.333-173.5-70-224.5S857.667 311 781 311c-86 0-153 37-201 111v2h-1l1-2v-95H358c1.333 21.333 2 87.666 2 199 0 111.333-.667 267.666-2 469z"/></svg>
+              
+            </a>
+          
+            <a href="https://x.com/real_yiming_ma" target="_blank" class="social-link" title="X">
+              
+                <svg class="social-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/>
+                </svg>
+              
+            </a>
+          
+            <a href="https://bsky.app/profile/yiming-ma.bsky.social" target="_blank" class="social-link" title="BlueSky">
+              
+                <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -3.268 64 68.414" width="2232" height="2500"><path fill="currentColor" d="M13.873 3.805C21.21 9.332 29.103 20.537 32 26.55v15.882c0-.338-.13.044-.41.867-1.512 4.456-7.418 21.847-20.923 7.944-7.111-7.32-3.819-14.64 9.125-16.85-7.405 1.264-15.73-.825-18.014-9.015C1.12 23.022 0 8.51 0 6.55 0-3.268 8.579-.182 13.873 3.805zm36.254 0C42.79 9.332 34.897 20.537 32 26.55v15.882c0-.338.13.044.41.867 1.512 4.456 7.418 21.847 20.923 7.944 7.111-7.32 3.819-14.64-9.125-16.85 7.405 1.264 15.73-.825 18.014-9.015C62.88 23.022 64 8.51 64 6.55c0-9.818-8.578-6.732-13.873-2.745z"/></svg>
+              
+            </a>
+          
+            <a href="https://www.instagram.com/real.yiming.ma/" target="_blank" class="social-link" title="Instagram">
+              
+                <svg class="social-icon" width="800px" height="800px" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M16.19 2H7.81C4.17 2 2 4.17 2 7.81V16.18C2 19.83 4.17 22 7.81 22H16.18C19.82 22 21.99 19.83 21.99 16.19V7.81C22 4.17 19.83 2 16.19 2ZM12 15.88C9.86 15.88 8.12 14.14 8.12 12C8.12 9.86 9.86 8.12 12 8.12C14.14 8.12 15.88 9.86 15.88 12C15.88 14.14 14.14 15.88 12 15.88ZM17.92 6.88C17.87 7 17.8 7.11 17.71 7.21C17.61 7.3 17.5 7.37 17.38 7.42C17.26 7.47 17.13 7.5 17 7.5C16.73 7.5 16.48 7.4 16.29 7.21C16.2 7.11 16.13 7 16.08 6.88C16.03 6.76 16 6.63 16 6.5C16 6.37 16.03 6.24 16.08 6.12C16.13 5.99 16.2 5.89 16.29 5.79C16.52 5.56 16.87 5.45 17.19 5.52C17.26 5.53 17.32 5.55 17.38 5.58C17.44 5.6 17.5 5.63 17.56 5.67C17.61 5.7 17.66 5.75 17.71 5.79C17.8 5.89 17.87 5.99 17.92 6.12C17.97 6.24 18 6.37 18 6.5C18 6.63 17.97 6.76 17.92 6.88Z"/></svg>
+              
+            </a>
+          
+            <a href="mailto:yiming.m@proton.me" target="_blank" class="social-link" title="Email">
+              
+                <svg class="social-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+              
+            </a>
+          
         </div>
       </div>
-
-    </div>
-  </div>
-</div>
-
-  
-    
-
-
-
-
-
-
-
-
-
-<div class="group cursor-pointer">
-
-  
-  
-  
-    
-  
-  
-  <div class="overflow-hidden rounded-md bg-gray-100 transition-all hover:scale-105 dark:bg-gray-800">
-
-    <a
-      class="relative block aspect-video"
-      href="/publication/mhsa/" >
-
-      <img alt="Robust Multiview Multimodal Driver Monitoring System Using Masked Multi-Head Self-Attention"
-           class="object-fill transition-all"
-           data-nimg="fill"
-           decoding="async"
-           fetchpriority="high" height="540" loading="lazy" src="/publication/mhsa/featured_hu33f255599b590e7633957b00f6cf886c_2549431_abaf593b676cb4d660fd0c4e585ca352.webp"
-           style="position: absolute; height: 100%; width: 100%; inset: 0px; color: transparent;"
-           width="960"></a>
-  </div>
-  
-  <div class="">
-    <div class="">
-      <div class="flex gap-3">
-        
-        <a href="/tags/driver-monitoring-systems/"><span
-          class="inline-block text-xs font-medium tracking-wider uppercase mt-5 text-primary-700 dark:text-primary-300">Driver Monitoring Systems</span></a>
-        
-      </div>
       
-      <h2 class="text-lg font-semibold leading-snug tracking-tight mt-2 dark:text-white"><a
-        href="/publication/mhsa/" ><span
-        class="bg-gradient-to-r from-primary-200 to-primary-100 bg-[length:0px_10px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 hover:bg-[length:100%_3px] group-hover:bg-[length:100%_10px] dark:from-primary-800 dark:to-primary-900">Robust Multiview Multimodal Driver Monitoring System Using Masked Multi-Head Self-Attention
-          </span></a>
-      </h2>
       
-      <div class="grow"><p class="mt-2 line-clamp-3 text-sm text-gray-500 dark:text-gray-400"><a
-        href="/publication/mhsa/" >
-         </a></p>
-      </div>
-      <div class="flex-none">
-        <div class="mt-3 flex items-center space-x-3 text-gray-500 dark:text-gray-400 cursor-default">
+      <div class="recent-news">
+        <h3>📰 Recent News</h3>
+        <div class="news-list">
           
+            <div class="news-item">
+              <div class="news-date">2025-08-07</div>
+              <div class="news-content">🌟 I'm seeking new research opportunities in computer vision / multimodality in the UK.</div>
+            </div>
           
-          <time class="truncate text-sm" datetime="2023-08-14">Mon, 14 Aug 2023</time>
+            <div class="news-item">
+              <div class="news-date">2025-07-31</div>
+              <div class="news-content">🚀 Implemented a <a href="https://huggingface.co/spaces/Yiming-M/ZIP">HF Space</a> for ZIP.</div>
+            </div>
+          
+            <div class="news-item">
+              <div class="news-date">2025-07-31</div>
+              <div class="news-content">💻 Released the code of <a href="https://github.com/Yiming-M/EBC-ZIP">ZIP</a> on GitHub.</div>
+            </div>
+          
+            <div class="news-item">
+              <div class="news-date">2025-07-31</div>
+              <div class="news-content">📢 Released a new paper <a href="https://arxiv.org/abs/2506.19955">ZIP: Scalable Crowd Counting via Zero-Inflated Poisson Modeling</a> on arXiv.</div>
+            </div>
+          
+            <div class="news-item">
+              <div class="news-date">2025-07-04</div>
+              <div class="news-content">🇫🇷 Attended <a href="https://2025.ieeeicme.org">ICME 2025</a> @ Nantes, France.</div>
+            </div>
+          
+            <div class="news-item">
+              <div class="news-date">2025-03-20</div>
+              <div class="news-content">🎊 <em>CLIP-EBC</em> and <em>Interact with me</em> got accepted by <a href="https://2025.ieeeicme.org">ICME 2025</a>.</div>
+            </div>
+          
+            <div class="news-item">
+              <div class="news-date">2025-02-03</div>
+              <div class="news-content">💻 Released the code of <a href="https://github.com/biantongfei/SocialEgoNe/">Interact with me</a> on GitHub.</div>
+            </div>
+          
+            <div class="news-item">
+              <div class="news-date">2024-12-21</div>
+              <div class="news-content">📢 Released a new paper <a href="https://arxiv.org/abs/2412.16698">Interact with me: Joint Egocentric Forecasting of Intent to Interact, Attitude and Social Actions</a> (co-author) on arXiv.</div>
+            </div>
+          
+            <div class="news-item">
+              <div class="news-date">2024-07-17</div>
+              <div class="news-content">💻 Released the code of <a href="https://github.com/Yiming-M/CLIP-EBC">CLIP-EBC</a> on GitHub.</div>
+            </div>
+          
+            <div class="news-item">
+              <div class="news-date">2024-03-14</div>
+              <div class="news-content">📢 Released a new paper <a href="https://arxiv.org/abs/2403.09281">CLIP-EBC: CLIP Can Count Accurately through Enhanced Blockwise Classification</a> on arXiv.</div>
+            </div>
+          
+            <div class="news-item">
+              <div class="news-date">2023-06-18</div>
+              <div class="news-content">🇨🇦 Attended [CVPR 2023](cvpr 2023 workshops) online.</div>
+            </div>
+          
+            <div class="news-item">
+              <div class="news-date">2023-04-13</div>
+              <div class="news-content">💻 Released the code and dataset of <a href="https://github.com/Yiming-M/MHSA/commits/main/">MHSA</a>.</div>
+            </div>
+          
+            <div class="news-item">
+              <div class="news-date">2023-04-13</div>
+              <div class="news-content">📢 Uploaded the paper of <a href="https://arxiv.org/abs/2304.06370">MHSA</a> on arXiv.</div>
+            </div>
+          
+            <div class="news-item">
+              <div class="news-date">2023-03-21</div>
+              <div class="news-content">🎊 The paper <em>Robust Multiview Multimodal Driver Monitoring System Using Masked Multi-Head Self-Attention</em> (<strong>MHSA</strong>) got accepted by <a href="https://mula-workshop.github.io/index_2023.html">CVPRW 2023</a>.</div>
+            </div>
+          
+            <div class="news-item">
+              <div class="news-date">2022-10-19</div>
+              <div class="news-content">🇫🇷 Attended <a href="https://2025.ieeeicme.org">ICIP 2022</a> online.</div>
+            </div>
+          
+            <div class="news-item">
+              <div class="news-date">2022-10-17</div>
+              <div class="news-content">📢 Released a new paper <a href="https://arxiv.org/abs/2210.09441">Real-Time Driver Monitoring Systems through Modality and View Analysis</a> on arXiv.</div>
+            </div>
+          
+            <div class="news-item">
+              <div class="news-date">2022-06-20</div>
+              <div class="news-content">🎊 FusionCount got accepted by ICIP 2022.</div>
+            </div>
+          
+            <div class="news-item">
+              <div class="news-date">2022-04-05</div>
+              <div class="news-content">💻 Released the code for <a href="https://github.com/Yiming-M/FusionCount/commits/main/">FusionCount</a> on GitHub.</div>
+            </div>
+          
+            <div class="news-item">
+              <div class="news-date">2022-02-28</div>
+              <div class="news-content">📢 Released a new paper <a href="https://arxiv.org/abs/2202.13660">FusionCount: Efficient Crowd Counting via Multiscale Feature Fusion</a> on arXiv.</div>
+            </div>
+          
+            <div class="news-item">
+              <div class="news-date">2021-10-04</div>
+              <div class="news-content">🎓 Started my PhD journey at <a href="https://warwick.ac.uk/fac/sci/mathsys/">Mathsys CDT of University of Warwick</a>.</div>
+            </div>
+          
         </div>
       </div>
+    </aside>
+    
+    
+    <main class="content-main">
+      
+  
+  <div class="posts-container">
+    <h1 class="main-title">Publications</h1>
+    <div class="posts-section">
+      
+      
+        
+        <article class="post-card" data-post-id="1">
+          <div class="post-header" data-post-id="1">
+            <h2>Interact with me: Joint Egocentric Forecasting of Intent to Interact, Attitude and Social Actions</h2>
+            <div class="post-meta">
+              <time>Dec 21, 2024</time>
+              
+                
+                  • <span class="tag tag-venue">ICME</span>
+                
+              
+            </div>
+            
+              <div class="post-keywords">
+                  
+                    
+                      <span class="tag tag-keyword">Action Forecasting</span>
+                    
+                  
+                    
+                      <span class="tag tag-keyword">Egocentric Vision</span>
+                    
+                  
+                    
+                      <span class="tag tag-keyword">AI for Social Good</span>
+                    
+                  
+                </div>
+              
+            </div>
+          
+          <div class="post-content" id="content-1" style="display: none;">
+            <div class="post-full-content">
+              <p><strong>Authors</strong>: Tongfei Bian, <strong>Yiming Ma</strong>, Mathieu Chollet, Victor Sanchez, Tanaya Guha</p>
+<img src="posts/interact-with-me/image.png" alt=""><p>For efficient human-agent interaction, an agent should proactively recognize their target user and prepare for upcoming interactions. We formulate this challenging problem as the novel task of jointly forecasting a person's intent to interact with the agent, their attitude towards the agent and the action they will perform, from the agent's (egocentric) perspective. So we propose \emph{SocialEgoNet} - a graph-based spatiotemporal framework that exploits task dependencies through a hierarchical multitask learning approach. SocialEgoNet uses whole-body skeletons (keypoints from face, hands and body) extracted from only 1 second of video input for high inference speed. For evaluation, we augment an existing egocentric human-agent interaction dataset with new class labels and bounding box annotations. Extensive experiments on this augmented dataset, named JPL-Social, demonstrate \emph{real-time} inference and superior performance (average accuracy across all tasks: 83.15%) of our model outperforming several competitive baselines. The additional annotations and code will be available upon acceptance.</p>
+<img src="posts/interact-with-me/image-1.png" alt=""><p><a href="https://arxiv.org/abs/2412.16698">Paper</a> | <a href="https://github.com/biantongfei/SocialEgoNet">Code</a></p>
 
+            </div>
+          </div>
+        </article>
+      
+        
+        <article class="post-card" data-post-id="2">
+          <div class="post-header" data-post-id="2">
+            <h2>CLIP-EBC: CLIP Can Count Accurately through Enhanced Blockwise Classification</h2>
+            <div class="post-meta">
+              <time>Mar 14, 2024</time>
+              
+                
+                  • <span class="tag tag-venue">ICME</span>
+                
+              
+            </div>
+            
+              <div class="post-keywords">
+                  
+                    
+                      <span class="tag tag-keyword">Crowd Counting</span>
+                    
+                  
+                    
+                      <span class="tag tag-keyword">CLIP</span>
+                    
+                  
+                </div>
+              
+            </div>
+          
+          <div class="post-content" id="content-2" style="display: none;">
+            <div class="post-full-content">
+              <p><strong>Authors</strong>: <strong>Yiming Ma</strong>, Victor Sanchez, Tanaya Guha</p>
+<p>We propose CLIP-EBC, the first fully CLIP-based model for accurate crowd density estimation. While the CLIP model has demonstrated remarkable success in addressing recognition tasks such as zero-shot image classification, its potential for counting has been largely unexplored due to the inherent challenges in transforming a regression problem, such as counting, into a recognition task. In this work, we investigate and enhance CLIP's ability to count, focusing specifically on the task of estimating crowd sizes from images. Existing classification-based crowd-counting frameworks have significant limitations, including the quantization of count values into bordering real-valued bins and the sole focus on classification errors. These practices result in label ambiguity near the shared borders and inaccurate prediction of count values. Hence, directly applying CLIP within these frameworks may yield suboptimal performance.</p>
+<p>To address these challenges, we first propose the Enhanced Blockwise Classification (EBC) framework. Unlike previous methods, EBC utilizes integer-valued bins, effectively reducing ambiguity near bin boundaries. Additionally, it incorporates a regression loss based on density maps to improve the prediction of count values. Within our backbone-agnostic EBC framework, we then introduce CLIP-EBC to fully leverage CLIP's recognition capabilities for this task. Extensive experiments demonstrate the effectiveness of EBC and the competitive performance of CLIP-EBC. Specifically, our EBC framework can improve existing classification-based methods by up to 44.5% on the UCF-QNRF dataset, and CLIP-EBC achieves state-of-the-art performance on the NWPU-Crowd test set, with an MAE of 58.2 and an RMSE of 268.5, representing improvements of 8.6% and 13.3% over the previous best method, STEERER. The code and weights are available at this https URL.</p>
+<img src="posts/clip-ebc/image.png" alt=""><p><a href="https://arxiv.org/abs/2403.09281">Paper</a> | <a href="https://github.com/Yiming-M/CLIP-EBC">Code</a> | <a href="https://huggingface.co/spaces/Yiming-M/CLIP-EBC">Hugging Face Space</a></p>
+
+            </div>
+          </div>
+        </article>
+      
+        
+        <article class="post-card" data-post-id="3">
+          <div class="post-header" data-post-id="3">
+            <h2>ZIP: Scalable Crowd Counting via Zero-Inflated Poisson Modeling</h2>
+            <div class="post-meta">
+              <time>Jul 31, 2023</time>
+              
+                
+                  • <span class="tag tag-venue">Preprint</span>
+                
+              
+            </div>
+            
+              <div class="post-keywords">
+                  
+                    
+                      <span class="tag tag-keyword">Crowd Counting</span>
+                    
+                  
+                    
+                      <span class="tag tag-keyword">Zero-Inflated Poisson Regression</span>
+                    
+                  
+                    
+                      <span class="tag tag-keyword">Scalability</span>
+                    
+                  
+                </div>
+              
+            </div>
+          
+          <div class="post-content" id="content-3" style="display: none;">
+            <div class="post-full-content">
+              <p><strong>Authors</strong>: <strong>Yiming Ma</strong>, Victor Sanchez, Tanaya Guha</p>
+<p>Most crowd counting methods directly regress blockwise density maps using Mean Squared Error (MSE) losses. This practice has two key limitations: (1) it fails to account for the extreme spatial sparsity of annotations - over 95% of 8x8 blocks are empty across standard benchmarks, so supervision signals in informative regions are diluted by the predominant zeros; (2) MSE corresponds to a Gaussian error model that poorly matches discrete, non-negative count data. To address these issues, we introduce ZIP, a scalable crowd counting framework that models blockwise counts with a Zero-Inflated Poisson likelihood: a zero-inflation term learns the probability a block is structurally empty (handling excess zeros), while the Poisson component captures expected counts when people are present (respecting discreteness). We provide a generalization analysis showing a tighter risk bound for ZIP than MSE-based losses and DMCount provided that the training resolution is moderately large. To assess the scalability of ZIP, we instantiate it on backbones spanning over 100x in parameters/compute. Experiments on ShanghaiTech A &amp; B, UCF-QNRF, and NWPU-Crowd demonstrate that ZIP consistently surpasses state-of-the-art methods across all model scales.</p>
+<img src="posts/zip/image.png" alt=""><p><a href="https://arxiv.org/abs/2506.19955">paper</a> | <a href="https://github.com/Yiming-M/EBC-ZIP">Code</a> | <a href="https://huggingface.co/spaces/Yiming-M/ZIP">Hugging Face Space</a></p>
+
+            </div>
+          </div>
+        </article>
+      
+        
+        <article class="post-card" data-post-id="4">
+          <div class="post-header" data-post-id="4">
+            <h2>Robust Multiview Multimodal Driver Monitoring System Using Masked Multi-Head Self-Attention</h2>
+            <div class="post-meta">
+              <time>Mar 21, 2023</time>
+              
+                
+                  • <span class="tag tag-venue">CVPR</span>
+                
+              
+            </div>
+            
+              <div class="post-keywords">
+                  
+                    
+                      <span class="tag tag-keyword">Driver Monitoring System</span>
+                    
+                  
+                    
+                      <span class="tag tag-keyword">Multimodality</span>
+                    
+                  
+                    
+                      <span class="tag tag-keyword">Multivew</span>
+                    
+                  
+                    
+                      <span class="tag tag-keyword">Attention Mechanism</span>
+                    
+                  
+                </div>
+              
+            </div>
+          
+          <div class="post-content" id="content-4" style="display: none;">
+            <div class="post-full-content">
+              <p><strong>Authors</strong>: <strong>Yiming Ma</strong>, Victor Sanchez, Soodeh Nikan, Devesh Upadhyay, Bhushan Atote, Tanaya Guha</p>
+<p>Driver Monitoring Systems (DMSs) are crucial for safe hand-over actions in Level-2+ self-driving vehicles. State-of-the-art DMSs leverage multiple sensors mounted at different locations to monitor the driver and the vehicle's interior scene and employ decision-level fusion to integrate these heterogenous data. However, this fusion method may not fully utilize the complementarity of different data sources and may overlook their relative importance. To address these limitations, we propose a novel multiview multimodal driver monitoring system based on feature-level fusion through multi-head self-attention (MHSA). We demonstrate its effectiveness by comparing it against four alternative fusion strategies (Sum, Conv, SE, and AFF). We also present a novel GPU-friendly supervised contrastive learning framework SuMoCo to learn better representations. Furthermore, We fine-grained the test split of the DAD dataset to enable the multi-class recognition of drivers' activities. Experiments on this enhanced database demonstrate that 1) the proposed MHSA-based fusion method (AUC-ROC: 97.0%) outperforms all baselines and previous approaches, and 2) training MHSA with patch masking can improve its robustness against modality/view collapses. The code and annotations are publicly available.</p>
+<p><img src="posts/dms2/image.png" alt="">[80, center]</p>
+<p><a href="https://arxiv.org/abs/2303.12093">Paper</a> | <a href="https://github.com/Yiming-M/MHSA">Code</a></p>
+
+            </div>
+          </div>
+        </article>
+      
+        
+        <article class="post-card" data-post-id="5">
+          <div class="post-header" data-post-id="5">
+            <h2>Real-Time Driver Monitoring Systems through Modality and View Analysis</h2>
+            <div class="post-meta">
+              <time>Oct 17, 2022</time>
+              
+                
+                  • <span class="tag tag-venue">Preprint</span>
+                
+              
+            </div>
+            
+              <div class="post-keywords">
+                  
+                    
+                      <span class="tag tag-keyword">Driver Monitoring System</span>
+                    
+                  
+                    
+                      <span class="tag tag-keyword">Multimodality</span>
+                    
+                  
+                    
+                      <span class="tag tag-keyword">Multivew</span>
+                    
+                  
+                    
+                      <span class="tag tag-keyword">Real-Time</span>
+                    
+                  
+                </div>
+              
+            </div>
+          
+          <div class="post-content" id="content-5" style="display: none;">
+            <div class="post-full-content">
+              <p><strong>Authors</strong>: <strong>Yiming Ma</strong>, Victor Sanchez, Soodeh Nikan, Devesh Upadhyay, Bhushan Atote, Tanaya Guha</p>
+<p>Driver distractions are known to be the dominant cause of road accidents. While monitoring systems can detect non-driving-related activities and facilitate reducing the risks, they must be accurate and efficient to be applicable. Unfortunately, state-of-the-art methods prioritize accuracy while ignoring latency because they leverage cross-view and multimodal videos in which consecutive frames are highly similar. Thus, in this paper, we pursue time-effective detection models by neglecting the temporal relation between video frames and investigate the importance of each sensing modality in detecting drives' activities. Experiments demonstrate that 1) our proposed algorithms are real-time and can achieve similar performances (97.5% AUC-PR) with significantly reduced computation compared with video-based models; 2) the top view with the infrared channel is more informative than any other single modality. Furthermore, we enhance the DAD dataset by manually annotating its test set to enable multiclassification. We also thoroughly analyze the influence of visual sensor types and their placements on the prediction of each class. The code and the new labels will be released.</p>
+<p><a href="https://arxiv.org/abs/2210.09441">Paper</a></p>
+
+            </div>
+          </div>
+        </article>
+      
+        
+        <article class="post-card" data-post-id="6">
+          <div class="post-header" data-post-id="6">
+            <h2>Fusioncount: Efficient Crowd Counting Via Multiscale Feature Fusion</h2>
+            <div class="post-meta">
+              <time>Feb 28, 2022</time>
+              
+                
+                  • <span class="tag tag-venue">ICIP</span>
+                
+              
+            </div>
+            
+              <div class="post-keywords">
+                  
+                    
+                      <span class="tag tag-keyword">Crowd Counting</span>
+                    
+                  
+                    
+                      <span class="tag tag-keyword">Multiscale</span>
+                    
+                  
+                    
+                      <span class="tag tag-keyword">Attention Mechanism</span>
+                    
+                  
+                </div>
+              
+            </div>
+          
+          <div class="post-content" id="content-6" style="display: none;">
+            <div class="post-full-content">
+              <p><strong>Authors</strong>: <strong>Yiming Ma</strong>, Victor Sanchez, Tanaya Guha</p>
+<p>State-of-the-art crowd counting models follow an encoder-decoder approach. Images are first processed by the encoder to extract features. Then, to account for perspective distortion, the highest-level feature map is fed to extra components to extract multiscale features, which are the input to the decoder to generate crowd densities. However, in these methods, features extracted at earlier stages during encoding are underutilised, and the multiscale modules can only capture a limited range of receptive fields, albeit with considerable computational cost. This paper proposes a novel crowd counting architecture (FusionCount), which exploits the adaptive fusion of a large majority of encoded features instead of relying on additional extraction components to obtain multiscale features. Thus, it can cover a more extensive scope of receptive field sizes and lower the computational cost. We also introduce a new channel reduction block, which can extract saliency information during decoding and further enhance the model's performance. Experiments on two benchmark databases demonstrate that our model achieves state-of-the-art results with reduced computational complexity.</p>
+<p><a href="https://arxiv.org/abs/2202.13660">Paper</a> | <a href="https://github.com/Yiming-M/FusionCount">Code</a></p>
+
+            </div>
+          </div>
+        </article>
+      
     </div>
   </div>
-</div>
 
-  
+    </main>
     
-
-
-
-
-
-
-
-
-
-<div class="group cursor-pointer">
-
-  
-  
-  
     
-  
-  
-  <div class="overflow-hidden rounded-md bg-gray-100 transition-all hover:scale-105 dark:bg-gray-800">
-
-    <a
-      class="relative block aspect-video"
-      href="/publication/fusioncount/" >
-
-      <img alt="FusionCount: Efficient Crowd Counting via Multiscale Feature Fusion"
-           class="object-fill transition-all"
-           data-nimg="fill"
-           decoding="async"
-           fetchpriority="high" height="540" loading="lazy" src="/publication/fusioncount/featured_hua7bfda980ec298d2925371fe4a266327_6430722_6baefb17e8d622e678b892483d6090d8.webp"
-           style="position: absolute; height: 100%; width: 100%; inset: 0px; color: transparent;"
-           width="960"></a>
-  </div>
-  
-  <div class="">
-    <div class="">
-      <div class="flex gap-3">
-        
-        <a href="/tags/crowd-counting/"><span
-          class="inline-block text-xs font-medium tracking-wider uppercase mt-5 text-primary-700 dark:text-primary-300">Crowd Counting</span></a>
-        
-      </div>
+    <aside class="sidebar-right">
       
-      <h2 class="text-lg font-semibold leading-snug tracking-tight mt-2 dark:text-white"><a
-        href="/publication/fusioncount/" ><span
-        class="bg-gradient-to-r from-primary-200 to-primary-100 bg-[length:0px_10px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 hover:bg-[length:100%_3px] group-hover:bg-[length:100%_10px] dark:from-primary-800 dark:to-primary-900">FusionCount: Efficient Crowd Counting via Multiscale Feature Fusion
-          </span></a>
-      </h2>
-      
-      <div class="grow"><p class="mt-2 line-clamp-3 text-sm text-gray-500 dark:text-gray-400"><a
-        href="/publication/fusioncount/" >
-         </a></p>
-      </div>
-      <div class="flex-none">
-        <div class="mt-3 flex items-center space-x-3 text-gray-500 dark:text-gray-400 cursor-default">
-          
-          
-          <time class="truncate text-sm" datetime="2022-10-18">Tue, 18 Oct 2022</time>
+      <div class="search-section">
+        <h3>🔍 Search</h3>
+        <div class="search-box">
+          <input type="text" id="search-input" placeholder="Search posts..." />
+          <div id="search-results"></div>
         </div>
       </div>
-
-    </div>
-  </div>
-</div>
-
-  
-
-    </div>
-</div>
-
-
-</div>
-
-
-
-
-
-
-  
-
-  
-</section>
-
-  
-
-  
-  
-    
-
-
-
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-    
-    
-    
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section id="section-collection" class="relative hbb-section blox-collection  " style="padding: 3rem 0 3rem 0;" >
- <div class="home-section-bg " >
-   
- </div>
-  
-
-  
-
-    
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-  
-  
-  
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-<div class="flex flex-col items-center max-w-prose mx-auto gap-3 justify-center">
-
-  <div class="mb-6 text-3xl font-bold text-gray-900 dark:text-white">
-    Recent Publications
+      
+      
+      <div class="archives-section">
+        <h3 class="collapsible-header" onclick="toggleSection('archives-content')">
+          📁 Archives <span id="archives-toggle" class="toggle-icon">🔽</span>
+        </h3>
+        <div class="archives-list collapsible-content" id="archives-content">
+          
+            
+              
+                <div class="archive-year">
+                  <a href="javascript:void(0);" data-year="2024">2024</a>
+                  <span class="count">(2)</span>
+                </div>
+              
+                <div class="archive-year">
+                  <a href="javascript:void(0);" data-year="2023">2023</a>
+                  <span class="count">(2)</span>
+                </div>
+              
+                <div class="archive-year">
+                  <a href="javascript:void(0);" data-year="2022">2022</a>
+                  <span class="count">(2)</span>
+                </div>
+              
+            
+          
+        </div>
+      </div>
+      
+      
+      <div class="tags-section">
+        <h3 class="collapsible-header" onclick="toggleSection('venues-section')">
+          📄 Venues <span id="venues-toggle" class="toggle-icon">🔽</span>
+        </h3>
+        <div id="venues-section" class="tags-cloud collapsible-content">
+          
+            <a href="javascript:void(0);" class="tag tag-venue sidebar-tag">CVPR</a>
+          
+            <a href="javascript:void(0);" class="tag tag-venue sidebar-tag">ICIP</a>
+          
+            <a href="javascript:void(0);" class="tag tag-venue sidebar-tag">ICME</a>
+          
+            <a href="javascript:void(0);" class="tag tag-venue sidebar-tag">Preprint</a>
+          
+        </div>
+      </div>
+      
+      
+      <div class="tags-section">
+        <h3 class="collapsible-header" onclick="toggleSection('keywords-section')">
+          🔖 Keywords <span id="keywords-toggle" class="toggle-icon">🔽</span>
+        </h3>
+        <div id="keywords-section" class="tags-cloud collapsible-content">
+          
+          
+            
+              
+                
+              
+                
+              
+                
+              
+            
+          
+            
+              
+                
+              
+                
+              
+            
+          
+            
+              
+                
+              
+                
+              
+                
+              
+            
+          
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+            
+              
+                
+              
+                
+              
+                
+              
+            
+          
+          
+          
+            <a href="javascript:void(0);" class="tag tag-keyword sidebar-tag" data-keyword="Action Forecasting">Action Forecasting</a>
+          
+            <a href="javascript:void(0);" class="tag tag-keyword sidebar-tag" data-keyword="AI for Social Good">AI for Social Good</a>
+          
+            <a href="javascript:void(0);" class="tag tag-keyword sidebar-tag" data-keyword="Attention Mechanism">Attention Mechanism</a>
+          
+            <a href="javascript:void(0);" class="tag tag-keyword sidebar-tag" data-keyword="CLIP">CLIP</a>
+          
+            <a href="javascript:void(0);" class="tag tag-keyword sidebar-tag" data-keyword="Crowd Counting">Crowd Counting</a>
+          
+            <a href="javascript:void(0);" class="tag tag-keyword sidebar-tag" data-keyword="Driver Monitoring System">Driver Monitoring System</a>
+          
+            <a href="javascript:void(0);" class="tag tag-keyword sidebar-tag" data-keyword="Egocentric Vision">Egocentric Vision</a>
+          
+            <a href="javascript:void(0);" class="tag tag-keyword sidebar-tag" data-keyword="Multimodality">Multimodality</a>
+          
+            <a href="javascript:void(0);" class="tag tag-keyword sidebar-tag" data-keyword="Multiscale">Multiscale</a>
+          
+            <a href="javascript:void(0);" class="tag tag-keyword sidebar-tag" data-keyword="Multivew">Multivew</a>
+          
+            <a href="javascript:void(0);" class="tag tag-keyword sidebar-tag" data-keyword="Real-Time">Real-Time</a>
+          
+            <a href="javascript:void(0);" class="tag tag-keyword sidebar-tag" data-keyword="Scalability">Scalability</a>
+          
+            <a href="javascript:void(0);" class="tag tag-keyword sidebar-tag" data-keyword="Zero-Inflated Poisson Regression">Zero-Inflated Poisson Regression</a>
+          
+        </div>
+      </div>
+    </aside>
   </div>
 
-  
-</div>
-
-
-<div class="flex flex-col items-center">
-
-  
-  
-<div class="mt-16 sm:mt-20 container max-w-3xl w-full">
-  <div class="flex flex-col space-y-3">
-
-
-  
-    
-
-
-<div class="pub-list-item view-citation" style="margin-bottom: 1rem">
-  <i class="far fa-file-alt pub-icon" aria-hidden="true"></i>
-
-  
-  
-
-  <span class="article-metadata li-cite-author">
-    
-
-  <span class="font-bold">
-      Yiming Ma</span>, <span >
-      Victor Sanchez</span>, <span >
-      Tanaya Guha</span>
-  </span>
-  (2024).
-  <a href="/publication/clip_ebc/" class="underline">CLIP-EBC: CLIP Can Count Accurately through Enhanced Blockwise Classification</a>.
-  
-
-  
-  <div class="flex space-x-3">
-    
-
-
-
-
-
-
-
-
-  
-    
-  
-
-
-
-<a class="hb-attachment-link hb-attachment-small" href="https://arxiv.org/abs/2403.09281" target="_blank" rel="noopener">
-  <svg style="height: 1em" class='inline-block' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9"/></svg>
-  PDF
-</a>
-
-
-
-<a class="hb-attachment-link hb-attachment-small" href="/publication/clip_ebc/cite.bib" target="_blank" data-filename="/publication/clip_ebc/cite.bib">
-  <svg style="height: 1em" class='inline-block' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75"/></svg>
-  Cite
-</a>
-
-
-  
-  
-    
-  
-<a class="hb-attachment-link hb-attachment-small" href="https://github.com/Yiming-M/CLIP-EBC" target="_blank" rel="noopener">
-  <svg style="height: 1em" class='inline-block' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/></svg>
-  Code
-</a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-  
-
-  
-  
-</div>
-
-  
-    
-
-
-<div class="pub-list-item view-citation" style="margin-bottom: 1rem">
-  <i class="far fa-file-alt pub-icon" aria-hidden="true"></i>
-
-  
-  
-
-  <span class="article-metadata li-cite-author">
-    
-
-  <span class="font-bold">
-      Yiming Ma</span>, <span >
-      Victor Sanchez</span>, <span >
-      Soodeh Nikan</span>, <span >
-      Devesh Upadhyay</span>, <span >
-      Bhushan Atote</span>, <span >
-      Tanaya Guha</span>
-  </span>
-  (2023).
-  <a href="/publication/mhsa/" class="underline">Robust Multiview Multimodal Driver Monitoring System Using Masked Multi-Head Self-Attention</a>.
-  In <em>CVPRW</em>.
-  
-
-  
-  <div class="flex space-x-3">
-    
-
-
-
-
-
-
-
-
-  
-    
-  
-
-
-
-<a class="hb-attachment-link hb-attachment-small" href="https://arxiv.org/abs/2304.06370" target="_blank" rel="noopener">
-  <svg style="height: 1em" class='inline-block' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9"/></svg>
-  PDF
-</a>
-
-
-
-<a class="hb-attachment-link hb-attachment-small" href="/publication/mhsa/cite.bib" target="_blank" data-filename="/publication/mhsa/cite.bib">
-  <svg style="height: 1em" class='inline-block' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75"/></svg>
-  Cite
-</a>
-
-
-  
-  
-    
-  
-<a class="hb-attachment-link hb-attachment-small" href="https://github.com/Yiming-M/MHSA" target="_blank" rel="noopener">
-  <svg style="height: 1em" class='inline-block' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/></svg>
-  Code
-</a>
-
-
-  
-  
-    
-  
-<a class="hb-attachment-link hb-attachment-small" href="https://github.com/Yiming-M/MHSA/blob/main/labels.csv" target="_blank" rel="noopener">
-  <svg style="height: 1em" class='inline-block' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"/></svg>
-  Dataset
-</a>
-
-
-
-<a class="hb-attachment-link hb-attachment-small" href="dms" target="_blank" rel="noopener">
-  Project
-</a>
-
-
-
-
-
-
-
-
-
-<a class="hb-attachment-link hb-attachment-small" href="https://doi.org/0.1109/CVPRW59228.2023.00260" target="_blank" rel="noopener">
-  DOI
-</a>
-
-
-
-  </div>
-  
-
-  
-  
-</div>
-
-  
-    
-
-
-<div class="pub-list-item view-citation" style="margin-bottom: 1rem">
-  <i class="far fa-file-alt pub-icon" aria-hidden="true"></i>
-
-  
-  
-
-  <span class="article-metadata li-cite-author">
-    
-
-  <span class="font-bold">
-      Yiming Ma</span>, <span >
-      Victor Sanchez</span>, <span >
-      Tanaya Guha</span>
-  </span>
-  (2022).
-  <a href="/publication/fusioncount/" class="underline">FusionCount: Efficient Crowd Counting via Multiscale Feature Fusion</a>.
-  In <em>ICIP</em>.
-  
-
-  
-  <div class="flex space-x-3">
-    
-
-
-
-
-
-
-
-
-  
-    
-  
-
-
-
-<a class="hb-attachment-link hb-attachment-small" href="https://arxiv.org/abs/2202.13660" target="_blank" rel="noopener">
-  <svg style="height: 1em" class='inline-block' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9"/></svg>
-  PDF
-</a>
-
-
-
-<a class="hb-attachment-link hb-attachment-small" href="/publication/fusioncount/cite.bib" target="_blank" data-filename="/publication/fusioncount/cite.bib">
-  <svg style="height: 1em" class='inline-block' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75"/></svg>
-  Cite
-</a>
-
-
-  
-  
-    
-  
-<a class="hb-attachment-link hb-attachment-small" href="https://github.com/Yiming-M/FusionCount" target="_blank" rel="noopener">
-  <svg style="height: 1em" class='inline-block' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/></svg>
-  Code
-</a>
-
-
-
-
-
-
-
-
-
-
-
-
-<a class="hb-attachment-link hb-attachment-small" href="https://doi.org/10.1109/ICIP46576.2022.9897322" target="_blank" rel="noopener">
-  DOI
-</a>
-
-
-
-  </div>
-  
-
-  
-  
-</div>
-
-  
-    
-
-
-<div class="pub-list-item view-citation" style="margin-bottom: 1rem">
-  <i class="far fa-file-alt pub-icon" aria-hidden="true"></i>
-
-  
-  
-
-  <span class="article-metadata li-cite-author">
-    
-
-  <span class="font-bold">
-      Yiming Ma</span>, <span >
-      Victor Sanchez</span>, <span >
-      Soodeh Nikan</span>, <span >
-      Devesh Upadhyay</span>, <span >
-      Bhushan Atote</span>, <span >
-      Tanaya Guha</span>
-  </span>
-  (2022).
-  <a href="/publication/real_time/" class="underline">Real-Time Driver Monitoring Systems through Modality and View Analysis</a>.
-  
-
-  
-  <div class="flex space-x-3">
-    
-
-
-
-
-
-
-
-
-  
-    
-  
-
-
-
-<a class="hb-attachment-link hb-attachment-small" href="https://arxiv.org/abs/2210.09441" target="_blank" rel="noopener">
-  <svg style="height: 1em" class='inline-block' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9"/></svg>
-  PDF
-</a>
-
-
-
-<a class="hb-attachment-link hb-attachment-small" href="/publication/real_time/cite.bib" target="_blank" data-filename="/publication/real_time/cite.bib">
-  <svg style="height: 1em" class='inline-block' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75"/></svg>
-  Cite
-</a>
-
-
-
-
-
-  
-  <a class="hb-attachment-link hb-attachment-small" href="/project/dms/">
-    Project
-  </a>
-  
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-  
-
-  
-  
-</div>
-
-  
-    
-
-
-<div class="pub-list-item view-citation" style="margin-bottom: 1rem">
-  <i class="far fa-file-alt pub-icon" aria-hidden="true"></i>
-
-  
-  
-
-  <span class="article-metadata li-cite-author">
-    
-
-  <span class="font-bold">
-      Yiming Ma</span>
-  </span>
-  (2021).
-  <a href="/publication/icc/" class="underline">Inception-Based Crowd Counting–Being Fast while Remaining Accurate</a>.
-  
-
-  
-  <div class="flex space-x-3">
-    
-
-
-
-
-
-
-
-
-  
-    
-  
-
-
-
-<a class="hb-attachment-link hb-attachment-small" href="https://arxiv.org/pdf/2210.09796" target="_blank" rel="noopener">
-  <svg style="height: 1em" class='inline-block' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9"/></svg>
-  PDF
-</a>
-
-
-
-<a class="hb-attachment-link hb-attachment-small" href="/publication/icc/cite.bib" target="_blank" data-filename="/publication/icc/cite.bib">
-  <svg style="height: 1em" class='inline-block' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75"/></svg>
-  Cite
-</a>
-
-
-  
-  
-    
-  
-<a class="hb-attachment-link hb-attachment-small" href="https://github.com/Yiming-M/CrowdCounting-ICC" target="_blank" rel="noopener">
-  <svg style="height: 1em" class='inline-block' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/></svg>
-  Code
-</a>
-
-
-
-
-  
-  <a class="hb-attachment-link hb-attachment-small" href="/project/icc/">
-    Project
-  </a>
-  
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-  
-
-  
-  
-</div>
-
-  
-
-  </div>
-</div>
-
-
-</div>
-
-
-
-
-
-
-  
-
-  
-</section>
-
-  
-
-
-    </div>
-    <div class="page-footer">
-      <footer class="container mx-auto flex flex-col justify-items-center text-sm leading-6 mt-24 mb-4 text-slate-700 dark:text-slate-200">
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-  
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-  
-
-  
-  
-    
-  
-  
-    
-  
-
-  
-
-  
-  <p class="powered-by text-center">
-    © 2024 Me. This work is licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0" rel="noopener noreferrer" target="_blank">CC BY NC ND 4.0</a>
-  </p>
-  
-
-  <p class="powered-by footer-license-icons">
-    <a href="https://creativecommons.org/licenses/by-nc-nd/4.0" rel="noopener noreferrer" target="_blank" aria-label="Creative Commons">
-      <i class="fab fa-creative-commons fa-2x" aria-hidden="true"></i>
-      <i class="fab fa-creative-commons-by fa-2x" aria-hidden="true"></i>
-      
-        <i class="fab fa-creative-commons-nc fa-2x" aria-hidden="true"></i>
-      
-      
-        <i class="fab fa-creative-commons-nd fa-2x" aria-hidden="true"></i>
-      
-    </a>
-  </p>
-
-
-
-
-
-  <p class="powered-by text-center">
-    
-    
-    
-      
-      
-      
-      
-      
-      
-      Published with <a href="https://hugoblox.com/?utm_campaign=poweredby" target="_blank" rel="noopener">Hugo Blox Builder</a> — the free, <a href="https://github.com/HugoBlox/hugo-blox-builder" target="_blank" rel="noopener">open source</a> website builder that empowers creators.
-    
-  </p>
-
-</footer>
-
-    </div>
-
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-  </body>
+</body>
 </html>
