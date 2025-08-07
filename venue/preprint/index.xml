@@ -2,24 +2,24 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Preprint on Yiming&#39;s Portfolio</title>
-    <link>http://localhost:1313/venue/preprint/</link>
+    <link>http://localhost:54834/venue/preprint/</link>
     <description>Recent content in Preprint on Yiming&#39;s Portfolio</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 31 Jul 2023 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/venue/preprint/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:54834/venue/preprint/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>ZIP: Scalable Crowd Counting via Zero-Inflated Poisson Modeling</title>
-      <link>http://localhost:1313/posts/zip/</link>
+      <link>http://localhost:54834/posts/zip/</link>
       <pubDate>Mon, 31 Jul 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/zip/</guid>
+      <guid>http://localhost:54834/posts/zip/</guid>
       <description>&lt;p&gt;&lt;strong&gt;Authors&lt;/strong&gt;: &lt;strong&gt;Yiming Ma&lt;/strong&gt;, Victor Sanchez, Tanaya Guha&lt;/p&gt;&#xA;&lt;p&gt;Most crowd counting methods directly regress blockwise density maps using Mean Squared Error (MSE) losses. This practice has two key limitations: (1) it fails to account for the extreme spatial sparsity of annotations - over 95% of 8x8 blocks are empty across standard benchmarks, so supervision signals in informative regions are diluted by the predominant zeros; (2) MSE corresponds to a Gaussian error model that poorly matches discrete, non-negative count data. To address these issues, we introduce ZIP, a scalable crowd counting framework that models blockwise counts with a Zero-Inflated Poisson likelihood: a zero-inflation term learns the probability a block is structurally empty (handling excess zeros), while the Poisson component captures expected counts when people are present (respecting discreteness). We provide a generalization analysis showing a tighter risk bound for ZIP than MSE-based losses and DMCount provided that the training resolution is moderately large. To assess the scalability of ZIP, we instantiate it on backbones spanning over 100x in parameters/compute. Experiments on ShanghaiTech A &amp;amp; B, UCF-QNRF, and NWPU-Crowd demonstrate that ZIP consistently surpasses state-of-the-art methods across all model scales.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Real-Time Driver Monitoring Systems through Modality and View Analysis</title>
-      <link>http://localhost:1313/posts/dms1/</link>
+      <link>http://localhost:54834/posts/dms1/</link>
       <pubDate>Mon, 17 Oct 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/dms1/</guid>
+      <guid>http://localhost:54834/posts/dms1/</guid>
       <description>&lt;p&gt;&lt;strong&gt;Authors&lt;/strong&gt;: &lt;strong&gt;Yiming Ma&lt;/strong&gt;, Victor Sanchez, Soodeh Nikan, Devesh Upadhyay, Bhushan Atote, Tanaya Guha&lt;/p&gt;&#xA;&lt;p&gt;Driver distractions are known to be the dominant cause of road accidents. While monitoring systems can detect non-driving-related activities and facilitate reducing the risks, they must be accurate and efficient to be applicable. Unfortunately, state-of-the-art methods prioritize accuracy while ignoring latency because they leverage cross-view and multimodal videos in which consecutive frames are highly similar. Thus, in this paper, we pursue time-effective detection models by neglecting the temporal relation between video frames and investigate the importance of each sensing modality in detecting drives&#39; activities. Experiments demonstrate that 1) our proposed algorithms are real-time and can achieve similar performances (97.5% AUC-PR) with significantly reduced computation compared with video-based models; 2) the top view with the infrared channel is more informative than any other single modality. Furthermore, we enhance the DAD dataset by manually annotating its test set to enable multiclassification. We also thoroughly analyze the influence of visual sensor types and their placements on the prediction of each class. The code and the new labels will be released.&lt;/p&gt;</description>
     </item>
   </channel>
