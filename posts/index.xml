@@ -2,52 +2,52 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Yiming&#39;s Portfolio</title>
-    <link>http://localhost:54834/posts/</link>
+    <link>http://localhost:56750/posts/</link>
     <description>Recent content in Posts on Yiming&#39;s Portfolio</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 21 Dec 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:54834/posts/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:56750/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Interact with me: Joint Egocentric Forecasting of Intent to Interact, Attitude and Social Actions</title>
-      <link>http://localhost:54834/posts/interact-with-me/</link>
+      <link>http://localhost:56750/posts/interact-with-me/</link>
       <pubDate>Sat, 21 Dec 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:54834/posts/interact-with-me/</guid>
+      <guid>http://localhost:56750/posts/interact-with-me/</guid>
       <description>&lt;p&gt;&lt;strong&gt;Authors&lt;/strong&gt;: Tongfei Bian, &lt;strong&gt;Yiming Ma&lt;/strong&gt;, Mathieu Chollet, Victor Sanchez, Tanaya Guha&lt;/p&gt;&#xA;&lt;img src=&#34;posts/interact-with-me/image.png&#34; alt=&#34;&#34;&gt;&lt;p&gt;For efficient human-agent interaction, an agent should proactively recognize their target user and prepare for upcoming interactions. We formulate this challenging problem as the novel task of jointly forecasting a person&#39;s intent to interact with the agent, their attitude towards the agent and the action they will perform, from the agent&#39;s (egocentric) perspective. So we propose \emph{SocialEgoNet} - a graph-based spatiotemporal framework that exploits task dependencies through a hierarchical multitask learning approach. SocialEgoNet uses whole-body skeletons (keypoints from face, hands and body) extracted from only 1 second of video input for high inference speed. For evaluation, we augment an existing egocentric human-agent interaction dataset with new class labels and bounding box annotations. Extensive experiments on this augmented dataset, named JPL-Social, demonstrate \emph{real-time} inference and superior performance (average accuracy across all tasks: 83.15%) of our model outperforming several competitive baselines. The additional annotations and code will be available upon acceptance.&lt;/p&gt;</description>
     </item>
     <item>
       <title>CLIP-EBC: CLIP Can Count Accurately through Enhanced Blockwise Classification</title>
-      <link>http://localhost:54834/posts/clip-ebc/</link>
+      <link>http://localhost:56750/posts/clip-ebc/</link>
       <pubDate>Thu, 14 Mar 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:54834/posts/clip-ebc/</guid>
+      <guid>http://localhost:56750/posts/clip-ebc/</guid>
       <description>&lt;p&gt;&lt;strong&gt;Authors&lt;/strong&gt;: &lt;strong&gt;Yiming Ma&lt;/strong&gt;, Victor Sanchez, Tanaya Guha&lt;/p&gt;&#xA;&lt;p&gt;We propose CLIP-EBC, the first fully CLIP-based model for accurate crowd density estimation. While the CLIP model has demonstrated remarkable success in addressing recognition tasks such as zero-shot image classification, its potential for counting has been largely unexplored due to the inherent challenges in transforming a regression problem, such as counting, into a recognition task. In this work, we investigate and enhance CLIP&#39;s ability to count, focusing specifically on the task of estimating crowd sizes from images. Existing classification-based crowd-counting frameworks have significant limitations, including the quantization of count values into bordering real-valued bins and the sole focus on classification errors. These practices result in label ambiguity near the shared borders and inaccurate prediction of count values. Hence, directly applying CLIP within these frameworks may yield suboptimal performance.&lt;/p&gt;</description>
     </item>
     <item>
       <title>ZIP: Scalable Crowd Counting via Zero-Inflated Poisson Modeling</title>
-      <link>http://localhost:54834/posts/zip/</link>
+      <link>http://localhost:56750/posts/zip/</link>
       <pubDate>Mon, 31 Jul 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:54834/posts/zip/</guid>
+      <guid>http://localhost:56750/posts/zip/</guid>
       <description>&lt;p&gt;&lt;strong&gt;Authors&lt;/strong&gt;: &lt;strong&gt;Yiming Ma&lt;/strong&gt;, Victor Sanchez, Tanaya Guha&lt;/p&gt;&#xA;&lt;p&gt;Most crowd counting methods directly regress blockwise density maps using Mean Squared Error (MSE) losses. This practice has two key limitations: (1) it fails to account for the extreme spatial sparsity of annotations - over 95% of 8x8 blocks are empty across standard benchmarks, so supervision signals in informative regions are diluted by the predominant zeros; (2) MSE corresponds to a Gaussian error model that poorly matches discrete, non-negative count data. To address these issues, we introduce ZIP, a scalable crowd counting framework that models blockwise counts with a Zero-Inflated Poisson likelihood: a zero-inflation term learns the probability a block is structurally empty (handling excess zeros), while the Poisson component captures expected counts when people are present (respecting discreteness). We provide a generalization analysis showing a tighter risk bound for ZIP than MSE-based losses and DMCount provided that the training resolution is moderately large. To assess the scalability of ZIP, we instantiate it on backbones spanning over 100x in parameters/compute. Experiments on ShanghaiTech A &amp;amp; B, UCF-QNRF, and NWPU-Crowd demonstrate that ZIP consistently surpasses state-of-the-art methods across all model scales.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Robust Multiview Multimodal Driver Monitoring System Using Masked Multi-Head Self-Attention</title>
-      <link>http://localhost:54834/posts/dms2/</link>
+      <link>http://localhost:56750/posts/dms2/</link>
       <pubDate>Tue, 21 Mar 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:54834/posts/dms2/</guid>
+      <guid>http://localhost:56750/posts/dms2/</guid>
       <description>&lt;p&gt;&lt;strong&gt;Authors&lt;/strong&gt;: &lt;strong&gt;Yiming Ma&lt;/strong&gt;, Victor Sanchez, Soodeh Nikan, Devesh Upadhyay, Bhushan Atote, Tanaya Guha&lt;/p&gt;&#xA;&lt;p&gt;Driver Monitoring Systems (DMSs) are crucial for safe hand-over actions in Level-2+ self-driving vehicles. State-of-the-art DMSs leverage multiple sensors mounted at different locations to monitor the driver and the vehicle&#39;s interior scene and employ decision-level fusion to integrate these heterogenous data. However, this fusion method may not fully utilize the complementarity of different data sources and may overlook their relative importance. To address these limitations, we propose a novel multiview multimodal driver monitoring system based on feature-level fusion through multi-head self-attention (MHSA). We demonstrate its effectiveness by comparing it against four alternative fusion strategies (Sum, Conv, SE, and AFF). We also present a novel GPU-friendly supervised contrastive learning framework SuMoCo to learn better representations. Furthermore, We fine-grained the test split of the DAD dataset to enable the multi-class recognition of drivers&#39; activities. Experiments on this enhanced database demonstrate that 1) the proposed MHSA-based fusion method (AUC-ROC: 97.0%) outperforms all baselines and previous approaches, and 2) training MHSA with patch masking can improve its robustness against modality/view collapses. The code and annotations are publicly available.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Real-Time Driver Monitoring Systems through Modality and View Analysis</title>
-      <link>http://localhost:54834/posts/dms1/</link>
+      <link>http://localhost:56750/posts/dms1/</link>
       <pubDate>Mon, 17 Oct 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:54834/posts/dms1/</guid>
+      <guid>http://localhost:56750/posts/dms1/</guid>
       <description>&lt;p&gt;&lt;strong&gt;Authors&lt;/strong&gt;: &lt;strong&gt;Yiming Ma&lt;/strong&gt;, Victor Sanchez, Soodeh Nikan, Devesh Upadhyay, Bhushan Atote, Tanaya Guha&lt;/p&gt;&#xA;&lt;p&gt;Driver distractions are known to be the dominant cause of road accidents. While monitoring systems can detect non-driving-related activities and facilitate reducing the risks, they must be accurate and efficient to be applicable. Unfortunately, state-of-the-art methods prioritize accuracy while ignoring latency because they leverage cross-view and multimodal videos in which consecutive frames are highly similar. Thus, in this paper, we pursue time-effective detection models by neglecting the temporal relation between video frames and investigate the importance of each sensing modality in detecting drives&#39; activities. Experiments demonstrate that 1) our proposed algorithms are real-time and can achieve similar performances (97.5% AUC-PR) with significantly reduced computation compared with video-based models; 2) the top view with the infrared channel is more informative than any other single modality. Furthermore, we enhance the DAD dataset by manually annotating its test set to enable multiclassification. We also thoroughly analyze the influence of visual sensor types and their placements on the prediction of each class. The code and the new labels will be released.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Fusioncount: Efficient Crowd Counting Via Multiscale Feature Fusion</title>
-      <link>http://localhost:54834/posts/fusioncount/</link>
+      <link>http://localhost:56750/posts/fusioncount/</link>
       <pubDate>Mon, 28 Feb 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:54834/posts/fusioncount/</guid>
+      <guid>http://localhost:56750/posts/fusioncount/</guid>
       <description>&lt;p&gt;&lt;strong&gt;Authors&lt;/strong&gt;: &lt;strong&gt;Yiming Ma&lt;/strong&gt;, Victor Sanchez, Tanaya Guha&lt;/p&gt;&#xA;&lt;p&gt;State-of-the-art crowd counting models follow an encoder-decoder approach. Images are first processed by the encoder to extract features. Then, to account for perspective distortion, the highest-level feature map is fed to extra components to extract multiscale features, which are the input to the decoder to generate crowd densities. However, in these methods, features extracted at earlier stages during encoding are underutilised, and the multiscale modules can only capture a limited range of receptive fields, albeit with considerable computational cost. This paper proposes a novel crowd counting architecture (FusionCount), which exploits the adaptive fusion of a large majority of encoded features instead of relying on additional extraction components to obtain multiscale features. Thus, it can cover a more extensive scope of receptive field sizes and lower the computational cost. We also introduce a new channel reduction block, which can extract saliency information during decoding and further enhance the model&#39;s performance. Experiments on two benchmark databases demonstrate that our model achieves state-of-the-art results with reduced computational complexity.&lt;/p&gt;</description>
     </item>
   </channel>

@@ -109,7 +109,7 @@ html[data-theme="dark"] * {
   display: grid;
   grid-template-columns: 280px 1fr 280px;
   gap: 20px;
-  min-height: 100vh;
+  min-height: 100dvh;
   max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
@@ -122,10 +122,10 @@ html[data-theme="dark"] * {
   padding: 1.5rem 0rem 1.0rem 1.0rem;
   border-radius: 8px;
   box-shadow: var(--shadow);
-  min-height: calc(100vh - 40px);
+  min-height: calc(100dvh - 40px);
   position: sticky;
   top: 20px;
-  max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px);
   display: flex;
   flex-direction: column;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
@@ -430,10 +430,10 @@ html[data-theme="dark"] * {
   background: var(--card-bg);
   border-radius: 8px;
   box-shadow: var(--shadow);
-  min-height: calc(100vh - 40px);
+  min-height: calc(100dvh - 40px);
   position: sticky;
   top: 20px;
-  max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px);
   overflow-y: auto;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   /* 保留滚动条空间，避免内容区域变窄 */
@@ -1277,10 +1277,10 @@ html[data-theme="dark"] * {
   padding: 1.0rem;
   border-radius: 8px;
   box-shadow: var(--shadow);
-  min-height: calc(100vh - 40px);
+  min-height: calc(100dvh - 40px);
   position: sticky;
   top: 20px;
-  max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px);
   overflow-y: auto; /* 恢复滚动条，但仅在需要时显示 */
   display: flex;
   flex-direction: column;

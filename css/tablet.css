@@ -6,7 +6,7 @@
     grid-template-columns: 0px 1fr 220px;
     gap: 15px;
     padding: 15px;
-    height: 100ddvh;
+    height: 100dvh;
     transition: grid-template-columns 0.3s ease;
   }
   
@@ -187,7 +187,7 @@
     top: 0;
     left: -280px; /* 默认隐藏 */
     width: 280px;
-    height: calc(100ddvh - 30px);
+    height: calc(100dvh - 30px);
     background: var(--card-bg);
     border-right: 1px solid var(--border-color);
     z-index: 1000;
@@ -197,7 +197,7 @@
     padding: 1.5rem 0rem 1.0rem 1.0rem;
     display: flex;
     flex-direction: column;
-    max-height: calc(100ddvh - 30px);
+    max-height: calc(100dvh - 30px);
     margin-top: 15px;
   }
   
@@ -314,7 +314,7 @@
     display: flex !important;
     flex-direction: column;
     overflow-y: auto;
-    height: calc(100ddvh - 30px);
+    height: calc(100dvh - 30px);
     grid-column: 2;
   }
   
@@ -326,7 +326,7 @@
     display: flex !important;
     flex-direction: column;
     overflow-y: auto;
-    height: calc(100ddvh - 30px);
+    height: calc(100dvh - 30px);
     grid-column: 3;
   }
   
