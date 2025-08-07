@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>ICIP on Yiming&#39;s Portfolio</title>
-    <link>http://localhost:62582/venue/icip/</link>
+    <link>http://localhost:65432/venue/icip/</link>
     <description>Recent content in ICIP on Yiming&#39;s Portfolio</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 28 Feb 2022 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:62582/venue/icip/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:65432/venue/icip/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Fusioncount: Efficient Crowd Counting Via Multiscale Feature Fusion</title>
-      <link>http://localhost:62582/posts/fusioncount/</link>
+      <link>http://localhost:65432/posts/fusioncount/</link>
       <pubDate>Mon, 28 Feb 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:62582/posts/fusioncount/</guid>
+      <guid>http://localhost:65432/posts/fusioncount/</guid>
       <description>&lt;p&gt;&lt;strong&gt;Authors&lt;/strong&gt;: &lt;strong&gt;Yiming Ma&lt;/strong&gt;, Victor Sanchez, Tanaya Guha&lt;/p&gt;&#xA;&lt;p&gt;State-of-the-art crowd counting models follow an encoder-decoder approach. Images are first processed by the encoder to extract features. Then, to account for perspective distortion, the highest-level feature map is fed to extra components to extract multiscale features, which are the input to the decoder to generate crowd densities. However, in these methods, features extracted at earlier stages during encoding are underutilised, and the multiscale modules can only capture a limited range of receptive fields, albeit with considerable computational cost. This paper proposes a novel crowd counting architecture (FusionCount), which exploits the adaptive fusion of a large majority of encoded features instead of relying on additional extraction components to obtain multiscale features. Thus, it can cover a more extensive scope of receptive field sizes and lower the computational cost. We also introduce a new channel reduction block, which can extract saliency information during decoding and further enhance the model&#39;s performance. Experiments on two benchmark databases demonstrate that our model achieves state-of-the-art results with reduced computational complexity.&lt;/p&gt;</description>
     </item>
   </channel>

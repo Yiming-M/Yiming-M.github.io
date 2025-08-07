@@ -153,6 +153,7 @@
     overflow-y: auto;
     min-height: 0;
     padding-top: 0.5rem;
+    padding-bottom: 3.5rem;
   }
   
   /* 左侧栏内的个人资料样式 */
@@ -635,7 +636,7 @@
   
   /* 移动端posts-section样式调整 */
   .posts-section {
-    padding: 0.5rem 0.5rem 0.5rem 0.5rem; /* 进一步减少底部padding */
+    padding: 0.5rem 0.5rem 4.5rem 0.5rem; /* 进一步减少底部padding */
     height: auto;
     overflow-y: auto; /* 如果内容过多，允许滚动 */
     display: flex;

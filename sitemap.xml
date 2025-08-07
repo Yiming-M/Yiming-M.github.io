@@ -2,45 +2,45 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:62582/venue/icme/</loc>
+    <loc>http://localhost:65432/venue/icme/</loc>
     <lastmod>2024-12-21T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:62582/posts/interact-with-me/</loc>
+    <loc>http://localhost:65432/posts/interact-with-me/</loc>
     <lastmod>2024-12-21T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:62582/posts/</loc>
+    <loc>http://localhost:65432/posts/</loc>
     <lastmod>2024-12-21T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:62582/venue/</loc>
+    <loc>http://localhost:65432/venue/</loc>
     <lastmod>2024-12-21T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:62582/</loc>
+    <loc>http://localhost:65432/</loc>
     <lastmod>2024-12-21T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:62582/posts/clip-ebc/</loc>
+    <loc>http://localhost:65432/posts/clip-ebc/</loc>
     <lastmod>2024-03-14T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:62582/venue/preprint/</loc>
+    <loc>http://localhost:65432/venue/preprint/</loc>
     <lastmod>2023-07-31T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:62582/posts/zip/</loc>
+    <loc>http://localhost:65432/posts/zip/</loc>
     <lastmod>2023-07-31T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:62582/venue/cvpr/</loc>
+    <loc>http://localhost:65432/venue/cvpr/</loc>
     <lastmod>2023-03-21T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:62582/posts/dms2/</loc>
+    <loc>http://localhost:65432/posts/dms2/</loc>
     <lastmod>2023-03-21T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:62582/posts/dms1/</loc>
+    <loc>http://localhost:65432/posts/dms1/</loc>
     <lastmod>2022-10-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:62582/posts/fusioncount/</loc>
+    <loc>http://localhost:65432/posts/fusioncount/</loc>
     <lastmod>2022-02-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:62582/venue/icip/</loc>
+    <loc>http://localhost:65432/venue/icip/</loc>
     <lastmod>2022-02-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:62582/tags/</loc>
+    <loc>http://localhost:65432/tags/</loc>
   </url>
 </urlset>
