@@ -1,5 +1,47 @@
 /* 移动端样式 - 适用于768px以下的设备 */
 
+/* iPhone视口高度修复 */
+@supports (-webkit-touch-callout: none) {
+  :root {
+    --vh: 1vh;
+  }
+  
+  html {
+    height: 100vh;
+    height: -webkit-fill-available;
+  }
+  
+  body {
+    height: 100vh;
+    height: -webkit-fill-available;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+  
+  .container {
+    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
+    min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+  }
+  
+  .content-main {
+    height: calc(100vh - 10px);
+    height: calc(calc(var(--vh, 1vh) * 100) - 10px);
+    min-height: calc(100vh - 10px);
+    min-height: calc(calc(var(--vh, 1vh) * 100) - 10px);
+  }
+  
+  .sidebar-left {
+    height: calc(100vh - 10px);
+    height: calc(calc(var(--vh, 1vh) * 100) - 10px);
+    max-height: calc(100vh - 10px);
+    max-height: calc(calc(var(--vh, 1vh) * 100) - 10px);
+    min-height: calc(100vh - 10px);
+    min-height: calc(calc(var(--vh, 1vh) * 100) - 10px);
+  }
+}
+
 /* 移动端弹出搜索框 */
 .mobile-search-overlay {
   display: none;
@@ -53,21 +95,29 @@
     gap: 0;
     padding: 5px;
     max-width: 100%;
-    margin: 0; /* 移除auto margin，确保没有额外的margin */
+    margin: 0;
+    min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
   }
   
   body {
     font-size: 14px;
     line-height: 1.5;
+    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
+    overflow: hidden;
   }
   
   /* 左侧栏在移动端隐藏，通过ℹ️图标显示 */
   .sidebar-left {
     position: fixed;
-    top: 5px; /* 与container的padding-top对齐 */
-    left: -280px; /* 默认隐藏 */
+    top: 5px;
+    left: -280px;
     width: 280px;
-    height: calc(100vh - 10px); /* 与content-main的高度一致 */
+    height: calc(100vh - 10px);
+    height: calc(calc(var(--vh, 1vh) * 100) - 10px);
     background: var(--card-bg);
     border-right: 1px solid var(--border-color);
     z-index: 1000;
@@ -77,11 +127,13 @@
     display: flex;
     flex-direction: column;
     padding: 1.5rem 0rem 1.0rem 1.0rem;
-    margin-top: 0; /* 移除margin-top确保从顶部开始 */
-    border-radius: 6px; /* 与content-main的border-radius一致 */
-    box-sizing: border-box; /* 确保padding包含在高度内 */
-    max-height: calc(100vh - 10px); /* 确保最大高度与content-main一致 */
-    min-height: calc(100vh - 10px); /* 确保最小高度与content-main一致 */
+    margin-top: 0;
+    border-radius: 6px;
+    box-sizing: border-box;
+    max-height: calc(100vh - 10px);
+    max-height: calc(calc(var(--vh, 1vh) * 100) - 10px);
+    min-height: calc(100vh - 10px);
+    min-height: calc(calc(var(--vh, 1vh) * 100) - 10px);
   }
   
   /* 左侧栏展开状态 */
@@ -89,7 +141,7 @@
     left: 0;
   }
   
-  /* 左侧栏内容样式调整 - 继承平板端设计 */
+  /* 左侧栏内容样式调整 */
   .sidebar-left .profile-section {
     margin-bottom: 0.5rem;
     flex-shrink: 0;
@@ -103,7 +155,7 @@
     padding-top: 0.5rem;
   }
   
-  /* 左侧栏内的个人资料样式 - 继承平板端设计 */
+  /* 左侧栏内的个人资料样式 */
   .sidebar-left .profile-header {
     text-align: center;
     margin-bottom: 1rem;
@@ -131,32 +183,24 @@
     color: var(--text-muted);
   }
   
-  /* 左侧栏内的社交链接样式 - 4列圆形布局 */
+  /* 左侧栏内的社交链接样式 */
   .sidebar-left .social-links {
-    display: flex; /* 启用Flexbox布局 */
-    flex-wrap: wrap; /* 允许换行，当图标超过一行时自动换到下一行 */
-    justify-content: center; /* 核心：实现行内图标的水平居中对齐 */
-    align-items: center; /* 垂直对齐图标（如果高度不一） */
-    gap: 1rem; /* 设置图标之间的统一间距，比margin更现代 */
-    /* 基础样式 */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
     padding: 0;
-    margin: 0 0 0rem 0; /* 只保留下外边距 */
-    list-style: none; /* 如果您使用<ul>作为容器，这会移除列表点 */
-    min-height: 3rem; /* 即使只有一个图标，也保持最小高度 */
+    margin: 0 0 0rem 0;
+    list-style: none;
+    min-height: 3rem;
   }
   
-  
   .sidebar-left .social-link {
-    /* 移除旧的flex-basis和margin:auto，因为布局由父容器控制 */
-    /* flex: 0 0 calc(25% - 0.6rem); (移除) */
-    /* margin: 0 auto; (移除) */
-    
-    display: inline-flex; /* 使用inline-flex使其表现像一个内联元素，同时保持内部的flex特性 */
-    align-items: center; /* 垂直居中内部的SVG或文字 */
-    justify-content: center; /* 水平居中内部的SVG或文字 */
-  
-    /* 图标外观样式 (基本保持不变) */
-    width: 2.5rem; /* 稍微增大点击区域 */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
     height: 2.5rem;
     background: var(--hover-bg);
     border-radius: 50%;
@@ -167,7 +211,7 @@
   
   .sidebar-left .social-link:hover {
     background: var(--border-color);
-    transform: translateY(-3px); /* 稍微增强悬停效果 */
+    transform: translateY(-3px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   }
   
@@ -180,7 +224,7 @@
     display: none;
   }
   
-  /* 左侧栏内的新闻样式 - 继承平板端设计 */
+  /* 左侧栏内的新闻样式 */
   .sidebar-left .recent-news h3 {
     font-size: 1rem;
     margin-bottom: 0.5rem;
@@ -193,21 +237,23 @@
     color: var(--text-muted);
   }
   
-  /* 主内容区域调整 - 占据全宽并添加滑动条 */
+  /* 主内容区域调整 */
   .content-main {
     position: static;
-    min-height: calc(100vh - 10px); /* 考虑container的上下padding */
-    height: calc(100vh - 10px); /* 固定高度，考虑container的padding */
+    min-height: calc(100vh - 10px);
+    min-height: calc(calc(var(--vh, 1vh) * 100) - 10px);
+    height: calc(100vh - 10px);
+    height: calc(calc(var(--vh, 1vh) * 100) - 10px);
     display: flex !important;
     flex-direction: column;
-    overflow-y: auto; /* 启用垂直滚动 */
+    overflow-y: auto;
     padding: 0.5rem;
     border-radius: 6px;
     background: var(--card-bg);
     box-shadow: var(--shadow);
-    margin-top: 0; /* 移除margin-top确保从顶部开始 */
-    margin-bottom: 0; /* 确保没有底部margin */
-    box-sizing: border-box; /* 确保padding包含在高度内 */
+    margin-top: 0;
+    margin-bottom: 0;
+    box-sizing: border-box;
   }
   
   /* 文章卡片样式 - 继承平板端设计 */
@@ -641,4 +687,64 @@
     transform: scale(0.95);
   }
   
+}
+
+/* iPhone特殊处理 */
+@supports (-webkit-touch-callout: none) {
+  /* iPhone Safari特殊处理 */
+  html, body {
+    height: 100vh;
+    height: -webkit-fill-available;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    overflow: hidden;
+  }
+  
+  .container {
+    height: 100vh;
+    height: -webkit-fill-available;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+  
+  .content-main {
+    height: calc(100vh - 10px);
+    height: calc(-webkit-fill-available - 10px);
+    min-height: calc(100vh - 10px);
+    min-height: calc(-webkit-fill-available - 10px);
+  }
+  
+  .sidebar-left {
+    height: calc(100vh - 10px);
+    height: calc(-webkit-fill-available - 10px);
+    max-height: calc(100vh - 10px);
+    max-height: calc(-webkit-fill-available - 10px);
+    min-height: calc(100vh - 10px);
+    min-height: calc(-webkit-fill-available - 10px);
+  }
+}
+
+/* 确保在移动端设备上正确处理视口高度 */
+@media screen and (max-width: 768px) and (max-height: 800px) {
+  html, body {
+    height: 100vh;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+  
+  .container {
+    height: 100vh;
+    min-height: 100vh;
+  }
+  
+  .content-main {
+    height: calc(100vh - 10px);
+    min-height: calc(100vh - 10px);
+  }
+  
+  .sidebar-left {
+    height: calc(100vh - 10px);
+    max-height: calc(100vh - 10px);
+    min-height: calc(100vh - 10px);
+  }
 }

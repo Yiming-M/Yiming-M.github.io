@@ -2,6 +2,17 @@
   // <stdin>
   (function() {
     const htmlElement = document.documentElement;
+    function fixViewportHeight() {
+      if ("CSS" in window && CSS.supports("color", "var(--fake-var)")) {
+        const setVH = () => {
+          const vh = window.innerHeight * 0.01;
+          document.documentElement.style.setProperty("--vh", `${vh}px`);
+        };
+        setVH();
+        window.addEventListener("resize", setVH);
+        window.addEventListener("orientationchange", setVH);
+      }
+    }
     function setTheme(theme) {
       console.log("\u8DDF\u968F\u7CFB\u7EDF\u8BBE\u7F6E\u4E3B\u9898\u4E3A:", theme);
       if (theme === "dark") {
@@ -193,6 +204,7 @@
     }
     initializeTheme();
     setupSystemThemeListener();
+    fixViewportHeight();
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", function() {
         setupSidebarToggle();
