@@ -109,12 +109,12 @@ html[data-theme="dark"] * {
   display: grid;
   grid-template-columns: 280px 1fr 280px;
   gap: 20px;
-  min-height: 100dvh;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 20px;
+  height: 100dvh;
+  width: 100dvw;
+  padding: 15px 55px 15px 55px;
   align-items: start;
 }
+
 
 /* 左侧栏样式 */
 .sidebar-left {
@@ -122,10 +122,9 @@ html[data-theme="dark"] * {
   padding: 1.5rem 0rem 1.0rem 1.0rem;
   border-radius: 8px;
   box-shadow: var(--shadow);
-  min-height: calc(100dvh - 40px);
+  height: calc(100dvh - 30px);
   position: sticky;
-  top: 20px;
-  max-height: calc(100dvh - 40px);
+  top: 15px;
   display: flex;
   flex-direction: column;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
@@ -220,16 +219,6 @@ html[data-theme="dark"] * {
   color: var(--text-color);
   text-decoration: none;
   transition: all 0.2s ease;
-}
-
-.social-link:hover {
-  background: var(--border-color);
-  transform: translateY(-3px); /* 稍微增强悬停效果 */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-[data-theme="dark"] .social-link:hover {
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
 /* 3. 智能隐藏空容器 */
@@ -430,10 +419,9 @@ html[data-theme="dark"] * {
   background: var(--card-bg);
   border-radius: 8px;
   box-shadow: var(--shadow);
-  min-height: calc(100dvh - 40px);
+  height: calc(100dvh - 30px);
   position: sticky;
-  top: 20px;
-  max-height: calc(100dvh - 40px);
+  top: 15px;
   overflow-y: auto;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   /* 保留滚动条空间，避免内容区域变窄 */
@@ -496,9 +484,9 @@ html[data-theme="dark"] * {
 .main-title {
   font-size: 2rem;
   font-weight: bold;
-  margin: 1.5rem 1rem 0.5rem 1rem;
+  margin: 1rem;
   color: var(--text-color);
-  text-align: left;
+  text-align: center;
   border-bottom: 2px solid var(--accent-color);
   padding-bottom: 0.5rem;
   flex-shrink: 0;
@@ -508,10 +496,6 @@ html[data-theme="dark"] * {
 .posts-section {
   padding: 0rem 1rem 1rem 1rem;
   height: 100%;
-}
-
-.post-card:first-child {
-  padding: 0rem 0.5rem 0.5rem 0.5rem;
 }
 
 .post-card {
@@ -525,18 +509,13 @@ html[data-theme="dark"] * {
 .post-card.centered {
   position: relative;
   margin: 1rem auto 1rem auto; /* 减少顶部边距，让标题更靠近页面顶端 */
-  max-width: 900px; /* 增加最大宽度从800px到900px */
+  padding: 0.5rem;
   background: var(--card-bg);
   border: 2px solid var(--accent-color);
   border-radius: 8px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
   z-index: 10;
   left: 50%;
   transform: translateX(-50%);
-}
-
-[data-theme="dark"] .post-card.centered {
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
 }
 
 .post-card.centered .post-header h2 {
@@ -591,20 +570,12 @@ html[data-theme="dark"] * {
   position: relative;
 }
 
-.post-header:hover {
-  background-color: var(--hover-bg);
-}
-
 .post-header h2 {
   margin-bottom: 0rem;
   color: var(--text-color);
   transition: color 0.3s ease;
   line-height: 2.0;
   /* 移除flex布局，因为按钮现在在右下角 */
-}
-
-.post-header:hover h2 {
-  color: var(--accent-color);
 }
 
 .post-meta {
@@ -652,35 +623,11 @@ html[data-theme="dark"] * {
   background: transparent;
 }
 
-.tag-venue:hover {
-  background: var(--tag-indigo-bg);
-  color: var(--tag-indigo-color);
-}
-
-/* 年份标签样式 */
-.tag-year {
-  border-color: var(--tag-purple-bg);
-  color: var(--tag-purple-bg);
-  background: transparent;
-}
-
-.tag-year:hover {
-  background: var(--tag-purple-bg);
-  color: var(--tag-purple-color);
-}
-
-
-
 /* 单独的关键词标签 */
 .tag-keyword {
   background: transparent;
   border: 1px solid var(--border-color);
   color: var(--text-muted);
-}
-
-.tag-keyword:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 
 /* Posts中的标签应该显示彩色边框 - 覆盖默认的灰色样式 */
@@ -815,138 +762,6 @@ html[data-theme="dark"] * {
   color: var(--tag-cyan-bg);
 }
 
-/* Posts中标签的悬停效果 - 彩色背景 + 白色文字 */
-.post-card .tag-keyword.tag-red:hover,
-.post-meta .tag-keyword.tag-red:hover,
-.post-keywords .tag-keyword.tag-red:hover {
-  background: var(--tag-red-bg);
-  color: var(--tag-red-color);
-}
-
-.post-card .tag-keyword.tag-green:hover,
-.post-meta .tag-keyword.tag-green:hover,
-.post-keywords .tag-keyword.tag-green:hover {
-  background: var(--tag-green-bg);
-  color: var(--tag-green-color);
-}
-
-.post-card .tag-keyword.tag-blue:hover,
-.post-meta .tag-keyword.tag-blue:hover,
-.post-keywords .tag-keyword.tag-blue:hover {
-  background: var(--tag-blue-bg);
-  color: var(--tag-blue-color);
-}
-
-.post-card .tag-keyword.tag-yellow:hover,
-.post-meta .tag-keyword.tag-yellow:hover,
-.post-keywords .tag-keyword.tag-yellow:hover {
-  background: var(--tag-yellow-bg);
-  color: var(--tag-yellow-color);
-}
-
-.post-card .tag-keyword.tag-purple:hover,
-.post-meta .tag-keyword.tag-purple:hover,
-.post-keywords .tag-keyword.tag-purple:hover {
-  background: var(--tag-purple-bg);
-  color: var(--tag-purple-color);
-}
-
-.post-card .tag-keyword.tag-orange:hover,
-.post-meta .tag-keyword.tag-orange:hover,
-.post-keywords .tag-keyword.tag-orange:hover {
-  background: var(--tag-orange-bg);
-  color: var(--tag-orange-color);
-}
-
-.post-card .tag-keyword.tag-teal:hover,
-.post-meta .tag-keyword.tag-teal:hover,
-.post-keywords .tag-keyword.tag-teal:hover {
-  background: var(--tag-teal-bg);
-  color: var(--tag-teal-color);
-}
-
-.post-card .tag-keyword.tag-pink:hover,
-.post-meta .tag-keyword.tag-pink:hover,
-.post-keywords .tag-keyword.tag-pink:hover {
-  background: var(--tag-pink-bg);
-  color: var(--tag-pink-color);
-}
-
-.post-card .tag-keyword.tag-indigo:hover,
-.post-meta .tag-keyword.tag-indigo:hover,
-.post-keywords .tag-keyword.tag-indigo:hover {
-  background: var(--tag-indigo-bg);
-  color: var(--tag-indigo-color);
-}
-
-.post-card .tag-keyword.tag-cyan:hover,
-.post-meta .tag-keyword.tag-cyan:hover,
-.post-keywords .tag-keyword.tag-cyan:hover {
-  background: var(--tag-cyan-bg);
-  color: var(--tag-cyan-color);
-}
-
-/* Posts中venue标签的悬停效果 */
-.post-card .tag-venue.tag-red:hover,
-.post-meta .tag-venue.tag-red:hover {
-  background: var(--tag-red-bg);
-  color: var(--tag-red-color);
-}
-
-.post-card .tag-venue.tag-green:hover,
-.post-meta .tag-venue.tag-green:hover {
-  background: var(--tag-green-bg);
-  color: var(--tag-green-color);
-}
-
-.post-card .tag-venue.tag-blue:hover,
-.post-meta .tag-venue.tag-blue:hover {
-  background: var(--tag-blue-bg);
-  color: var(--tag-blue-color);
-}
-
-.post-card .tag-venue.tag-yellow:hover,
-.post-meta .tag-venue.tag-yellow:hover {
-  background: var(--tag-yellow-bg);
-  color: var(--tag-yellow-color);
-}
-
-.post-card .tag-venue.tag-purple:hover,
-.post-meta .tag-venue.tag-purple:hover {
-  background: var(--tag-purple-bg);
-  color: var(--tag-purple-color);
-}
-
-.post-card .tag-venue.tag-orange:hover,
-.post-meta .tag-venue.tag-orange:hover {
-  background: var(--tag-orange-bg);
-  color: var(--tag-orange-color);
-}
-
-.post-card .tag-venue.tag-teal:hover,
-.post-meta .tag-venue.tag-teal:hover {
-  background: var(--tag-teal-bg);
-  color: var(--tag-teal-color);
-}
-
-.post-card .tag-venue.tag-pink:hover,
-.post-meta .tag-venue.tag-pink:hover {
-  background: var(--tag-pink-bg);
-  color: var(--tag-pink-color);
-}
-
-.post-card .tag-venue.tag-indigo:hover,
-.post-meta .tag-venue.tag-indigo:hover {
-  background: var(--tag-indigo-bg);
-  color: var(--tag-indigo-color);
-}
-
-.post-card .tag-venue.tag-cyan:hover,
-.post-meta .tag-venue.tag-cyan:hover {
-  background: var(--tag-cyan-bg);
-  color: var(--tag-cyan-color);
-}
-
 /* 可折叠部分样式 */
 .collapsible-header {
   cursor: pointer !important;
@@ -961,33 +776,23 @@ html[data-theme="dark"] * {
   color: var(--accent-color) !important;
 }
 
-.toggle-icon {
-  font-size: 0.8rem;
-  transition: transform 0.3s ease;
-  margin-left: 0.5rem;
-}
-
 .collapsible-content {
-  /* 移除max-height约束，让内容自由展示 */
   overflow: visible; /* 允许内容可见 */
   transition: opacity 0.3s ease, height 0.3s ease, visibility 0.3s ease;
   opacity: 1;
   visibility: visible;
-  /* height将由内容自然决定 */
   height: auto;
 }
 
 .collapsible-content.collapsed {
   opacity: 0 !important;
   visibility: hidden !important;
-  /* 完全不占用空间，让下面的内容上移 */
   height: 0 !important;
   margin-top: 0 !important;
   margin-bottom: 0 !important;
   padding-top: 0 !important;
   padding-bottom: 0 !important;
   overflow: hidden !important;
-  /* 移除transform，直接使用height控制 */
 }
 
 /* 彩色标签样式 */
@@ -995,110 +800,41 @@ html[data-theme="dark"] * {
   border-color: var(--tag-red-bg);
   color: var(--tag-red-bg);
 }
-
-.tag-red:hover {
-  background: var(--tag-red-bg);
-  color: var(--tag-red-color);
-}
-
 .tag-green {
   border-color: var(--tag-green-bg);
   color: var(--tag-green-bg);
 }
-
-.tag-green:hover {
-  background: var(--tag-green-bg);
-  color: var(--tag-green-color);
-}
-
 .tag-blue {
   border-color: var(--tag-blue-bg);
   color: var(--tag-blue-bg);
 }
-
-.tag-blue:hover {
-  background: var(--tag-blue-bg);
-  color: var(--tag-blue-color);
-}
-
 .tag-yellow {
   border-color: var(--tag-yellow-bg);
   color: var(--tag-yellow-bg);
 }
-
-.tag-yellow:hover {
-  background: var(--tag-yellow-bg);
-  color: var(--tag-yellow-color);
-}
-
 .tag-purple {
   border-color: var(--tag-purple-bg);
   color: var(--tag-purple-bg);
 }
-
-.tag-purple:hover {
-  background: var(--tag-purple-bg);
-  color: var(--tag-purple-color);
-}
-
 .tag-orange {
   border-color: var(--tag-orange-bg);
   color: var(--tag-orange-bg);
 }
-
-.tag-orange:hover {
-  background: var(--tag-orange-bg);
-  color: var(--tag-orange-color);
-}
-
 .tag-teal {
   border-color: var(--tag-teal-bg);
   color: var(--tag-teal-bg);
 }
-
-.tag-teal:hover {
-  background: var(--tag-teal-bg);
-  color: var(--tag-teal-color);
-}
-
 .tag-pink {
   border-color: var(--tag-pink-bg);
   color: var(--tag-pink-bg);
 }
-
-.tag-pink:hover {
-  background: var(--tag-pink-bg);
-  color: var(--tag-pink-color);
-}
-
 .tag-indigo {
   border-color: var(--tag-indigo-bg);
   color: var(--tag-indigo-bg);
 }
-
-.tag-indigo:hover {
-  background: var(--tag-indigo-bg);
-  color: var(--tag-indigo-color);
-}
-
 .tag-cyan {
   border-color: var(--tag-cyan-bg);
   color: var(--tag-cyan-bg);
-}
-
-.tag-cyan:hover {
-  background: var(--tag-cyan-bg);
-  color: var(--tag-cyan-color);
-}
-
-/* 标签悬停效果 */
-.tag:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
-
-[data-theme="dark"] .tag:hover {
-  box-shadow: 0 2px 8px rgba(255,255,255,0.1);
 }
 
 /* 深色模式下激活状态的标签样式 */
@@ -1187,11 +923,6 @@ html[data-theme="dark"] * {
   background: transparent !important;
 }
 
-.archive-year-active:hover {
-  border-color: var(--tag-blue-bg) !important;
-  color: var(--tag-blue-bg) !important;
-  background: transparent !important;
-}
 
 .post-content {
   margin-top: 0.5rem;
@@ -1256,11 +987,6 @@ html[data-theme="dark"] * {
   transition: color 0.3s ease;
 }
 
-.post-full-content a:hover {
-  text-decoration: underline;
-  color: var(--accent-color);
-}
-
 .post-full-content ul,
 .post-full-content ol {
   margin: 1rem 0;
@@ -1274,13 +1000,12 @@ html[data-theme="dark"] * {
 /* 右侧栏样式 */
 .sidebar-right {
   background: var(--card-bg);
-  padding: 1.0rem;
+  padding: 1rem 1rem 0rem 1rem;
   border-radius: 8px;
   box-shadow: var(--shadow);
-  min-height: calc(100dvh - 40px);
+  height: calc(100dvh - 30px);
   position: sticky;
-  top: 20px;
-  max-height: calc(100dvh - 40px);
+  top: 15px;
   overflow-y: auto; /* 恢复滚动条，但仅在需要时显示 */
   display: flex;
   flex-direction: column;
@@ -1355,24 +1080,7 @@ html[data-theme="dark"] * {
 }
 
 .sidebar-right > div {
-  margin-bottom: 2rem;
-}
-
-/* 确保最后一个section有额外的底部间距 */
-.sidebar-right > div:last-child {
-  margin-bottom: 3rem;
-  padding-bottom: 1rem;
-}
-
-/* Keywords section 特殊处理 */
-/* .tags-section:last-child .tags-cloud {
-  padding-bottom: 1rem;
-} */
-
-/* Archives 可折叠样式 */
-.archives-section .archives-list {
-  /* 移除固定高度和滚动条 */
-  overflow: visible;
+  margin-bottom: 1.5rem;
 }
 
 .search-box {
@@ -1496,13 +1204,6 @@ html[data-theme="dark"] * {
   color: var(--text-color);
 }
 
-.archive-year:hover {
-  color: var(--accent-color); /* 悬停时只改变字体颜色 */
-  background: transparent; /* 保持背景透明 */
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-}
-
 .archive-year a {
   color: inherit;
   text-decoration: none;
@@ -1542,11 +1243,6 @@ html[data-theme="dark"] * {
   text-align: center;
   white-space: nowrap;
   box-sizing: border-box;
-}
-
-.tags-cloud .tag:hover {
-  background: var(--border-color);
-  color: var(--accent-color);
 }
 
 /* 右边栏标签云激活状态 - 保持尺寸不变 */
@@ -1638,120 +1334,22 @@ html[data-theme="dark"] * {
   transform: none !important;
 }
 
-/* 清除筛选按钮 - 圆形设计 */
-.clear-filters-toggle {
-  position: fixed;
-  top: 80px; /* 在主题切换按钮下面 */
-  right: 20px;
-  z-index: 1000;
-  background: white;
-  border: 1px solid var(--border-color);
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  color: var(--text-color);
-  cursor: pointer;
-  font-size: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow);
-}
-
-.clear-filters-toggle:hover {
-  background: var(--hover-bg);
-  transform: scale(1.1);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-}
-
-.clear-filters-toggle:disabled {
-  background: var(--hover-bg);
-  border-color: var(--border-color);
-  color: var(--text-muted);
-  cursor: not-allowed;
-  opacity: 0.6;
-  transform: none;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.clear-filters-toggle:disabled:hover {
-  transform: none;
-  background: var(--hover-bg);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* 深色模式下的清除按钮 */
-html[data-theme="dark"] .clear-filters-toggle {
-  background: var(--card-bg);
-  border-color: var(--border-color);
-  color: var(--text-color);
-  box-shadow: var(--shadow);
-}
-
-html[data-theme="dark"] .clear-filters-toggle:hover {
-  background: var(--hover-bg);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-}
-
-html[data-theme="dark"] .clear-filters-toggle:disabled {
-  background: var(--hover-bg);
-  border-color: var(--border-color);
-  color: var(--text-muted);
-}
-
-/* 搜索图标按钮 - 移动端专用 */
-.search-toggle {
-  display: none; /* 默认隐藏，只在移动端显示 */
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  z-index: 1000;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 16px;
-  box-shadow: var(--shadow);
-  transition: all 0.3s ease;
-}
-
-.search-toggle:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-html[data-theme="dark"] .search-toggle {
-  background: var(--card-bg);
-  border-color: var(--border-color);
-  color: var(--text-color);
-}
-
-html[data-theme="dark"] .search-toggle:hover {
-  background: var(--hover-bg);
-  box-shadow: 0 4px 8px rgba(255,255,255,0.1);
-}
-
 /* 清除过滤器按钮 */
 .clear-filters-btn {
   position: fixed;
-  top: 20px; /* 移到顶部，不再需要为主题按钮留空间 */
-  right: 20px;
+  top: 15px;
+  right: 5px;
   z-index: 1000;
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 45px;
+  height: 45px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   box-shadow: var(--shadow);
   transition: all 0.3s ease;
 }
@@ -1776,10 +1374,221 @@ html[data-theme="dark"] .search-toggle:hover {
   opacity: 1;
 }
 
-/* 响应式设计 */
-@media (max-width: 1200px) {
-  .container {
-    max-width: 1200px;
-    padding: 20px;
+
+@media (min-width: 1025px) {
+  .sidebar-toggle {
+    display: none !important;
+  }
+  .search-toggle {
+    display: none; /* 默认隐藏，只在移动端显示 */
+  }
+
+  .social-link:hover {
+    background: var(--border-color);
+    transform: translateY(-3px); /* 稍微增强悬停效果 */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  [data-theme="dark"] .social-link:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+
+  .post-header:hover {
+    background-color: var(--hover-bg);
+  }
+  .post-full-content a:hover {
+    text-decoration: underline;
+    color: var(--accent-color);
+  }
+  /* Posts中标签的悬停效果 - 彩色背景 + 白色文字 */
+  .post-card .tag-keyword.tag-red:hover,
+  .post-meta .tag-keyword.tag-red:hover,
+  .post-keywords .tag-keyword.tag-red:hover {
+    background: var(--tag-red-bg);
+    color: var(--tag-red-color);
+  }
+  .post-card .tag-keyword.tag-green:hover,
+  .post-meta .tag-keyword.tag-green:hover,
+  .post-keywords .tag-keyword.tag-green:hover {
+    background: var(--tag-green-bg);
+    color: var(--tag-green-color);
+  }
+  .post-card .tag-keyword.tag-blue:hover,
+  .post-meta .tag-keyword.tag-blue:hover,
+  .post-keywords .tag-keyword.tag-blue:hover {
+    background: var(--tag-blue-bg);
+    color: var(--tag-blue-color);
+  }
+  .post-card .tag-keyword.tag-yellow:hover,
+  .post-meta .tag-keyword.tag-yellow:hover,
+  .post-keywords .tag-keyword.tag-yellow:hover {
+    background: var(--tag-yellow-bg);
+    color: var(--tag-yellow-color);
+  }
+  .post-card .tag-keyword.tag-purple:hover,
+  .post-meta .tag-keyword.tag-purple:hover,
+  .post-keywords .tag-keyword.tag-purple:hover {
+    background: var(--tag-purple-bg);
+    color: var(--tag-purple-color);
+  }
+  .post-card .tag-keyword.tag-orange:hover,
+  .post-meta .tag-keyword.tag-orange:hover,
+  .post-keywords .tag-keyword.tag-orange:hover {
+    background: var(--tag-orange-bg);
+    color: var(--tag-orange-color);
+  }
+  .post-card .tag-keyword.tag-teal:hover,
+  .post-meta .tag-keyword.tag-teal:hover,
+  .post-keywords .tag-keyword.tag-teal:hover {
+    background: var(--tag-teal-bg);
+    color: var(--tag-teal-color);
+  }
+  .post-card .tag-keyword.tag-pink:hover,
+  .post-meta .tag-keyword.tag-pink:hover,
+  .post-keywords .tag-keyword.tag-pink:hover {
+    background: var(--tag-pink-bg);
+    color: var(--tag-pink-color);
+  }
+  .post-card .tag-keyword.tag-indigo:hover,
+  .post-meta .tag-keyword.tag-indigo:hover,
+  .post-keywords .tag-keyword.tag-indigo:hover {
+    background: var(--tag-indigo-bg);
+    color: var(--tag-indigo-color);
+  }
+  .post-card .tag-keyword.tag-cyan:hover,
+  .post-meta .tag-keyword.tag-cyan:hover,
+  .post-keywords .tag-keyword.tag-cyan:hover {
+    background: var(--tag-cyan-bg);
+    color: var(--tag-cyan-color);
+  }
+  /* Posts中venue标签的悬停效果 */
+  .post-card .tag-venue.tag-red:hover,
+  .post-meta .tag-venue.tag-red:hover {
+    background: var(--tag-red-bg);
+    color: var(--tag-red-color);
+  }
+  .post-card .tag-venue.tag-green:hover,
+  .post-meta .tag-venue.tag-green:hover {
+    background: var(--tag-green-bg);
+    color: var(--tag-green-color);
+  }
+  .post-card .tag-venue.tag-blue:hover,
+  .post-meta .tag-venue.tag-blue:hover {
+    background: var(--tag-blue-bg);
+    color: var(--tag-blue-color);
+  }
+  .post-card .tag-venue.tag-yellow:hover,
+  .post-meta .tag-venue.tag-yellow:hover {
+    background: var(--tag-yellow-bg);
+    color: var(--tag-yellow-color);
+  }
+  .post-card .tag-venue.tag-purple:hover,
+  .post-meta .tag-venue.tag-purple:hover {
+    background: var(--tag-purple-bg);
+    color: var(--tag-purple-color);
+  }
+  .post-card .tag-venue.tag-orange:hover,
+  .post-meta .tag-venue.tag-orange:hover {
+    background: var(--tag-orange-bg);
+    color: var(--tag-orange-color);
+  }
+  .post-card .tag-venue.tag-teal:hover,
+  .post-meta .tag-venue.tag-teal:hover {
+    background: var(--tag-teal-bg);
+    color: var(--tag-teal-color);
+  }
+  .post-card .tag-venue.tag-pink:hover,
+  .post-meta .tag-venue.tag-pink:hover {
+    background: var(--tag-pink-bg);
+    color: var(--tag-pink-color);
+  }
+  .post-card .tag-venue.tag-indigo:hover,
+  .post-meta .tag-venue.tag-indigo:hover {
+    background: var(--tag-indigo-bg);
+    color: var(--tag-indigo-color);
+  }
+  .post-card .tag-venue.tag-cyan:hover,
+  .post-meta .tag-venue.tag-cyan:hover {
+    background: var(--tag-cyan-bg);
+    color: var(--tag-cyan-color);
+  }
+
+  /* 右侧栏 */
+  .tag-venue:hover {
+    background: var(--tag-indigo-bg);
+    color: var(--tag-indigo-color);
+  }
+  .tag-keyword:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  }
+
+  /* 彩色标签样式 */
+  .tag-red:hover {
+    background: var(--tag-red-bg);
+    color: var(--tag-red-color);
+  }
+  .tag-green:hover {
+    background: var(--tag-green-bg);
+    color: var(--tag-green-color);
+  }
+  .tag-blue:hover {
+    background: var(--tag-blue-bg);
+    color: var(--tag-blue-color);
+  }
+  .tag-yellow:hover {
+    background: var(--tag-yellow-bg);
+    color: var(--tag-yellow-color);
+  }
+  .tag-purple:hover {
+    background: var(--tag-purple-bg);
+    color: var(--tag-purple-color);
+  }
+  .tag-orange:hover {
+    background: var(--tag-orange-bg);
+    color: var(--tag-orange-color);
+  }
+  .tag-teal:hover {
+    background: var(--tag-teal-bg);
+    color: var(--tag-teal-color);
+  }
+  .tag-pink:hover {
+    background: var(--tag-pink-bg);
+    color: var(--tag-pink-color);
+  }
+  .tag-indigo:hover {
+    background: var(--tag-indigo-bg);
+    color: var(--tag-indigo-color);
+  }
+  .tag-cyan:hover {
+    background: var(--tag-cyan-bg);
+    color: var(--tag-cyan-color);
+  }
+
+  /* 标签悬停效果 */
+  .tag:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+
+  [data-theme="dark"] .tag:hover {
+    box-shadow: 0 2px 8px rgba(255,255,255,0.1);
+  }
+
+  .archive-year:hover {
+    color: var(--accent-color); /* 悬停时只改变字体颜色 */
+    background: transparent; /* 保持背景透明 */
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  }
+
+  .archive-year-active:hover {
+    border-color: var(--tag-blue-bg) !important;
+    color: var(--tag-blue-bg) !important;
+    background: transparent !important;
+  }
+
+  .tags-cloud .tag:hover {
+    background: var(--border-color);
+    color: var(--accent-color);
   }
 }
