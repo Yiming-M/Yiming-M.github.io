@@ -1,0 +1,36 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { localePath, site, type Locale } from "../lib/site";
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const isZh = locale === "zh";
+---
+
+<BaseLayout locale={locale} title={isZh ? "简历 — 马一铭博士" : "CV — Dr Yiming Ma"} description={isZh ? "马一铭博士的中文简历入口。" : "Dr Yiming Ma's English curriculum vitae."} path="/cv">
+  <section class="page-intro">
+    <div class="page-intro-meta"><p class="eyebrow">{isZh ? "中文简历" : "Curriculum vitae"}</p><span class="status-label">{isZh ? "待添加" : "Pending"}</span></div>
+    <h1>{isZh ? "简历 PDF 即将补充。" : "CV PDF coming soon."}</h1>
+    <p class="page-intro-lead">{isZh ? "仓库中暂时没有中文简历 PDF，因此这里保留一个诚实的状态页，而不是提供失效下载。" : "There is no English CV PDF in the repository yet, so this page records the status instead of offering a broken download."}</p>
+  </section>
+  <section class="cv-panel">
+    <div class="cv-document-status">
+      <p class="section-number">01 / {isZh ? "文件状态" : "Document status"}</p>
+      <h2>{isZh ? "当前文件尚未提供。" : "The current file is not available yet."}</h2>
+      <dl>
+        <div><dt>{isZh ? "语言" : "Language"}</dt><dd>{isZh ? "中文" : "English"}</dd></div>
+        <div><dt>{isZh ? "格式" : "Format"}</dt><dd>PDF</dd></div>
+        <div><dt>{isZh ? "状态" : "Status"}</dt><dd>{isZh ? "待添加" : "Pending"}</dd></div>
+      </dl>
+      <p class="cv-note">{isZh ? "中文和英文 CV 将分别提供；本页不会在文件缺失时显示下载按钮。" : "English and Chinese CV PDFs will be provided separately; this page does not show a download action while the file is missing."}</p>
+    </div>
+    <aside class="cv-alternatives">
+      <p class="section-number">02 / {isZh ? "替代入口" : "In the meantime"}</p>
+      <h2>{isZh ? "先从这些入口了解我的工作。" : "Use these routes while the PDF is pending."}</h2>
+      <div class="link-list">
+        <a href={site.scholar}><span>Google Scholar</span><span aria-hidden="true">↗</span></a>
+        <a href={localePath(locale, "/about")}><span>{isZh ? `关于${site.displayNameZh}` : `About ${site.displayName}`}</span><span aria-hidden="true">→</span></a>
+        <a href={`mailto:${site.email}`}><span>{isZh ? "通过邮件索取简历" : "Request the CV by email"}</span><span aria-hidden="true">→</span></a>
+      </div>
+    </aside>
+  </section>
+</BaseLayout>

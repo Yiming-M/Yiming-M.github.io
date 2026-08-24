@@ -1,0 +1,37 @@
+{
+  "title": "Real-Time Driver Monitoring Systems through Modality and View Analysis",
+  "shortTitle": "Real-Time DMS",
+  "date": "2022-10-17",
+  "publishedOn": "2026-08-24",
+  "venue": "Preprint",
+  "authors": ["Yiming Ma", "Victor Sanchez", "Soodeh Nikan", "Devesh Upadhyay", "Bhushan Atote", "Tanaya Guha"],
+  "tags": ["task:human-behaviour", "method:multimodal-fusion", "goal:efficiency"],
+  "selected": false,
+  "links": {
+    "paper": "https://arxiv.org/abs/2210.09441"
+  },
+  "question": {
+    "en": "If neighbouring in-cabin frames are almost identical, do driver-monitoring systems need 3D video models and every available sensor stream?",
+    "zh": "如果车内视频的相邻帧几乎相同，驾驶员监控系统还需要 3D 视频模型和所有传感器数据流吗？"
+  },
+  "oneLine": {
+    "en": "Use only the last frame of each 16-frame clip, then measure how top/front views and depth/infrared modalities trade accuracy for latency.",
+    "zh": "每个 16 帧片段只使用最后一帧，再系统测量顶视/前视与深度/红外在准确率和延迟之间的权衡。"
+  },
+  "problem": {
+    "en": "Contemporary systems run 3D CNNs over synchronized multi-view, multi-modal clips even though adjacent frames in DAD have near-identical histograms and high structural similarity. That redundancy multiplies computation, while the original DAD test split supplies only normal/anomalous labels and cannot evaluate which distraction occurred.",
+    "zh": "既有系统在同步的多视角、多模态视频片段上运行 3D CNN，但 DAD 中的相邻帧具有近乎相同的直方图和很高的结构相似度。这种冗余会成倍增加计算；同时，原始 DAD 测试集只提供正常/异常标签，无法评估具体发生了哪一种分心行为。"
+  },
+  "idea": {
+    "en": "The proposed MobileNet-V2 and ResNet-18 systems discard the temporal dimension and classify the final frame with channel attention. For multiple sources, an extended attentional fusion module combines top/front and infrared/depth features. The study also relabels DAD's test videos into activity classes, including a pooled 'unseen' category, so individual sensor choices can be evaluated per activity.",
+    "zh": "所提出的 MobileNet-V2 与 ResNet-18 系统舍弃时间维度，只对最后一帧做带通道注意力的分类；多路输入则通过扩展后的注意力融合模块组合顶视/前视与红外/深度特征。研究还重新标注 DAD 测试视频，将具体活动和汇总的“未见类别”纳入评估，以便逐类分析不同传感器选择。"
+  },
+  "evidence": {
+    "en": "The image-based MobileNet model reaches 97.5% AUC-PR with both views in infrared; as a single source, top infrared gives 92.4% binary accuracy and about 96% AUC-PR. On the tested M1 Pro and AMD 5900X platforms, the 2D models are reported roughly 10x faster than the 3D baselines and satisfy the dataset camera's real-time interval.",
+    "zh": "图像式 MobileNet 在双视角红外输入下达到 97.5% AUC-PR；作为单一信息源，顶视红外达到 92.4% 二分类准确率和约 96% AUC-PR。在测试使用的 M1 Pro 与 AMD 5900X 平台上，2D 模型报告的速度约为 3D 基线的 10 倍，并满足数据集相机的实时帧间隔。"
+  },
+  "caveat": {
+    "en": "The efficiency result is strong for binary anomaly detection, but fine-grained classification peaks at 75.7% accuracy and several distractions are confused with normal driving. The preferred top-infrared placement is a DAD-specific finding; other cabin geometries, sensors, and activity distributions may change the ranking.",
+    "zh": "效率结论主要建立在二分类异常检测上，而细粒度分类的最高准确率只有 75.7%，多种分心行为仍会被误判为正常驾驶。顶视红外更优是 DAD 配置下的结论；换用其他座舱布局、传感器或活动分布后，排序可能改变。"
+  }
+}

@@ -1,0 +1,61 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { localePath, site, type Locale } from "../lib/site";
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const isZh = locale === "zh";
+---
+
+<BaseLayout locale={locale} title={isZh ? `关于${site.displayNameZh}` : `About ${site.displayName}`} description={isZh ? "马一铭博士的多模态学习、医学影像 AI 与计算机视觉研究简介。" : "About Dr Yiming Ma's research in multimodal learning, medical imaging AI, and computer vision."} path="/about">
+  <section class="page-intro about-page-intro">
+    <p class="eyebrow">{isZh ? "关于" : "About"}</p>
+    <h1>{isZh ? site.displayNameZh : site.displayName}</h1>
+    <p class="page-intro-lead">{isZh ? "专注于医学影像 AI 中的多模态学习，并以计算机视觉为更广泛的研究基础。" : "Focused on multimodal learning for medical imaging AI, with a broader foundation in computer vision."}</p>
+  </section>
+  <div class="about-page-grid">
+    <div class="about-portrait"><img src="/images/profile.jpg" width="400" height="400" loading="eager" decoding="async" fetchpriority="high" alt={isZh ? `${site.displayNameZh}的肖像` : `Portrait of ${site.displayName}`} /></div>
+    <div class="about-page-copy">
+      <p>{isZh ? "我是马一铭博士，目前专注于医学影像 AI 中的多模态学习，研究模型如何融合不同影像模态与互补信息。我的既有研究还涉及计算机视觉、人群计数、视觉–语言模型、多模态驾驶员监控，以及以人为中心的视觉系统。" : "I am Dr Yiming Ma. My current focus is multimodal learning for medical imaging AI: how models can combine different imaging modalities and complementary sources of information. My broader research background spans computer vision, crowd counting, vision–language models, multimodal driver monitoring, and human-centred visual systems."}</p>
+      <p>{isZh ? "我尤其关心多模态模型在现实约束下是否仍然可靠：某个模态缺失时能否继续工作，标注稀疏时能否有效学习，计算预算有限时能否部署，以及实验结论在什么条件下才成立。这个网站既保存成果，也解释这些选择。" : "I am especially interested in whether multimodal models remain reliable under real constraints: whether they still work when a modality is missing, learn effectively from sparse labels, operate under limited compute, and state the conditions under which an empirical claim holds. This site records the outputs and explains those choices."}</p>
+      <blockquote class="about-pull-quote">
+        <p>{isZh ? "“事实的堆积之于科学，正如石头的堆积之于房屋。”" : "“An accumulation of facts is no more a science than a heap of stones is a house.”"}</p>
+        <cite>
+          {isZh ? <>— 亨利·庞加莱，《<span class="work-title">科学与假设</span>》</> : <>— Henri Poincaré, <span class="work-title">Science and Hypothesis</span></>}
+          {" · "}
+          <a href="https://www.gutenberg.org/files/39713/39713-h/39713-h.htm"><span>{isZh ? "庞加莱引文出处" : "Source for the Poincaré quotation"}</span><span aria-hidden="true"> ↗</span></a>
+        </cite>
+      </blockquote>
+
+      <section class="about-detail-section">
+        <h2>{isZh ? "研究兴趣" : "Research interests"}</h2>
+        <ul>
+          <li>{isZh ? "多模态医学影像" : "Multimodal medical imaging"}</li>
+          <li>{isZh ? "多模态表征学习" : "Multimodal representation learning"}</li>
+          <li>{isZh ? "视觉–语言学习" : "Vision–language learning"}</li>
+          <li>{isZh ? "模态缺失条件下的可靠 AI" : "Reliable AI under missing modalities"}</li>
+        </ul>
+      </section>
+
+      <section class="about-detail-section">
+        <h2>{isZh ? "研究原则" : "Working principles"}</h2>
+        <ul>
+          <li>{isZh ? "从稀疏标注中可靠地学习。" : "Learn reliably from sparse labels."}</li>
+          <li>{isZh ? "在传感器缺失时仍能融合信息。" : "Combine information when sensors fail."}</li>
+          <li>{isZh ? "在有限计算预算下考虑部署。" : "Consider deployment under limited compute."}</li>
+          <li>{isZh ? "说明实验结论成立的条件与边界。" : "State the conditions and limits of empirical claims."}</li>
+        </ul>
+      </section>
+
+      <section class="about-detail-section about-contact">
+        <h2>{isZh ? "联系" : "Contact"}</h2>
+        <p>{isZh ? "如需讨论我的研究或网站内容，可以通过邮件联系我。" : "For questions about my research or this site, you can contact me by email."}</p>
+        <nav class="secondary-actions" aria-label={isZh ? "关于页面入口" : "About page actions"}>
+          <a href={localePath(locale, "/publications")}><span>{isZh ? "研究与出版物" : "Research & publications"}</span><span aria-hidden="true"> →</span></a>
+          <a href={localePath(locale, "/cv")}><span>{isZh ? "简历" : "CV"}</span><span aria-hidden="true"> →</span></a>
+          <a href={`mailto:${site.email}`}><span>{isZh ? "给我发邮件" : "Email me"}</span><span aria-hidden="true"> →</span></a>
+        </nav>
+        <div class="link-list about-socials"><a href={site.scholar}><span>Google Scholar</span><span aria-hidden="true">↗</span></a><a href={site.github}><span>GitHub</span><span aria-hidden="true">↗</span></a><a href={site.linkedin}><span>LinkedIn</span><span aria-hidden="true">↗</span></a></div>
+      </section>
+    </div>
+  </div>
+</BaseLayout>

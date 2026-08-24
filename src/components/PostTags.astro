@@ -1,0 +1,25 @@
+---
+import { postTagLabel, postTagTaxonomy } from "../lib/post-taxonomy";
+import { localePath, type Locale } from "../lib/site";
+
+interface Props {
+  tags: string[];
+  locale: Locale;
+  linked?: boolean;
+}
+
+const { tags, locale, linked = false } = Astro.props;
+---
+
+<div class="post-tag-row" aria-label={locale === "zh" ? "随笔标签" : "Post tags"}>
+  {tags.map((tag) => {
+    const group = postTagTaxonomy[tag]?.group ?? "topic";
+    return linked ? (
+      <a class="post-tag" data-post-kind={group} href={`${localePath(locale, "/writing")}?tag=${encodeURIComponent(tag)}`}>
+        {postTagLabel(tag, locale)}
+      </a>
+    ) : (
+      <span class="post-tag" data-post-kind={group}>{postTagLabel(tag, locale)}</span>
+    );
+  })}
+</div>

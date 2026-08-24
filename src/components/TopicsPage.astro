@@ -1,0 +1,54 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { localePath, taxonomy, type Locale } from "../lib/site";
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const isZh = locale === "zh";
+const publications = await getCollection("publications");
+const tagCounts = publications.reduce<Record<string, number>>((counts, publication) => {
+  publication.data.tags.forEach((tag) => { counts[tag] = (counts[tag] ?? 0) + 1; });
+  return counts;
+}, {});
+const descriptions = {
+  task: isZh ? "研究对象与待解决的问题。" : "The problem domain and object of study.",
+  method: isZh ? "建模、表征或信息融合的技术路线。" : "The modelling, representation, or fusion route.",
+  goal: isZh ? "工作最主要的设计取向。" : "The work's primary design priority.",
+};
+const groupLabels = {
+  task: isZh ? "任务" : "Task",
+  method: isZh ? "方法" : "Method",
+  goal: isZh ? "目标" : "Goal",
+};
+const groups = ["task", "method", "goal"] as const;
+const topicGroups = groups.map((group) => ({
+  label: groupLabels[group],
+  description: descriptions[group],
+  topics: Object.entries(taxonomy)
+    .filter(([, value]) => value.group === group)
+    .map(([key, value]) => ({ key, label: value.label[locale], count: tagCounts[key] ?? 0 })),
+}));
+---
+
+<BaseLayout locale={locale} title={isZh ? "研究主题 — 马一铭博士" : "Research Topics — Dr Yiming Ma"} description={isZh ? "按照任务、方法与目标组织马一铭博士的研究。" : "Dr Yiming Ma's research organized by task, method, and goal."} path="/topics">
+  <section class="page-intro"><p class="eyebrow">{isZh ? "标签体系" : "Research taxonomy"}</p><h1>{isZh ? "按主题浏览我的研究。" : "Browse my research by topic."}</h1><p class="page-intro-lead">{isZh ? `当前 ${publications.length} 篇出版物按照研究任务、主要方法和设计目标分类。` : `The current ${publications.length} publications are grouped by research task, main method, and design goal.`}</p></section>
+  <section class="topic-groups">
+    {topicGroups.map((group, index) => (
+      <section class="topic-group">
+        <div class="topic-group-heading">
+          <p class="section-number">0{index + 1} / {group.label}</p>
+          <h2>{group.label}</h2>
+          <p>{group.description}</p>
+        </div>
+        <div class="topic-index">
+          {group.topics.map((topic) => (
+            <a href={`${localePath(locale, "/publications")}?tag=${encodeURIComponent(topic.key)}`}>
+              <span class="topic-link-label">{topic.label}</span>
+              <span class="topic-link-meta"><span>{isZh ? `${topic.count} 篇论文` : `${topic.count} ${topic.count === 1 ? "paper" : "papers"}`}</span><span aria-hidden="true">→</span></span>
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+  </section>
+</BaseLayout>

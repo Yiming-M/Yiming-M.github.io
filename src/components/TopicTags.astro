@@ -1,0 +1,22 @@
+---
+import { taxonomy, type Locale } from "../lib/site";
+
+interface Props {
+  tags: string[];
+  locale: Locale;
+  linked?: boolean;
+}
+
+const { tags, locale, linked = false } = Astro.props;
+---
+
+<div class="tag-row taxonomy-row" aria-label={locale === "zh" ? "研究标签" : "Research tags"}>
+  {tags.map((tag) => {
+    const item = taxonomy[tag];
+    if (!item) return null;
+    const label = item.label[locale];
+    return linked
+      ? <a class="taxonomy-tag" data-kind={item.group} href={`${locale === "zh" ? "/zh" : ""}/publications/?tag=${encodeURIComponent(tag)}`}>{label}</a>
+      : <span class="taxonomy-tag" data-kind={item.group}>{label}</span>;
+  })}
+</div>

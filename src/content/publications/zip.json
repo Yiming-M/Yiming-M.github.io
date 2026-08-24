@@ -1,0 +1,40 @@
+{
+  "title": "ZIP: Scalable Crowd Counting via Zero-Inflated Poisson Modeling",
+  "shortTitle": "ZIP",
+  "date": "2025-07-31",
+  "publishedOn": "2026-08-24",
+  "venue": "Preprint",
+  "authors": ["Yiming Ma", "Victor Sanchez", "Tanaya Guha"],
+  "tags": ["task:crowd-counting", "method:probabilistic", "goal:scalability"],
+  "selected": true,
+  "image": "/publications/zip/overview.png",
+  "links": {
+    "paper": "https://arxiv.org/abs/2506.19955",
+    "code": "https://github.com/Yiming-M/EBC-ZIP",
+    "demo": "https://huggingface.co/spaces/Yiming-M/ZIP"
+  },
+  "question": {
+    "en": "When more than 95% of local crowd-map blocks are empty, is squared-error regression still the right statistical model?",
+    "zh": "当人群密度图中超过 95% 的局部分块都是空的，平方误差回归还是合适的统计模型吗？"
+  },
+  "oneLine": {
+    "en": "Use a zero-inflated Poisson likelihood to separate structurally empty regions from discrete counts, without requiring segmentation masks or Gaussian-smoothed targets.",
+    "zh": "用零膨胀泊松似然分开结构性空区域与离散计数，不再依赖分割掩码或高斯平滑标签。"
+  },
+  "problem": {
+    "en": "Even after aggregating annotations into blocks, more than 95% of standard 8 x 8 blocks are zero on most benchmarks. Those zeros dilute the signal from occupied regions, Gaussian smoothing introduces bandwidth-dependent label noise, and MSE assumes continuous Gaussian residuals for a target that is discrete, non-negative, and heavily zero-inflated.",
+    "zh": "即使把点标注聚合到分块，大多数基准中仍有超过 95% 的标准 8 x 8 分块为零。这些零会淹没有人区域的监督信号；高斯平滑还会引入依赖核宽的标签噪声，而 MSE 又用连续高斯残差描述本质上离散、非负且零值过量的目标。"
+  },
+  "idea": {
+    "en": "ZIP predicts two quantities per block: a structural-zero probability for background, body parts, and other non-head-centre regions, and a Poisson rate for candidate head-centre regions. Integer count bins stabilize rate prediction, while the joint likelihood learns the distinction between structural zeros and sampling zeros directly from point annotations.",
+    "zh": "ZIP 为每个分块预测两个量：结构零概率用于背景、身体部位和其他非头部中心区域，泊松率用于可能包含头部中心的区域。整数计数分箱用于稳定泊松率预测，联合似然则直接从点标注中学习区分结构零与抽样零。"
+  },
+  "evidence": {
+    "en": "With the same VGG19 backbone, ZIP lowers MAE relative to EBC by 3.2%-14.2% across ShanghaiTech A/B, UCF-QNRF, and NWPU-Crowd validation. Five variants from 0.81M to 105.60M parameters improve monotonically with scale; ZIP-B reaches 69.46 MAE on UCF-QNRF and 60.1 MAE / 0.104 NAE on the NWPU-Crowd test set.",
+    "zh": "在相同 VGG19 骨干下，ZIP 在 ShanghaiTech A/B、UCF-QNRF 与 NWPU-Crowd 验证集上相对 EBC 将 MAE 降低 3.2%-14.2%。从 0.81M 到 105.60M 参数的五个版本随规模单调提升；ZIP-B 在 UCF-QNRF 达到 69.46 MAE，并在 NWPU-Crowd 测试集达到 60.1 MAE / 0.104 NAE。"
+  },
+  "caveat": {
+    "en": "The current preprint uses dataset-specific count bins, block sizes, and training resolutions. Its failure analysis still finds false positives on person-shaped objects and missed low-contrast heads; on NWPU-Crowd test, its RMSE is competitive rather than best.",
+    "zh": "当前预印本针对不同数据集设置了不同的计数分箱、分块大小和训练分辨率。失败分析仍发现模型会把人形物体误报为人，也会漏掉低对比度头部；在 NWPU-Crowd 测试集上，RMSE 具有竞争力但并非最佳。"
+  }
+}

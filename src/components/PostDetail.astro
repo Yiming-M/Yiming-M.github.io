@@ -1,0 +1,74 @@
+---
+import { render, type CollectionEntry } from "astro:content";
+import "katex/dist/katex.min.css";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { formatDate, localePath, writingPath, type Locale } from "../lib/site";
+import PostTags from "./PostTags.astro";
+
+interface Props {
+  locale: Locale;
+  post: CollectionEntry<"posts">;
+}
+
+const { locale, post } = Astro.props;
+const isZh = locale === "zh";
+const { Content, headings } = await render(post);
+const sections = headings.filter((heading) => heading.depth === 2);
+const path = writingPath(post.data.route, post.data.date);
+---
+
+<BaseLayout
+  locale={locale}
+  title={`${post.data.title} — ${isZh ? "马一铭博士" : "Dr Yiming Ma"}`}
+  description={post.data.description}
+  path={path}
+  type="article"
+  publishedTime={post.data.date}
+  image={post.data.image}
+  imageAlt={post.data.imageAlt}
+>
+  <article class="post-detail">
+    <header class="post-hero">
+      <a class="back-link" href={localePath(locale, "/writing")}><span aria-hidden="true">← </span>{isZh ? "返回随笔" : "Back to posts"}</a>
+      <div class="post-hero-grid">
+        <div class="post-hero-meta">
+          <p class="eyebrow">{post.data.seriesTitle}</p>
+          <span class="status-label">{isZh ? `第 ${post.data.seriesPart} 篇` : `Part ${post.data.seriesPart}`}</span>
+        </div>
+        <div class="post-title-column">
+          <h1>{post.data.title}</h1>
+          <p>{post.data.description}</p>
+        </div>
+        <div class="post-byline">
+          <p><span>{isZh ? "作者" : "Author"}</span>{isZh ? "马一铭博士" : "Dr Yiming Ma"}</p>
+          <p><span>{isZh ? "发布" : "Published"}</span><time datetime={post.data.date.toISOString()}>{formatDate(locale, post.data.date)}</time></p>
+          <p><span>{isZh ? "阅读" : "Reading time"}</span>{post.data.readingTime}</p>
+        </div>
+        <PostTags tags={post.data.tags} locale={locale} linked />
+      </div>
+    </header>
+
+    <div class="post-reading-layout">
+      <aside class="post-section-nav" aria-label={isZh ? "本文目录" : "On this page"}>
+        <p>{isZh ? "本文目录" : "On this page"}</p>
+        <ol>
+          {sections.map((heading, index) => (
+            <li><a href={`#${heading.slug}`}><span>{String(index + 1).padStart(2, "0")}</span>{heading.text}</a></li>
+          ))}
+        </ol>
+      </aside>
+      <div class="post-body">
+        <Content />
+      </div>
+    </div>
+
+    <footer class="post-end">
+      <div>
+        <p class="section-number">{isZh ? "系列" : "Series"}</p>
+        <h2>{post.data.seriesTitle}</h2>
+        <p>{isZh ? "这是本系列的第 1 篇。后续文章会沿着相对位置编码、注意力结构与长上下文继续重读。" : "This is Part 1. Later notes will continue through relative position encodings, attention variants, and long-context methods."}</p>
+      </div>
+      <a class="button button-primary" href={localePath(locale, "/writing")}><span>{isZh ? "返回随笔索引" : "Back to post index"}</span><span aria-hidden="true">↗</span></a>
+    </footer>
+  </article>
+</BaseLayout>

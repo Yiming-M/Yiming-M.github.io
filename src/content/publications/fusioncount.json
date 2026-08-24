@@ -1,0 +1,38 @@
+{
+  "title": "FusionCount: Efficient Crowd Counting via Multiscale Feature Fusion",
+  "shortTitle": "FusionCount",
+  "date": "2022-02-28",
+  "publishedOn": "2026-08-24",
+  "venue": "ICIP 2022",
+  "authors": ["Yiming Ma", "Victor Sanchez", "Tanaya Guha"],
+  "tags": ["task:crowd-counting", "method:feature-fusion", "goal:efficiency"],
+  "selected": false,
+  "links": {
+    "paper": "https://arxiv.org/abs/2202.13660",
+    "code": "https://github.com/Yiming-M/FusionCount"
+  },
+  "question": {
+    "en": "Why build an extra multiscale module if the encoder has already produced features with many receptive-field sizes?",
+    "zh": "如果编码器已经产生了多种感受野尺度的特征，为什么还要额外搭建一个多尺度模块？"
+  },
+  "oneLine": {
+    "en": "Reuse 15 intermediate VGG-16 feature maps, learn spatially varying fusion weights from their contrasts, and decode them with a lightweight saliency-preserving reduction block.",
+    "zh": "复用 VGG-16 的 15 层中间特征，从特征差异中学习随空间变化的融合权重，再用保留显著性的轻量通道压缩模块完成解码。"
+  },
+  "problem": {
+    "en": "Perspective makes people occupy very different image scales. Earlier counters address this by running extra branches or spatial-pyramid modules after the encoder, but those modules add computation, cover only a few predefined receptive fields, and ignore the multiscale information already present in shallow and intermediate encoder features.",
+    "zh": "透视变化会让同一场景中的人呈现出差异很大的图像尺度。以往方法在编码器之后增加额外分支或空间金字塔模块，但这些模块增加计算量、只覆盖少数预定义感受野，也忽略了浅层和中间层编码特征中已有的多尺度信息。"
+  },
+  "idea": {
+    "en": "FusionCount collects VGG-16 features after the first pooling stage, spanning receptive fields from 6 to 192 pixels. Within each resolution group, contrast features generate spatial weights for adaptive averaging; the four fused maps are then decoded coarse-to-fine. A parallel dilated-convolution and pointwise-convolution block reduces channels while retaining salient context.",
+    "zh": "FusionCount 收集 VGG-16 第一次池化之后的特征，覆盖 6 到 192 像素的感受野。在每个分辨率组内，特征差异生成空间权重并进行自适应平均；得到的四组特征再从粗到细解码。并行的空洞卷积与逐点卷积模块在压缩通道的同时保留显著上下文。"
+  },
+  "evidence": {
+    "en": "On ShanghaiTech B, FusionCount reports 6.9 MAE and 11.8 RMSE, the best MAE and tied-best RMSE among the compared VGG-based models. On the harder ShanghaiTech A it is competitive rather than best at 62.2 MAE / 101.2 RMSE. Its reported cost is 815.0G multiply-adds at 1920 x 1080, below CSRNet, CAN, BL, and DM-Count in the paper's comparison.",
+    "zh": "在 ShanghaiTech B 上，FusionCount 报告 6.9 MAE 和 11.8 RMSE，在所比较的 VGG 系模型中 MAE 最佳、RMSE 并列最佳；在更困难的 ShanghaiTech A 上则是具有竞争力而非最佳，为 62.2 MAE / 101.2 RMSE。论文按 1920 x 1080 输入统计 815.0G 次乘加，低于对比中的 CSRNet、CAN、BL 和 DM-Count。"
+  },
+  "caveat": {
+    "en": "The evaluation covers only ShanghaiTech A and B, and efficiency is measured as multiply-adds rather than wall-clock latency, memory use, or energy. The decoder's second-stage fusion also uses simple addition; the paper leaves context-aware decoding fusion to future work.",
+    "zh": "实验只覆盖 ShanghaiTech A 与 B，效率指标也是乘加次数，而不是实际延迟、显存或能耗。解码器第二阶段仍使用简单相加进行融合；论文把带上下文的解码融合留作后续工作。"
+  }
+}
