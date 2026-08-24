@@ -2500,6 +2500,11 @@ html[lang^="zh"] .topic-group-heading h2 {
   margin-top: var(--space-8);
 }
 
+.cv-download-actions a {
+  width: min(100%, 19rem);
+  justify-content: center;
+}
+
 .secondary-actions .cv-primary-download {
   border-color: var(--text-primary);
   background: var(--text-primary);
