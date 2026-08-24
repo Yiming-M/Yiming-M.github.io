@@ -1,0 +1,127 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PublicationCard from "./PublicationCard.astro";
+import { taxonomy, type Locale } from "../lib/site";
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const isZh = locale === "zh";
+const publications = (await getCollection("publications")).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const usedTags = [...new Set(publications.flatMap((entry) => entry.data.tags))];
+const groupCopy = {
+  task: { en: "Task", zh: "任务", anyEn: "Any task", anyZh: "全部任务" },
+  method: { en: "Method", zh: "方法", anyEn: "Any method", anyZh: "全部方法" },
+  goal: { en: "Goal", zh: "目标", anyEn: "Any goal", anyZh: "全部目标" },
+};
+const filterGroups = (["task", "method", "goal"] as const).map((group) => ({
+  key: group,
+  label: isZh ? groupCopy[group].zh : groupCopy[group].en,
+  defaultLabel: isZh ? groupCopy[group].anyZh : groupCopy[group].anyEn,
+  tags: usedTags.filter((tag) => taxonomy[tag].group === group).sort((a, b) => taxonomy[a].label.en.localeCompare(taxonomy[b].label.en)),
+}));
+---
+
+<BaseLayout locale={locale} title={isZh ? "研究与出版物 — 马一铭博士" : "Research & Publications — Dr Yiming Ma"} description={isZh ? "马一铭博士的出版物及中英双语研究讲解。" : "Publications by Dr Yiming Ma with plain-language explanations, evidence, and limitations."} path="/publications">
+  <section class="page-hero compact-page-hero publications-page-hero">
+    <p class="eyebrow">{isZh ? "研究档案" : "Research archive"}</p>
+    <h1>{isZh ? "研究与出版物。" : "Research & publications."}</h1>
+    <p>{isZh ? "这里整理了我的论文和项目，并简要说明每项工作解决什么问题、采用什么方法，以及有哪些局限。" : "My papers and projects, with short notes on what each one tries to solve, how it works, and where it falls short."}</p>
+  </section>
+
+  <section class="archive-section">
+    <div class="archive-toolbar">
+      <div class="archive-toolbar-intro">
+        <p class="section-number">01 / {isZh ? "标签体系" : "Research taxonomy"}</p>
+        <p>{isZh ? "任务说明研究对象，方法说明技术路线，目标说明主要设计取向。" : "Task names the problem, Method names the technical route, and Goal names the primary design priority."}</p>
+      </div>
+      <div class="archive-filter-panel">
+        <div class="archive-filter-status">
+          <button class="filter-chip filter-all" type="button" data-filter="all" aria-pressed="true" aria-controls="publication-list">{isZh ? "全部" : "All"}</button>
+          <p
+            class="archive-results-count"
+            aria-live="polite"
+            aria-atomic="true"
+            data-results-count
+            data-count-one={isZh ? "篇论文" : "publication"}
+            data-count-many={isZh ? "篇论文" : "publications"}
+          >{isZh ? `${publications.length} 篇论文` : `${publications.length} publications`}</p>
+        </div>
+
+        <div class="taxonomy-filter-desktop" aria-label={isZh ? "筛选出版物" : "Filter publications"}>
+          {filterGroups.map((group) => (
+            <div class="taxonomy-filter-group">
+              <p>{group.label}</p>
+              <div class="filter-chip-row">
+                {group.tags.map((tag) => (
+                  <button class="filter-chip" type="button" data-filter={tag} data-filter-group={group.key} aria-pressed="false" aria-controls="publication-list">{taxonomy[tag].label[locale]}</button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div class="taxonomy-filter-mobile">
+          {filterGroups.map((group) => (
+            <details class="taxonomy-mobile-group">
+              <summary>
+                <span>{group.label}</span>
+                <span class="taxonomy-summary-selection" data-filter-summary={group.key} data-default-label={group.defaultLabel}>{group.defaultLabel}</span>
+                <span class="taxonomy-disclosure" aria-hidden="true"><span class="disclosure-closed">+</span><span class="disclosure-open">−</span></span>
+              </summary>
+              <div class="filter-chip-row">
+                {group.tags.map((tag) => (
+                  <button class="filter-chip" type="button" data-filter={tag} data-filter-group={group.key} aria-pressed="false" aria-controls="publication-list">{taxonomy[tag].label[locale]}</button>
+                ))}
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+    </div>
+    <div class="publication-list" id="publication-list">
+      {publications.map((publication) => <PublicationCard publication={publication} locale={locale} />)}
+    </div>
+    <p class="no-results" hidden>{isZh ? "没有匹配这一标签的出版物。" : "No publications match this tag."}</p>
+  </section>
+
+  <script is:inline>
+    const cards = [...document.querySelectorAll("[data-publication-card]")];
+    const empty = document.querySelector(".no-results");
+    const buttons = [...document.querySelectorAll("[data-filter]")];
+    const resultCount = document.querySelector("[data-results-count]");
+    const summaries = [...document.querySelectorAll("[data-filter-summary]")];
+    const validTags = new Set(buttons.map((button) => button.dataset.filter).filter((tag) => tag && tag !== "all"));
+    const labelByTag = new Map(buttons.filter((button) => button.dataset.filter !== "all").map((button) => [button.dataset.filter, button.textContent.trim()]));
+    const groupByTag = new Map(buttons.filter((button) => button.dataset.filterGroup).map((button) => [button.dataset.filter, button.dataset.filterGroup]));
+    const updateCount = (count) => {
+      if (!resultCount) return;
+      const unit = count === 1 ? resultCount.dataset.countOne : resultCount.dataset.countMany;
+      resultCount.textContent = `${count} ${unit}`;
+    };
+    const applyFilter = (requestedTag) => {
+      const tag = requestedTag === "all" || validTags.has(requestedTag) ? requestedTag : "all";
+      let visible = 0;
+      cards.forEach((card) => {
+        card.hidden = tag !== "all" && !card.dataset.topic.split(" ").includes(tag);
+        if (!card.hidden) visible += 1;
+      });
+      buttons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.filter === tag)));
+      if (empty) empty.hidden = visible !== 0;
+      updateCount(visible);
+      const activeGroup = groupByTag.get(tag);
+      summaries.forEach((summary) => {
+        summary.textContent = summary.dataset.filterSummary === activeGroup ? labelByTag.get(tag) : summary.dataset.defaultLabel;
+      });
+      const url = new URL(window.location.href);
+      tag === "all" ? url.searchParams.delete("tag") : url.searchParams.set("tag", tag);
+      history.replaceState({}, "", url);
+    };
+    buttons.forEach((button) => button.addEventListener("click", () => {
+      applyFilter(button.dataset.filter);
+      button.closest("details")?.removeAttribute("open");
+    }));
+    const initial = new URL(window.location.href).searchParams.get("tag");
+    applyFilter(initial || "all");
+  </script>
+</BaseLayout>

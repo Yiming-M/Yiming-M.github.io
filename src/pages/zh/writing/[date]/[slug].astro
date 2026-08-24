@@ -1,0 +1,16 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import PostDetail from "../../../../components/PostDetail.astro";
+import { routeDate } from "../../../../lib/site";
+
+export async function getStaticPaths() {
+  return (await getCollection("posts", ({ data }) => data.locale === "zh")).map((post) => ({
+    params: { date: routeDate(post.data.date), slug: post.data.route },
+    props: { post },
+  }));
+}
+
+interface Props { post: CollectionEntry<"posts"> }
+const { post } = Astro.props;
+---
+<PostDetail locale="zh" post={post} />

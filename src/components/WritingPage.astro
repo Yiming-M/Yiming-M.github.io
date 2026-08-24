@@ -1,0 +1,119 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { postTagGroupLabels, postTagLabel, postTagTaxonomy, type PostTagGroup } from "../lib/post-taxonomy";
+import { formatDate, localePath, writingPath, type Locale } from "../lib/site";
+import PostTags from "./PostTags.astro";
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const isZh = locale === "zh";
+const posts = (await getCollection("posts", ({ data }) => data.locale === locale))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const usedTags = [...new Set(posts.flatMap((post) => post.data.tags))];
+const groupOrder: PostTagGroup[] = ["series", "topic", "lens"];
+const tagGroups = groupOrder
+  .map((group) => ({
+    group,
+    label: postTagGroupLabels[group][locale],
+    tags: usedTags.filter((tag) => postTagTaxonomy[tag]?.group === group),
+  }))
+  .filter((group) => group.tags.length > 0);
+---
+
+<BaseLayout
+  locale={locale}
+  title={isZh ? "随笔 — 马一铭博士" : "Posts — Dr Yiming Ma"}
+  description={isZh ? "马一铭博士关于多模态学习、医学影像 AI、Transformer 与研究方法的双语随笔。" : "Bilingual posts by Dr Yiming Ma on multimodal learning, medical imaging AI, Transformers, and research practice."}
+  path="/writing"
+>
+  <section class="page-intro posts-page-intro">
+    <div class="page-intro-meta">
+      <p class="eyebrow">{isZh ? "我的随笔" : "My posts"}</p>
+      <span class="status-label">{isZh ? `${posts.length} 篇文章` : `${posts.length} post${posts.length === 1 ? "" : "s"}`}</span>
+    </div>
+    <h1>{isZh ? "AI 与机器学习笔记。" : "Notes on AI and machine learning."}</h1>
+    <p class="page-intro-lead">{isZh ? "记录我认为有用或有趣的论文与技术问题，并在适合时补充推导、例子和参考资料。" : "Posts about papers and technical topics I find useful or interesting, with derivations, examples, and references where they help."}</p>
+  </section>
+
+  <section class="archive-section posts-archive" data-post-archive>
+    <div class="post-filter-bar">
+      <div>
+        <p class="section-number">01 / {isZh ? "文章索引" : "Post index"}</p>
+        <p class="post-taxonomy-note">{isZh ? "随笔标签独立于 Research 的任务／方法／目标分类。" : "Post tags are separate from the task/method/goal taxonomy used for Research."}</p>
+      </div>
+      <div class="post-filter-panel" aria-label={isZh ? "按随笔标签筛选" : "Filter by post tag"}>
+        <div class="post-filter-status">
+          <p class="archive-results-count" data-post-count aria-live="polite">{isZh ? `${posts.length} 篇文章` : `${posts.length} post${posts.length === 1 ? "" : "s"}`}</p>
+          <button class="post-filter-clear" type="button" data-post-filter="all" aria-pressed="true">{isZh ? "全部" : "All"}</button>
+        </div>
+        {tagGroups.map((group) => (
+          <div class="post-filter-group">
+            <p>{group.label}</p>
+            <div>
+              {group.tags.map((tag) => (
+                <button class="post-filter-chip" type="button" data-post-filter={tag} aria-pressed="false">
+                  {postTagLabel(tag, locale).replace(/^.*? · /, "")}
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="post-list">
+      {posts.map((post) => (
+        <article class="post-index-card" data-post-card data-post-tags={post.data.tags.join(" ")}>
+          <div class="post-index-meta">
+            <p>{isZh ? `系列第 ${post.data.seriesPart} 篇` : `Series · Part ${post.data.seriesPart}`}</p>
+            <time datetime={post.data.date.toISOString()}>{formatDate(locale, post.data.date)}</time>
+            <span>{post.data.readingTime}</span>
+          </div>
+          <div class="post-index-copy">
+            <p class="post-series-name">{post.data.seriesTitle}</p>
+            <h2><a href={localePath(locale, writingPath(post.data.route, post.data.date))}>{post.data.title}</a></h2>
+            <p>{post.data.description}</p>
+            <PostTags tags={post.data.tags} locale={locale} />
+          </div>
+          <a class="post-index-link" href={localePath(locale, writingPath(post.data.route, post.data.date))}>
+            <span>{isZh ? "阅读全文" : "Read post"}</span><span aria-hidden="true"> →</span>
+          </a>
+        </article>
+      ))}
+    </div>
+    <p class="post-no-results" data-post-empty hidden>{isZh ? "没有匹配该标签的文章。" : "No posts match this tag."}</p>
+  </section>
+
+  <script is:inline define:vars={{ isZh }}>
+    const archive = document.querySelector("[data-post-archive]");
+    if (archive) {
+      const cards = [...archive.querySelectorAll("[data-post-card]")];
+      const controls = [...archive.querySelectorAll("[data-post-filter]")];
+      const count = archive.querySelector("[data-post-count]");
+      const empty = archive.querySelector("[data-post-empty]");
+
+      const applyFilter = (requestedTag, updateUrl = true) => {
+        const knownTag = controls.some((control) => control.dataset.postFilter === requestedTag);
+        const tag = requestedTag === "all" || knownTag ? requestedTag : "all";
+        let visible = 0;
+        cards.forEach((card) => {
+          const matches = tag === "all" || card.dataset.postTags?.split(" ").includes(tag);
+          card.hidden = !matches;
+          if (matches) visible += 1;
+        });
+        controls.forEach((control) => control.setAttribute("aria-pressed", String(control.dataset.postFilter === tag)));
+        if (count) count.textContent = isZh ? `${visible} 篇文章` : `${visible} post${visible === 1 ? "" : "s"}`;
+        if (empty) empty.hidden = visible !== 0;
+        if (updateUrl) {
+          const url = new URL(window.location.href);
+          tag === "all" ? url.searchParams.delete("tag") : url.searchParams.set("tag", tag);
+          window.history.replaceState({}, "", url);
+        }
+      };
+
+      controls.forEach((control) => control.addEventListener("click", () => applyFilter(control.dataset.postFilter || "all")));
+      applyFilter(new URL(window.location.href).searchParams.get("tag") || "all", false);
+    }
+  </script>
+</BaseLayout>

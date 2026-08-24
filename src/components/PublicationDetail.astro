@@ -1,0 +1,139 @@
+---
+import type { CollectionEntry } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import TopicTags from "./TopicTags.astro";
+import { formatDate, localePath, localize, publicationPath, type Locale } from "../lib/site";
+
+interface Props {
+  locale: Locale;
+  publication: CollectionEntry<"publications">;
+}
+
+const { locale, publication } = Astro.props;
+const { data } = publication;
+const isZh = locale === "zh";
+const path = publicationPath(publication.id, data.date);
+const resources = [
+  { label: "Paper", href: data.links.paper },
+  ...(data.links.code ? [{ label: "Code", href: data.links.code }] : []),
+  ...(data.links.demo ? [{ label: "Demo", href: data.links.demo }] : []),
+];
+const imageDimensions: Record<string, { width: number; height: number }> = {
+  "/publications/zip/overview.png": { width: 2800, height: 1332 },
+  "/publications/dms2/overview.png": { width: 1618, height: 1630 },
+  "/publications/clip-ebc/overview.png": { width: 2826, height: 1476 },
+  "/publications/interact-with-me/overview.png": { width: 2960, height: 1116 },
+};
+const imageSize = data.image ? imageDimensions[data.image] : undefined;
+const sections = [
+  {
+    id: "problem",
+    number: "01",
+    label: isZh ? "研究问题" : "Problem",
+    title: isZh ? "这项工作试图解决什么？" : "What is this work trying to solve?",
+    content: localize(locale, data.problem),
+  },
+  {
+    id: "idea",
+    number: "02",
+    label: isZh ? "核心想法" : "Idea",
+    title: isZh ? "关键的技术直觉是什么？" : "What is the central technical intuition?",
+    content: localize(locale, data.idea),
+  },
+  {
+    id: "evidence",
+    number: "03",
+    label: isZh ? "研究证据" : "Evidence",
+    title: isZh ? "现有结果说明了什么？" : "What does the current evidence show?",
+    content: localize(locale, data.evidence),
+  },
+  {
+    id: "limits",
+    number: "04",
+    label: isZh ? "边界与版本" : "Limits",
+    title: isZh ? "这项工作的边界在哪里？" : "Where are the limits of this work?",
+    content: localize(locale, data.caveat),
+    kind: "limits",
+  },
+];
+---
+
+<BaseLayout
+  locale={locale}
+  title={`${data.shortTitle} — ${isZh ? "研究讲解 · 马一铭博士" : "Explained by Dr Yiming Ma"}`}
+  description={localize(locale, data.oneLine)}
+  path={path}
+  type="article"
+  publishedTime={data.publishedOn}
+>
+  <article class="publication-detail">
+    <header class="publication-hero">
+      <a class="back-link" href={localePath(locale, "/publications")}><span aria-hidden="true">← </span><span>{isZh ? "返回研究档案" : "Back to research archive"}</span></a>
+      <div class="publication-hero-grid">
+        <dl class="publication-meta-list">
+          <div>
+            <dt>{isZh ? "发表日期" : "Published"}</dt>
+            <dd><time datetime={data.date.toISOString()}>{formatDate(locale, data.date)}</time></dd>
+          </div>
+          <div>
+            <dt>{isZh ? "发表来源" : "Venue"}</dt>
+            <dd>{data.venue}</dd>
+          </div>
+        </dl>
+        <div class="publication-title-column">
+          <h1>{data.title}</h1>
+          <p class="publication-question">{localize(locale, data.question)}</p>
+        </div>
+        <p class="publication-authors"><span>{isZh ? "作者" : "Authors"}</span>{data.authors.join(", ")}</p>
+        <div class="publication-topic-list">
+          <TopicTags tags={data.tags} locale={locale} linked />
+        </div>
+        <nav class="publication-resource-links" aria-label={isZh ? "论文资源" : "Publication resources"}>
+          {resources.map((resource) => <a href={resource.href}>{resource.label} <span aria-hidden="true">↗</span></a>)}
+        </nav>
+      </div>
+    </header>
+
+    {data.image && (
+      <figure class="publication-figure">
+        <a href={data.image} aria-label={isZh ? `查看 ${data.shortTitle} 方法概览原图` : `View the ${data.shortTitle} method overview at its original size`}>
+          <img src={data.image} width={imageSize?.width} height={imageSize?.height} loading="lazy" decoding="async" alt={isZh ? `${data.shortTitle} 方法概览` : `${data.shortTitle} method overview`} />
+        </a>
+        <figcaption><strong>{isZh ? `${data.shortTitle} 方法概览。` : `${data.shortTitle} method overview.`}</strong> {isZh ? "图像来自论文；完整原始图注、符号说明与上下文请参阅原文。点按图片可查看原始尺寸。" : "Figure from the publication; see the paper for the complete original caption, notation, and context. Open the image to view it at its original size."}</figcaption>
+      </figure>
+    )}
+
+    <div class="publication-reading-layout">
+      <nav class="publication-section-nav" aria-label={isZh ? "本页章节" : "On this page"}>
+        <p>{isZh ? "本页章节" : "On this page"}</p>
+        <ol>
+          {sections.map((section) => <li><a href={`#${section.id}`}><span>{section.number}</span>{section.label}</a></li>)}
+        </ol>
+      </nav>
+      <div class="explanation-sections">
+        {sections.map((section) => (
+          <section id={section.id} class:list={["publication-explanation", { "is-limits": section.kind === "limits" }]} aria-labelledby={`${section.id}-heading`}>
+            <p class="section-number">{section.number} / {section.label}</p>
+            <div class="explanation-copy">
+              <h2 id={`${section.id}-heading`}>{section.title}</h2>
+              <p>{section.content}</p>
+            </div>
+          </section>
+        ))}
+      </div>
+    </div>
+
+    <footer class="publication-end-actions">
+      <div>
+        <p class="section-number">05 / {isZh ? "原始资源" : "Source material"}</p>
+        <h2>{isZh ? "继续阅读原始材料。" : "Continue with the source material."}</h2>
+      </div>
+      <div class="publication-end-links">
+        <nav class="publication-resource-links" aria-label={isZh ? "页末论文资源" : "Publication resources at end of page"}>
+          {resources.map((resource) => <a href={resource.href}>{resource.label} <span aria-hidden="true">↗</span></a>)}
+        </nav>
+        <a class="publication-end-back" href={localePath(locale, "/publications")}><span>{isZh ? "下一步：返回全部出版物" : "Next: back to all publications"}</span><span aria-hidden="true"> →</span></a>
+      </div>
+    </footer>
+  </article>
+</BaseLayout>

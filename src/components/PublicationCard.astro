@@ -1,0 +1,29 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { formatDate, localePath, localize, publicationPath, type Locale } from "../lib/site";
+import TopicTags from "./TopicTags.astro";
+
+interface Props {
+  publication: CollectionEntry<"publications">;
+  locale: Locale;
+}
+
+const { publication, locale } = Astro.props;
+const { data } = publication;
+---
+
+<article class="publication-row" data-publication-card data-topic={data.tags.join(" ")}>
+  <div class="publication-row-meta">
+    <time datetime={data.date.toISOString()}>{formatDate(locale, data.date)}</time>
+    <span>{data.venue}</span>
+  </div>
+  <div class="publication-row-copy">
+    <h2><a href={localePath(locale, publicationPath(publication.id, data.date))}>{data.title}</a></h2>
+    <p class="publication-row-question">{localize(locale, data.question)}</p>
+    <p class="publication-row-conclusion"><span>{locale === "zh" ? "一句话" : "In brief"}</span>{localize(locale, data.oneLine)}</p>
+  </div>
+  <div class="publication-row-aside">
+    <TopicTags tags={data.tags} locale={locale} />
+    <a class="publication-row-link" href={localePath(locale, publicationPath(publication.id, data.date))}><span>{locale === "zh" ? "阅读完整讲解" : "Read the explanation"}</span><span aria-hidden="true"> →</span></a>
+  </div>
+</article>

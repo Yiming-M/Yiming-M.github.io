@@ -1,0 +1,164 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import TopicTags from "./TopicTags.astro";
+import { formatDate, localePath, localize, publicationPath, site, writingPath, type Locale } from "../lib/site";
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const isZh = locale === "zh";
+const publications = (await getCollection("publications")).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const selected = publications.filter((entry) => entry.data.selected);
+const feature = selected.find((entry) => entry.id === "zip")!;
+const secondary = selected.filter((entry) => entry.id !== "zip");
+const posts = (await getCollection("posts", ({ data }) => data.locale === locale))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const latestPost = posts[0]!;
+const description = isZh
+  ? "马一铭博士的研究主页，聚焦多模态学习、医学影像 AI 与计算机视觉，包含论文、研究讲解与随笔。"
+  : "Dr Yiming Ma's research website on multimodal learning, medical imaging AI, and computer vision, featuring publications, explanations, and posts.";
+---
+
+<BaseLayout locale={locale} title={isZh ? "马一铭博士 — 多模态医学影像 AI" : "Dr Yiming Ma — Multimodal Medical Imaging AI"} description={description} path="/">
+  <section class="hero" id="top">
+    <div class="hero-copy">
+      <p class="eyebrow">{isZh ? "多模态学习 · 计算机视觉 · 医学影像" : "Multimodal learning · Computer vision · Medical Imaging"}</p>
+      <h1 class="hero-name">{isZh ? site.nameZh : site.name}</h1>
+      <p class="hero-thesis">{isZh ? "连接多种模态，构建更可靠的医学影像 AI。" : "Connecting modalities to build more reliable medical imaging AI."}</p>
+      <p class="hero-intro">
+        {isZh
+          ? "我目前专注于医学影像 AI 中的多模态学习：研究模型如何融合不同影像模态与互补信息，形成可靠的表征与预测。我的既有工作还涉及计算机视觉、人群计数、视觉–语言学习与以人为中心的感知。这里会从问题与直觉出发，讲清每项工作的证据与局限。"
+          : "I study multimodal learning for medical imaging AI: how models can combine different imaging modalities and complementary sources of information to form reliable representations and predictions. My broader work spans computer vision, crowd counting, vision–language learning, and human-centred perception. Here, I explain each project from its question and intuition to its evidence and limitations."}
+      </p>
+      <div class="hero-actions">
+        <a class="button button-primary" href={localePath(locale, "/publications")}>
+          <span>{isZh ? "浏览我的研究" : "Explore my research"}</span><span aria-hidden="true">↘</span>
+        </a>
+        <a class="hero-secondary-link" href={localePath(locale, "/writing")}>
+          <span>{isZh ? "阅读我的随笔" : "Read my posts"}</span><span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+
+    <aside class="profile-card" aria-label={isZh ? "个人简介" : "Profile summary"}>
+      <div class="profile-image-wrap">
+        <img
+          src="/images/profile.jpg"
+          width="400"
+          height="400"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+          alt={isZh ? `${site.nameZh}的肖像` : `Portrait of ${site.name}`}
+        />
+      </div>
+      <div class="profile-body">
+        <p class="profile-name">{site.displayName} <span>{site.displayNameZh}</span></p>
+        <p>{isZh ? "从事医学影像 AI 中的多模态学习研究，并具有计算机视觉研究背景，现居英国。" : "Researcher in multimodal learning for medical imaging AI, with a broader background in computer vision, based in the United Kingdom."}</p>
+        <div class="profile-links">
+          <a href={site.scholar}><span>Scholar</span><span aria-hidden="true"> ↗</span></a>
+          <a href={site.github}><span>GitHub</span><span aria-hidden="true"> ↗</span></a>
+        </div>
+      </div>
+    </aside>
+
+    <blockquote class="hero-quote">
+      <p>{isZh ? "“凡是能够说的，都能够说清楚。”" : "“What can be said at all can be said clearly.”"}</p>
+      <cite>
+        — Ludwig Wittgenstein, <span>Tractatus Logico-Philosophicus</span>
+        <a
+          href="https://www.wittgensteinproject.org/w/index.php/Tractatus_Logico-Philosophicus_%28English%29"
+          aria-label={isZh ? "维特根斯坦引文出处" : "Source for the Wittgenstein quotation"}
+        >↗</a>
+      </cite>
+    </blockquote>
+  </section>
+
+  <section class="section" id="research">
+    <div class="section-heading research-heading">
+      <div>
+        <p class="section-number">01 / {isZh ? "代表性研究" : "Selected research"}</p>
+        <h2>{isZh ? "讲清想法、证据与边界。" : "Ideas, evidence, and limits."}</h2>
+      </div>
+      <div class="research-heading-aside">
+        <p>{isZh ? `${selected.length} 篇精选工作，完整档案收录 ${publications.length} 篇论文。` : `${selected.length} selected works; ${publications.length} publications in the complete archive.`}</p>
+        <a href={localePath(locale, "/publications")}><span>{isZh ? "查看全部出版物" : "View all publications"}</span><span aria-hidden="true"> →</span></a>
+      </div>
+    </div>
+
+    <div class="research-grid">
+      <article class="feature-paper">
+        <div class="paper-visual">
+          <img src={feature.data.image} width="2800" height="1332" loading="lazy" decoding="async" alt={isZh ? "ZIP 人群计数方法概览" : "ZIP crowd-counting method overview"} />
+        </div>
+        <div class="paper-content">
+          <div class="paper-meta"><time datetime={feature.data.date.toISOString()}>{formatDate(locale, feature.data.date)}</time><span>{feature.data.venue}</span></div>
+          <h3><a href={localePath(locale, publicationPath(feature.id, feature.data.date))}>{feature.data.title}</a></h3>
+          <p class="paper-question">{localize(locale, feature.data.question)}</p>
+          <div class="feature-idea"><span>{isZh ? "核心想法" : "Central idea"}</span><p>{localize(locale, feature.data.idea)}</p></div>
+          <TopicTags tags={feature.data.tags.slice(0, 4)} locale={locale} />
+          <div class="paper-links">
+            <a href={localePath(locale, publicationPath(feature.id, feature.data.date))}><span>{isZh ? "完整讲解" : "Full explanation"}</span><span aria-hidden="true"> →</span></a>
+            <a href={feature.data.links.paper}><span>Paper</span><span aria-hidden="true"> ↗</span></a>
+            {feature.data.links.code && <a href={feature.data.links.code}><span>Code</span><span aria-hidden="true"> ↗</span></a>}
+            {feature.data.links.demo && <a href={feature.data.links.demo}><span>Demo</span><span aria-hidden="true"> ↗</span></a>}
+          </div>
+        </div>
+      </article>
+
+      <div class="compact-work-list">
+        {secondary.map((publication) => (
+          <article class="compact-work">
+            <div class="compact-work-meta"><time datetime={publication.data.date.toISOString()}>{formatDate(locale, publication.data.date)}</time><span>{publication.data.venue}</span></div>
+            <div class="compact-work-copy">
+              <h3><a href={localePath(locale, publicationPath(publication.id, publication.data.date))}>{publication.data.title}</a></h3>
+              <p>{localize(locale, publication.data.question)}</p>
+            </div>
+            <div class="compact-work-aside">
+              <TopicTags tags={publication.data.tags.slice(0, 4)} locale={locale} />
+              <a class="compact-work-link" href={localePath(locale, publicationPath(publication.id, publication.data.date))}><span>{isZh ? "阅读讲解" : "Read explanation"}</span><span aria-hidden="true"> →</span></a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section writing-section" id="writing">
+    <div class="section-heading">
+      <div>
+        <p class="section-number">02 / {isZh ? "我的随笔" : "My posts"}</p>
+        <h2>{isZh ? "让研究变得可读。" : "Notes that make research legible."}</h2>
+      </div>
+      <p class="section-note">{isZh ? "第一篇真实长文现已发布，中英文内容一一对应。" : "The first full post is now available in matching English and Chinese editions."}</p>
+    </div>
+    <div class="essay-list">
+      <article class="essay-card">
+        <span class="essay-number">01</span>
+        <div>
+          <p class="essay-meta">{latestPost.data.seriesTitle} · {latestPost.data.readingTime}</p>
+          <h3><a href={localePath(locale, writingPath(latestPost.data.route, latestPost.data.date))}>{latestPost.data.title}</a></h3>
+        </div>
+        <span class="essay-arrow" aria-hidden="true">→</span>
+      </article>
+    </div>
+    <p class="section-cta"><a class="text-button" href={localePath(locale, "/writing")}><span>{isZh ? "查看全部随笔" : "View all posts"}</span><span aria-hidden="true"> →</span></a></p>
+  </section>
+
+  <section class="section about-section" id="about">
+    <div class="about-label"><p class="section-number">03 / {isZh ? "关于" : "About"}</p><p class="about-monogram" aria-hidden="true">YM</p></div>
+    <div class="about-copy">
+      <h2>{isZh ? "“事实的堆积之于科学，正如石头的堆积之于房屋。”" : "“An accumulation of facts is no more a science than a heap of stones is a house.”"}</h2>
+      <p class="quote-source">{isZh ? <>— 亨利·庞加莱，《<cite>科学与假设</cite>》</> : <>— Henri Poincaré, <cite>Science and Hypothesis</cite></>} <a href="https://www.gutenberg.org/files/39713/39713-h/39713-h.htm" aria-label={isZh ? "庞加莱引文出处" : "Source for the Poincaré quotation"}>↗</a></p>
+      <p>{isZh
+        ? "研究不只是一张成果清单。这个网站用来串联我选择的问题、构建的模型、信任的证据，以及从局限中获得的认识。我目前专注于医学影像 AI 中的多模态学习，并延续此前在人群计数、视觉–语言模型、多模态驾驶员监控和以人为中心的视觉方面的研究积累。"
+        : "Research is more than a list of results. I use this site to connect the problems I choose, the models I build, the evidence I trust, and the limits I learn from. My current focus is multimodal learning for medical imaging AI, building on earlier work in crowd counting, vision–language models, multimodal driver monitoring, and human-centred vision."}</p>
+      <div class="about-actions">
+        <a class="text-button" href={localePath(locale, "/about")}><span>{isZh ? "完整介绍" : "Full profile"}</span><span aria-hidden="true"> ↗</span></a>
+        <a class="text-button" href={localePath(locale, "/cv")}><span>{isZh ? "中文简历" : "English CV"}</span><span aria-hidden="true"> ↗</span></a>
+        <a class="text-button" href={`mailto:${site.email}`}><span>{isZh ? "邮件联系" : "Email me"}</span><span aria-hidden="true"> ↗</span></a>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>

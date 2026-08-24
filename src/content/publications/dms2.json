@@ -1,0 +1,39 @@
+{
+  "title": "Robust Multiview Multimodal Driver Monitoring System Using Masked Multi-Head Self-Attention",
+  "shortTitle": "Masked MHSA",
+  "date": "2023-04-13",
+  "publishedOn": "2026-08-24",
+  "venue": "CVPRW 2023",
+  "authors": ["Yiming Ma", "Victor Sanchez", "Soodeh Nikan", "Devesh Upadhyay", "Bhushan Atote", "Tanaya Guha"],
+  "tags": ["task:human-behaviour", "method:multimodal-fusion", "goal:robustness"],
+  "selected": true,
+  "image": "/publications/dms2/overview.png",
+  "links": {
+    "paper": "https://arxiv.org/abs/2304.06370",
+    "code": "https://github.com/Yiming-M/MHSA"
+  },
+  "question": {
+    "en": "How should four heterogeneous video sources be fused, and can the same model remain useful when one or more sources fail?",
+    "zh": "四路异构视频信息应该如何融合？当其中一路或多路失效时，同一个模型还能否继续工作？"
+  },
+  "oneLine": {
+    "en": "Fuse top/front and depth/infrared features with source-aware self-attention, and randomly mask feature patches during training to simulate missing views or modalities.",
+    "zh": "用带信息源标识的自注意力融合顶视/前视与深度/红外特征，并在训练中随机遮挡特征块以模拟视角或模态缺失。"
+  },
+  "problem": {
+    "en": "Averaging final decisions from separate sensor branches discards the spatial-temporal relationships among sources and cannot learn which source matters for a particular action. At deployment, camera or modality collapse creates a second problem: a model trained only with all four sources may depend too strongly on any one of them.",
+    "zh": "把各传感器分支的最终分数直接平均，会丢失不同信息源之间的时空关系，也无法学习某个动作更依赖哪一路信息。部署时还存在第二个问题：只用完整四路输入训练的模型，可能过度依赖其中任意一路，一旦相机或模态失效便明显退化。"
+  },
+  "idea": {
+    "en": "Separate R3D-18 backbones encode the four synchronized sources. Their patches receive source and position embeddings before multi-head self-attention, so the fusion module can compare semantics across views, modalities, space, and time. SuMoCo supplies memory-efficient supervised contrastive training, while random patch masking acts as both regularization and a simulation of partial source collapse.",
+    "zh": "四路同步视频分别由独立的 R3D-18 编码；特征块加入信息源与位置嵌入后进入多头自注意力，使融合模块能够跨视角、模态、空间和时间比较语义。SuMoCo 提供显存友好的监督式对比学习，随机特征块遮挡则同时承担正则化与模拟部分信息源失效的作用。"
+  },
+  "evidence": {
+    "en": "With all four sources, MHSA reaches 97.0% AUC-ROC and 97.8% mAP for binary non-driving-activity detection, and 91.6% mAP for fine-grained classification after unseen test activities are excluded. Across tests that remove one, two, or three sources, increasing the training mask ratio consistently reduces degradation; the 90% mask setting is the most robust.",
+    "zh": "使用全部四路信息时，MHSA 在非驾驶活动二分类上达到 97.0% AUC-ROC 和 97.8% mAP；在排除测试集中未见过的活动后，细粒度分类达到 91.6% mAP。在分别移除一、二或三路输入的实验中，提高训练遮挡比例能持续减小性能退化，其中 90% 遮挡的模型最稳健。"
+  },
+  "caveat": {
+    "en": "The paper explicitly reports overfitting and severe class imbalance: normal driving is 84.7% of training data, and unseen activities are removed from the fine-grained evaluation. Missing sensors are simulated by clean source removal rather than real corruption; the authors also flag demographic imbalance and privacy risks from face-containing driver video.",
+    "zh": "论文明确指出过拟合和严重类别不均衡：正常驾驶占训练数据的 84.7%，细粒度评估还排除了训练中未见的活动。传感器缺失通过干净地移除信息源来模拟，并不等同于真实故障噪声；作者也指出驾驶员面部视频带来的群体不均衡与隐私风险。"
+  }
+}

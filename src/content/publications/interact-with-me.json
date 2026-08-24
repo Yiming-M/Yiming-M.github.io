@@ -1,0 +1,39 @@
+{
+  "title": "Interact with me: Joint Egocentric Forecasting of Intent to Interact, Attitude and Social Actions",
+  "shortTitle": "Interact with me",
+  "date": "2024-12-21",
+  "publishedOn": "2026-08-24",
+  "venue": "ICME 2025",
+  "authors": ["Tongfei Bian", "Yiming Ma", "Mathieu Chollet", "Victor Sanchez", "Tanaya Guha"],
+  "tags": ["task:human-behaviour", "method:skeleton-graphs", "goal:anticipation"],
+  "selected": false,
+  "image": "/publications/interact-with-me/overview.png",
+  "links": {
+    "paper": "https://arxiv.org/abs/2412.16698",
+    "code": "https://github.com/biantongfei/SocialEgoNet"
+  },
+  "question": {
+    "en": "From one second of egocentric video, can an agent identify who will engage, whether the attitude is positive or negative, and what social action comes next?",
+    "zh": "只看一秒钟的第一人称视频，智能体能否判断谁会与它互动、态度是积极还是消极，以及下一步会发生什么社交动作？"
+  },
+  "oneLine": {
+    "en": "Represent face, body, and hand keypoints as graphs, model their temporal evolution, and forecast intent, attitude, and action through a chained task hierarchy.",
+    "zh": "把面部、身体和手部关键点建成图，建模它们的时序变化，再通过链式任务层级联合预判意图、态度和动作。"
+  },
+  "problem": {
+    "en": "A social agent should prepare before an interaction begins, including when several people are visible. Existing work usually studies intent, attitude, or action separately, and the available JPL dataset originally labels only the completed action of the interacting person rather than all visible people.",
+    "zh": "社交智能体应在互动真正开始前做好准备，尤其是在视野中同时出现多个人时。既有工作通常把意图、态度或动作分开研究，而原始 JPL 数据集只标注互动者已经完成的动作，没有覆盖画面中所有人的互动状态。"
+  },
+  "idea": {
+    "en": "SocialEgoNet runs separate graph convolutional networks over face, body, and hand keypoints, fuses the spatial cues with multi-head attention, and uses a bidirectional LSTM for the 30-frame sequence. A chained classifier passes information from intent to attitude to action. The accompanying JPL-Social annotations expand 200 videos into 290 person-level tracks with labels for all three tasks.",
+    "zh": "SocialEgoNet 分别用图卷积网络处理面部、身体和手部关键点，通过多头注意力融合空间线索，再用双向 LSTM 建模 30 帧序列。链式分类器让信息从意图传递到态度和动作。配套的 JPL-Social 标注把 200 段视频扩展为 290 条人物轨迹，并为三项任务逐人标注。"
+  },
+  "evidence": {
+    "en": "SocialEgoNet reports 88.10% intent accuracy, 91.11% attitude accuracy, and 70.24% action accuracy, averaging 83.15%. Its 3.18M-parameter task model is much smaller than MS-G3D's 12.82M and has lower post-keypoint-processing latency, although MS-G3D retains the highest average accuracy at 85.08% versus 83.15%.",
+    "zh": "SocialEgoNet 的意图、态度和动作准确率分别为 88.10%、91.11% 和 70.24%，平均为 83.15%。其任务模型只有 3.18M 参数，明显小于 MS-G3D 的 12.82M，关键点提取后的推理延迟也更低；但 MS-G3D 的平均准确率仍最高，为 85.08%，高于 SocialEgoNet 的 83.15%。"
+  },
+  "caveat": {
+    "en": "JPL-Social contains only 200 laboratory videos from 16 subjects across six settings, so in-the-wild generalization remains untested. The reported network latency is measured after whole-body pose extraction; end-to-end speed and accuracy still depend on person tracking and keypoint quality.",
+    "zh": "JPL-Social 仅包含 16 名参与者在六种实验室场景中的 200 段视频，因此尚未验证真实开放环境中的泛化。论文报告的网络延迟从全身姿态提取之后开始计算；端到端速度和准确性仍取决于人物跟踪与关键点质量。"
+  }
+}

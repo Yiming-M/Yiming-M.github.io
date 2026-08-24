@@ -1,0 +1,40 @@
+{
+  "title": "CLIP-EBC: CLIP Can Count Accurately through Enhanced Blockwise Classification",
+  "shortTitle": "CLIP-EBC",
+  "date": "2024-03-14",
+  "publishedOn": "2026-08-24",
+  "venue": "ICME 2025",
+  "authors": ["Yiming Ma", "Victor Sanchez", "Tanaya Guha"],
+  "tags": ["task:crowd-counting", "method:vision-language", "goal:accuracy"],
+  "selected": true,
+  "image": "/publications/clip-ebc/overview.png",
+  "links": {
+    "paper": "https://arxiv.org/abs/2403.09281",
+    "code": "https://github.com/Yiming-M/CLIP-EBC",
+    "demo": "https://huggingface.co/spaces/Yiming-M/CLIP-EBC"
+  },
+  "question": {
+    "en": "CLIP was trained to match images and words, not to regress continuous values. Can counting be reformulated so that its recognition knowledge remains useful?",
+    "zh": "CLIP 学到的是图文匹配，而不是连续数值回归。能否重新表述计数问题，让它的识别知识仍然有用？"
+  },
+  "oneLine": {
+    "en": "Turn each local count into an unambiguous integer class, match local CLIP image features to natural-language count prompts, and recover a density map from the class probabilities.",
+    "zh": "把局部人数变成无歧义的整数类别，让 CLIP 的局部图像特征匹配自然语言计数提示，再从类别概率恢复密度图。"
+  },
+  "problem": {
+    "en": "Standard blockwise classification first Gaussian-smooths point labels, turning integer counts into real values and forcing adjacent bins to share fragile boundaries. Such bins make poor text prompts for CLIP (for example, '3.14 people'), while classification loss alone is not aligned with MAE or RMSE on the reconstructed count map.",
+    "zh": "标准分块分类先对点标注做高斯平滑，把整数人数变成实数，并让相邻分箱共享脆弱边界。这类分箱既难以形成适合 CLIP 的自然语言提示（例如“3.14 个人”），单独优化分类损失也不等价于降低重建计数图上的 MAE 或 RMSE。"
+  },
+  "idea": {
+    "en": "Enhanced Blockwise Classification replaces smoothed real-valued bins with integer bins, merges the noisy high-count tail into a shared bin, and combines classification with a density-map count loss. CLIP-EBC freezes the text encoder, adapts the image encoder with visual prompt tokens, and classifies each spatial feature by similarity to prompts such as 'There are 3 people.'",
+    "zh": "增强分块分类用整数分箱替代平滑后的实数分箱，把噪声较大的高计数长尾合并进同一分箱，并将分类损失与密度图计数损失结合。CLIP-EBC 冻结文本编码器，通过视觉提示 token 适配图像编码器，再按局部特征与“这里有 3 个人”等提示的相似度完成分类。"
+  },
+  "evidence": {
+    "en": "On UCF-QNRF, applying all three EBC changes to VGG16 reduces MAE from 140.6 to 77.9, a 44.5% improvement, and the framework also improves five other backbones. CLIP-EBC with ViT-L/14 reports 58.2 MAE and 268.5 RMSE on NWPU-Crowd test, while experiments cover four crowd-counting datasets.",
+    "zh": "在 UCF-QNRF 上，把三项 EBC 改进全部用于 VGG16，可将 MAE 从 140.6 降至 77.9，即提升 44.5%，且另外五种骨干也得到改善。采用 ViT-L/14 的 CLIP-EBC 在 NWPU-Crowd 测试集报告 58.2 MAE 和 268.5 RMSE，整体实验覆盖四个人群计数数据集。"
+  },
+  "caveat": {
+    "en": "Despite using language prompts, CLIP-EBC is a supervised, dataset-specific counter with tuned bins and visual prompt learning; it is not a zero-shot or open-vocabulary counting result. The paper does not test cross-dataset transfer or robustness under domain shift.",
+    "zh": "尽管使用了语言提示，CLIP-EBC 仍是带有数据集特定分箱和视觉提示学习的监督式计数器，并不是零样本或开放词汇计数结果。论文也没有检验跨数据集迁移或域偏移下的稳健性。"
+  }
+}

@@ -1,0 +1,16 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import PublicationDetail from "../../../components/PublicationDetail.astro";
+import { routeDate } from "../../../lib/site";
+
+export async function getStaticPaths() {
+  return (await getCollection("publications")).map((publication) => ({
+    params: { date: routeDate(publication.data.date), slug: publication.id },
+    props: { publication },
+  }));
+}
+
+interface Props { publication: CollectionEntry<"publications"> }
+const { publication } = Astro.props;
+---
+<PublicationDetail locale="en" publication={publication} />
