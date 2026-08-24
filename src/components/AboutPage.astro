@@ -18,11 +18,11 @@ const isZh = locale === "zh";
       <p>{isZh ? "我是马一铭博士，目前专注于医学影像 AI 中的多模态学习，研究模型如何融合不同影像模态与互补信息。我的既有研究还涉及计算机视觉、人群计数、视觉–语言模型、多模态驾驶员监控，以及以人为中心的视觉系统。" : "I am Dr Yiming Ma. My current focus is multimodal learning for medical imaging AI: how models can combine different imaging modalities and complementary sources of information. My broader research background spans computer vision, crowd counting, vision–language models, multimodal driver monitoring, and human-centred visual systems."}</p>
       <p>{isZh ? "我尤其关心多模态模型在现实约束下是否仍然可靠：某个模态缺失时能否继续工作，标注稀疏时能否有效学习，计算预算有限时能否部署，以及实验结论在什么条件下才成立。这个网站既保存成果，也解释这些选择。" : "I am especially interested in whether multimodal models remain reliable under real constraints: whether they still work when a modality is missing, learn effectively from sparse labels, operate under limited compute, and state the conditions under which an empirical claim holds. This site records the outputs and explains those choices."}</p>
       <blockquote class="about-pull-quote">
-        <p>{isZh ? "“事实的堆积之于科学，正如石头的堆积之于房屋。”" : "“An accumulation of facts is no more a science than a heap of stones is a house.”"}</p>
+        <p>{isZh ? "“凡人之患，蔽于一曲，而暗于大理。”" : "“False facts are highly injurious to the progress of science, for they often endure long.”"}</p>
         <cite>
-          {isZh ? <>— 亨利·庞加莱，《<span class="work-title">科学与假设</span>》</> : <>— Henri Poincaré, <span class="work-title">Science and Hypothesis</span></>}
+          {isZh ? <>— 荀子，《<span class="work-title">解蔽</span>》</> : <>— Charles Darwin, <span class="work-title">The Descent of Man</span></>}
           {" · "}
-          <a href="https://www.gutenberg.org/files/39713/39713-h/39713-h.htm"><span>{isZh ? "庞加莱引文出处" : "Source for the Poincaré quotation"}</span><span aria-hidden="true"> ↗</span></a>
+          <a href={isZh ? "https://zh.wikisource.org/zh-hans/%E8%8D%80%E5%AD%90/%E8%A7%A3%E8%94%BD%E7%AF%87" : "https://darwin-online.org.uk/converted/published/1877_Descent_F948/1877_Descent_F948.html"}><span>{isZh ? "荀子引文出处" : "Source for the Darwin quotation"}</span><span aria-hidden="true"> ↗</span></a>
         </cite>
       </blockquote>
 

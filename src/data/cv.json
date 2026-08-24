@@ -1,0 +1,248 @@
+{
+  "updated": {
+    "en": "August 2026",
+    "zh": "2026年8月"
+  },
+  "headline": {
+    "en": "Postdoctoral Research Associate at King's College London",
+    "zh": "伦敦国王学院博士后研究员"
+  },
+  "summary": {
+    "en": "Computer vision and multimodal learning researcher with six publications, five as first author, and experience spanning medical imaging AI, crowd counting, multi-view multimodal driver monitoring, and industry collaboration.",
+    "zh": "从事计算机视觉与多模态学习研究，已发表 6 篇论文，其中 5 篇为第一作者；研究经历涵盖医学影像 AI、人群计数、多视角多模态驾驶员监控及产业合作。"
+  },
+  "contact": {
+    "email": "yiming.m@proton.me",
+    "github": "https://github.com/Yiming-M",
+    "scholar": "https://scholar.google.com/citations?user=gC0aZsAAAAAJ&hl=en",
+    "linkedin": "https://www.linkedin.com/in/yiming-ma-5b401a201/"
+  },
+  "experience": [
+    {
+      "role": {
+        "en": "Postdoctoral Research Associate",
+        "zh": "博士后研究员"
+      },
+      "institution": {
+        "en": "King's College London",
+        "zh": "伦敦国王学院"
+      },
+      "location": {
+        "en": "London, UK",
+        "zh": "英国伦敦"
+      },
+      "period": {
+        "en": "Jan 2026 - Present",
+        "zh": "2026年1月 - 至今"
+      },
+      "bullets": [
+        {
+          "en": "Develop AI-driven precision active-surveillance tools for prostate cancer, spanning patient selection, risk stratification, lesion detection, progression assessment, and personalised surveillance.",
+          "zh": "面向前列腺癌主动监测，研发 AI 驱动的精准决策工具，覆盖患者筛选、风险分层、病灶检测、进展评估与个体化随访。"
+        },
+        {
+          "en": "Build patient-specific Multi-Modal Fingerprints that integrate longitudinal prostate MRI, clinicopathological variables, demographic data, and radiology reports.",
+          "zh": "构建患者级多模态指纹（MMF），融合纵向前列腺 MRI、临床病理变量、人口统计信息与放射学报告。"
+        },
+        {
+          "en": "Investigate foundation models, self-supervised and semi-supervised learning, and longitudinal architectures, with emphasis on missing data, domain shift, and external validation.",
+          "zh": "研究基础模型、自监督与半监督学习以及纵向建模，重点处理数据缺失、域偏移与外部验证问题。"
+        },
+        {
+          "en": "Contribute to clinician-facing standardised reports that translate model outputs into patient selection and follow-up decisions.",
+          "zh": "参与生成面向临床的标准化报告，将模型输出转化为患者筛选和随访决策支持。"
+        }
+      ]
+    },
+    {
+      "role": {
+        "en": "Research Assistant",
+        "zh": "研究助理"
+      },
+      "institution": {
+        "en": "University of Warwick",
+        "zh": "华威大学"
+      },
+      "location": {
+        "en": "Coventry, UK",
+        "zh": "英国考文垂"
+      },
+      "period": {
+        "en": "2022 - 2023",
+        "zh": "2022 - 2023"
+      },
+      "bullets": [
+        {
+          "en": "Refined and extended DAD annotations with nine non-driving activities and prepared data for robust benchmarking.",
+          "zh": "整理并扩展 DAD 数据集标注，新增 9 类非驾驶活动，为稳健性评测准备数据。"
+        },
+        {
+          "en": "Designed a multi-view multimodal driver-monitoring system using masked multi-head self-attention, improving DAD AUC-ROC from 88% to 97% and increasing robustness to missing views or modalities.",
+          "zh": "设计基于掩码多头自注意力的多视角多模态驾驶员监控系统，将 DAD 上的 AUC-ROC 从 88% 提升至 97%，并增强视角或模态缺失时的稳健性。"
+        }
+      ]
+    },
+    {
+      "role": {
+        "en": "Teaching Assistant",
+        "zh": "助教"
+      },
+      "institution": {
+        "en": "University of Warwick",
+        "zh": "华威大学"
+      },
+      "location": {
+        "en": "Coventry, UK",
+        "zh": "英国考文垂"
+      },
+      "period": {
+        "en": "2023",
+        "zh": "2023"
+      },
+      "bullets": [
+        {
+          "en": "Led labs and tutorials for an undergraduate Python and introductory machine-learning module, covering regression, classification, and neural networks.",
+          "zh": "承担本科 Python 与机器学习导论课程的实验课和辅导课，内容涵盖回归、分类与神经网络。"
+        },
+        {
+          "en": "Provided one-to-one and small-group support for programming, machine-learning concepts, code troubleshooting, and experiment design.",
+          "zh": "为学生提供一对一及小组辅导，讲解编程与机器学习概念，并协助排查代码和实验设计问题。"
+        }
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": {
+        "en": "PhD in Mathematics of Systems",
+        "zh": "系统数学博士"
+      },
+      "institution": {
+        "en": "University of Warwick",
+        "zh": "华威大学"
+      },
+      "location": {
+        "en": "Coventry, UK",
+        "zh": "英国考文垂"
+      },
+      "period": {
+        "en": "Sep 2021 - Sep 2025",
+        "zh": "2021年9月 - 2025年9月"
+      },
+      "detail": {
+        "en": "Supervisors: Prof. Victor Sanchez and Dr Tanaya Guha.",
+        "zh": "导师：Victor Sanchez 教授、Tanaya Guha 博士。"
+      }
+    },
+    {
+      "degree": {
+        "en": "MSc in Mathematics of Systems (Distinction)",
+        "zh": "系统数学硕士（Distinction）"
+      },
+      "institution": {
+        "en": "University of Warwick",
+        "zh": "华威大学"
+      },
+      "location": {
+        "en": "Coventry, UK",
+        "zh": "英国考文垂"
+      },
+      "period": {
+        "en": "2020 - 2021",
+        "zh": "2020 - 2021"
+      },
+      "detail": {
+        "en": "Research on guide-dog oestrus-interval prediction and digital twins of urban crowds.",
+        "zh": "研究课题包括导盲犬动情周期间隔预测与城市人群数字孪生。"
+      }
+    },
+    {
+      "degree": {
+        "en": "BSc in Mathematics and Applied Mathematics",
+        "zh": "数学与应用数学学士"
+      },
+      "institution": {
+        "en": "Southern University of Science and Technology",
+        "zh": "南方科技大学"
+      },
+      "location": {
+        "en": "Shenzhen, China",
+        "zh": "中国深圳"
+      },
+      "period": {
+        "en": "2016 - 2020",
+        "zh": "2016 - 2020"
+      },
+      "detail": {
+        "en": "GPA: 3.89/4.00.",
+        "zh": "GPA：3.89/4.00。"
+      }
+    }
+  ],
+  "service": {
+    "en": "Reviewer for IEEE TNNLS, IEEE TMM, IEEE SPL, ECCV, ACM MM, CVPRW, ICME, WACV, BMVC, and ICIP.",
+    "zh": "担任 IEEE TNNLS、IEEE TMM、IEEE SPL、ECCV、ACM MM、CVPRW、ICME、WACV、BMVC 与 ICIP 审稿人。"
+  },
+  "skills": [
+    {
+      "label": {
+        "en": "Deep learning",
+        "zh": "深度学习"
+      },
+      "value": {
+        "en": "Attention, vision transformers, prompt tuning, CLIP, contrastive learning, multimodal alignment, multimodal fusion",
+        "zh": "注意力机制、视觉 Transformer、提示调优、CLIP、对比学习、多模态对齐、多模态融合"
+      }
+    },
+    {
+      "label": {
+        "en": "Frameworks",
+        "zh": "框架"
+      },
+      "value": {
+        "en": "PyTorch, TIMM, OpenCLIP, Transformers, TensorBoard, Optuna",
+        "zh": "PyTorch、TIMM、OpenCLIP、Transformers、TensorBoard、Optuna"
+      }
+    },
+    {
+      "label": {
+        "en": "Python",
+        "zh": "Python"
+      },
+      "value": {
+        "en": "NumPy, SciPy, scikit-learn, pandas, OpenCV, Matplotlib, Seaborn",
+        "zh": "NumPy、SciPy、scikit-learn、pandas、OpenCV、Matplotlib、Seaborn"
+      }
+    },
+    {
+      "label": {
+        "en": "Mathematics and statistics",
+        "zh": "数学与统计"
+      },
+      "value": {
+        "en": "Probability, statistical inference, optimisation, stochastic processes, time-series modelling, survival analysis, computational statistics, real, complex, functional and Fourier analysis, measure theory",
+        "zh": "概率论、统计推断、优化、随机过程、时间序列建模、生存分析、计算统计、实分析、复分析、泛函分析、傅里叶分析、测度论"
+      }
+    },
+    {
+      "label": {
+        "en": "Development tools",
+        "zh": "开发工具"
+      },
+      "value": {
+        "en": "SSH, Git, Linux, LaTeX, Markdown, Microsoft Word",
+        "zh": "SSH、Git、Linux、LaTeX、Markdown、Microsoft Word"
+      }
+    },
+    {
+      "label": {
+        "en": "Languages",
+        "zh": "语言"
+      },
+      "value": {
+        "en": "Mandarin Chinese (native); English (IELTS 8.0/9.0)",
+        "zh": "普通话（母语）；英语（IELTS 8.0/9.0）"
+      }
+    }
+  ]
+}

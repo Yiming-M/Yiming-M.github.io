@@ -62,12 +62,13 @@ const description = isZh
     </aside>
 
     <blockquote class="hero-quote">
-      <p>{isZh ? "“凡是能够说的，都能够说清楚。”" : "“What can be said at all can be said clearly.”"}</p>
+      <p>{isZh ? "“操千曲而后晓声，观千剑而后识器。”" : "“Do not block the way of inquiry.”"}</p>
       <cite>
-        — Ludwig Wittgenstein, <span>Tractatus Logico-Philosophicus</span>
+        {isZh ? <>— 刘勰，《<span>文心雕龙·知音</span>》</> : <>— Charles S. Peirce, <span>The First Rule of Logic</span></>}
+        {" "}
         <a
-          href="https://www.wittgensteinproject.org/w/index.php/Tractatus_Logico-Philosophicus_%28English%29"
-          aria-label={isZh ? "维特根斯坦引文出处" : "Source for the Wittgenstein quotation"}
+          href={isZh ? "https://zh.wikisource.org/zh-hans/%E6%96%87%E5%BF%83%E9%9B%95%E9%BE%8D/%E7%9F%A5%E9%9F%B3" : "https://www.textlog.de/4249"}
+          aria-label={isZh ? "刘勰引文出处" : "Source for the Peirce quotation"}
         >↗</a>
       </cite>
     </blockquote>
@@ -147,8 +148,8 @@ const description = isZh
   <section class="section about-section" id="about">
     <div class="about-label"><p class="section-number">03 / {isZh ? "关于" : "About"}</p><p class="about-monogram" aria-hidden="true">YM</p></div>
     <div class="about-copy">
-      <h2>{isZh ? "“事实的堆积之于科学，正如石头的堆积之于房屋。”" : "“An accumulation of facts is no more a science than a heap of stones is a house.”"}</h2>
-      <p class="quote-source">{isZh ? <>— 亨利·庞加莱，《<cite>科学与假设</cite>》</> : <>— Henri Poincaré, <cite>Science and Hypothesis</cite></>} <a href="https://www.gutenberg.org/files/39713/39713-h/39713-h.htm" aria-label={isZh ? "庞加莱引文出处" : "Source for the Poincaré quotation"}>↗</a></p>
+      <h2>{isZh ? "“凡人之患，蔽于一曲，而暗于大理。”" : "“False facts are highly injurious to the progress of science, for they often endure long.”"}</h2>
+      <p class="quote-source">{isZh ? <>— 荀子，《<cite>解蔽</cite>》</> : <>— Charles Darwin, <cite>The Descent of Man</cite></>} <a href={isZh ? "https://zh.wikisource.org/zh-hans/%E8%8D%80%E5%AD%90/%E8%A7%A3%E8%94%BD%E7%AF%87" : "https://darwin-online.org.uk/converted/published/1877_Descent_F948/1877_Descent_F948.html"} aria-label={isZh ? "荀子引文出处" : "Source for the Darwin quotation"}>↗</a></p>
       <p>{isZh
         ? "研究不只是一张成果清单。这个网站用来串联我选择的问题、构建的模型、信任的证据，以及从局限中获得的认识。我目前专注于医学影像 AI 中的多模态学习，并延续此前在人群计数、视觉–语言模型、多模态驾驶员监控和以人为中心的视觉方面的研究积累。"
         : "Research is more than a list of results. I use this site to connect the problems I choose, the models I build, the evidence I trust, and the limits I learn from. My current focus is multimodal learning for medical imaging AI, building on earlier work in crowd counting, vision–language models, multimodal driver monitoring, and human-centred vision."}</p>

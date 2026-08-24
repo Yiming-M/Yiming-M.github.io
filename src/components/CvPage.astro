@@ -1,36 +1,152 @@
 ---
+import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { localePath, site, type Locale } from "../lib/site";
+import cv from "../data/cv.json";
+import { localePath, localize, publicationPath, site, type Locale } from "../lib/site";
+
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const isZh = locale === "zh";
+const publicationOrder = ["zip", "clip-ebc", "interact-with-me", "dms2", "fusioncount", "dms1"];
+const publications = (await getCollection("publications")).sort(
+  (a, b) => publicationOrder.indexOf(a.id) - publicationOrder.indexOf(b.id),
+);
+const englishPdf = "/cv/Yiming-Ma-CV-en.pdf";
+const chinesePdf = "/cv/Yiming-Ma-CV-zh.pdf";
 ---
 
-<BaseLayout locale={locale} title={isZh ? "简历 — 马一铭博士" : "CV — Dr Yiming Ma"} description={isZh ? "马一铭博士的中文简历入口。" : "Dr Yiming Ma's English curriculum vitae."} path="/cv">
-  <section class="page-intro">
-    <div class="page-intro-meta"><p class="eyebrow">{isZh ? "中文简历" : "Curriculum vitae"}</p><span class="status-label">{isZh ? "待添加" : "Pending"}</span></div>
-    <h1>{isZh ? "简历 PDF 即将补充。" : "CV PDF coming soon."}</h1>
-    <p class="page-intro-lead">{isZh ? "仓库中暂时没有中文简历 PDF，因此这里保留一个诚实的状态页，而不是提供失效下载。" : "There is no English CV PDF in the repository yet, so this page records the status instead of offering a broken download."}</p>
-  </section>
-  <section class="cv-panel">
-    <div class="cv-document-status">
-      <p class="section-number">01 / {isZh ? "文件状态" : "Document status"}</p>
-      <h2>{isZh ? "当前文件尚未提供。" : "The current file is not available yet."}</h2>
-      <dl>
-        <div><dt>{isZh ? "语言" : "Language"}</dt><dd>{isZh ? "中文" : "English"}</dd></div>
-        <div><dt>{isZh ? "格式" : "Format"}</dt><dd>PDF</dd></div>
-        <div><dt>{isZh ? "状态" : "Status"}</dt><dd>{isZh ? "待添加" : "Pending"}</dd></div>
-      </dl>
-      <p class="cv-note">{isZh ? "中文和英文 CV 将分别提供；本页不会在文件缺失时显示下载按钮。" : "English and Chinese CV PDFs will be provided separately; this page does not show a download action while the file is missing."}</p>
+<BaseLayout
+  locale={locale}
+  title={isZh ? "简历 — 马一铭博士" : "CV — Dr Yiming Ma"}
+  description={isZh ? "马一铭博士的中文学术简历与 PDF 下载。" : "Dr Yiming Ma's academic CV and downloadable PDF."}
+  path="/cv"
+>
+  <section class="page-intro cv-page-intro">
+    <div class="page-intro-meta">
+      <p class="eyebrow">{isZh ? "中文简历" : "Curriculum vitae"}</p>
+      <span class="status-label">{isZh ? `${localize(locale, cv.updated)}更新` : `Updated ${localize(locale, cv.updated)}`}</span>
     </div>
-    <aside class="cv-alternatives">
-      <p class="section-number">02 / {isZh ? "替代入口" : "In the meantime"}</p>
-      <h2>{isZh ? "先从这些入口了解我的工作。" : "Use these routes while the PDF is pending."}</h2>
-      <div class="link-list">
+    <h1>{isZh ? "学术简历。" : "Academic CV."}</h1>
+    <p class="page-intro-lead"><strong>{localize(locale, cv.headline)}</strong>{isZh ? "。" : ". "}{localize(locale, cv.summary)}</p>
+    <nav class="secondary-actions cv-download-actions" aria-label={isZh ? "简历下载" : "CV downloads"}>
+      <a class="cv-primary-download" href={isZh ? chinesePdf : englishPdf} download>
+        <span>{isZh ? "下载中文 PDF" : "Download English PDF"}</span><span aria-hidden="true"> ↓</span>
+      </a>
+      <a href={isZh ? englishPdf : chinesePdf} download>
+        <span>{isZh ? "下载英文 PDF" : "Download Chinese PDF"}</span><span aria-hidden="true"> ↓</span>
+      </a>
+    </nav>
+  </section>
+
+  <section class="cv-panel cv-complete">
+    <aside class="cv-sidebar">
+      <div class="cv-current-role">
+        <p class="section-number">01 / {isZh ? "现任" : "Current"}</p>
+        <h2>{localize(locale, cv.experience[0].role)}</h2>
+        <p>{localize(locale, cv.experience[0].institution)}</p>
+        <p>{localize(locale, cv.experience[0].period)}</p>
+      </div>
+
+      <nav class="cv-section-index link-list" aria-label={isZh ? "简历目录" : "CV sections"}>
+        <a href="#experience"><span>{isZh ? "工作经历" : "Experience"}</span><span aria-hidden="true">↓</span></a>
+        <a href="#publications"><span>{isZh ? "论文" : "Publications"}</span><span aria-hidden="true">↓</span></a>
+        <a href="#education"><span>{isZh ? "教育背景" : "Education"}</span><span aria-hidden="true">↓</span></a>
+        <a href="#service"><span>{isZh ? "学术服务" : "Service"}</span><span aria-hidden="true">↓</span></a>
+        <a href="#skills"><span>{isZh ? "技能" : "Skills"}</span><span aria-hidden="true">↓</span></a>
+      </nav>
+
+      <div class="cv-contact link-list">
+        <a href={`mailto:${site.email}`}><span>{site.email}</span><span aria-hidden="true">↗</span></a>
         <a href={site.scholar}><span>Google Scholar</span><span aria-hidden="true">↗</span></a>
-        <a href={localePath(locale, "/about")}><span>{isZh ? `关于${site.displayNameZh}` : `About ${site.displayName}`}</span><span aria-hidden="true">→</span></a>
-        <a href={`mailto:${site.email}`}><span>{isZh ? "通过邮件索取简历" : "Request the CV by email"}</span><span aria-hidden="true">→</span></a>
+        <a href={site.github}><span>GitHub</span><span aria-hidden="true">↗</span></a>
+        <a href={site.linkedin}><span>LinkedIn</span><span aria-hidden="true">↗</span></a>
       </div>
     </aside>
+
+    <div class="cv-document">
+      <section class="cv-section" id="experience">
+        <header class="cv-section-heading">
+          <p class="section-number">02 / {isZh ? "工作经历" : "Experience"}</p>
+          <h2>{isZh ? "研究与教学" : "Research and teaching"}</h2>
+        </header>
+        <div class="cv-entry-list">
+          {cv.experience.map((entry) => (
+            <article class="cv-entry">
+              <div class="cv-entry-meta">
+                <p>{localize(locale, entry.period)}</p>
+                <p>{localize(locale, entry.location)}</p>
+              </div>
+              <div class="cv-entry-copy">
+                <h3>{localize(locale, entry.role)}</h3>
+                <p class="cv-entry-institution">{localize(locale, entry.institution)}</p>
+                <ul>{entry.bullets.map((bullet) => <li>{localize(locale, bullet)}</li>)}</ul>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="cv-section" id="publications">
+        <header class="cv-section-heading">
+          <p class="section-number">03 / {isZh ? "论文" : "Publications"}</p>
+          <h2>{isZh ? "论文与预印本" : "Publications and preprints"}</h2>
+        </header>
+        <div class="cv-publication-list">
+          {publications.map((publication) => (
+            <article class="cv-publication">
+              <p class="cv-publication-venue">{publication.data.venue}</p>
+              <div>
+                <h3><a href={localePath(locale, publicationPath(publication.id, publication.data.date))}>{publication.data.title}</a></h3>
+                <p class="cv-publication-authors">{publication.data.authors.join(", ")}</p>
+                <p>{localize(locale, publication.data.oneLine)}</p>
+                <a class="text-button" href={publication.data.links.paper}><span>{isZh ? "论文" : "Paper"}</span><span aria-hidden="true"> ↗</span></a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="cv-section" id="education">
+        <header class="cv-section-heading">
+          <p class="section-number">04 / {isZh ? "教育背景" : "Education"}</p>
+          <h2>{isZh ? "教育经历" : "Education"}</h2>
+        </header>
+        <div class="cv-entry-list">
+          {cv.education.map((entry) => (
+            <article class="cv-entry">
+              <div class="cv-entry-meta">
+                <p>{localize(locale, entry.period)}</p>
+                <p>{localize(locale, entry.location)}</p>
+              </div>
+              <div class="cv-entry-copy">
+                <h3>{localize(locale, entry.degree)}</h3>
+                <p class="cv-entry-institution">{localize(locale, entry.institution)}</p>
+                <p>{localize(locale, entry.detail)}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="cv-section" id="service">
+        <header class="cv-section-heading">
+          <p class="section-number">05 / {isZh ? "学术服务" : "Service"}</p>
+          <h2>{isZh ? "审稿服务" : "Peer review"}</h2>
+        </header>
+        <p class="cv-service-copy">{localize(locale, cv.service)}</p>
+      </section>
+
+      <section class="cv-section" id="skills">
+        <header class="cv-section-heading">
+          <p class="section-number">06 / {isZh ? "技能" : "Skills"}</p>
+          <h2>{isZh ? "研究与开发能力" : "Research and development"}</h2>
+        </header>
+        <dl class="cv-skills">
+          {cv.skills.map((skill) => (
+            <div><dt>{localize(locale, skill.label)}</dt><dd>{localize(locale, skill.value)}</dd></div>
+          ))}
+        </dl>
+      </section>
+    </div>
   </section>
 </BaseLayout>
