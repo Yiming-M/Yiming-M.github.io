@@ -326,15 +326,6 @@ img {
   text-transform: uppercase;
 }
 
-.hero-name {
-  margin: 0;
-  font-family: var(--font-sans);
-  font-size: clamp(3rem, 5vw, 5.5rem);
-  font-weight: 650;
-  letter-spacing: -0.045em;
-  line-height: 1;
-}
-
 .hero-thesis {
   max-width: 720px;
   margin: var(--space-6) 0 0;
@@ -345,7 +336,6 @@ img {
   line-height: 0.94;
 }
 
-html[lang^="zh"] .hero-name,
 html[lang^="zh"] .hero-thesis {
   letter-spacing: -0.015em;
 }
@@ -2604,8 +2594,8 @@ html[lang^="zh"] .cv-panel h2 {
 
   .main-nav {
     grid-area: nav;
-    justify-content: flex-start;
-    padding: var(--space-3) var(--space-1) var(--space-1);
+    justify-content: center;
+    padding: 0 var(--space-1);
     border-top: 1px solid var(--border-subtle);
   }
 
@@ -2625,10 +2615,6 @@ html[lang^="zh"] .cv-panel h2 {
 
   .hero-copy {
     grid-column: 1 / span 5;
-  }
-
-  .hero-name {
-    font-size: clamp(2.75rem, 6vw, 4rem);
   }
 
   .hero-thesis {
@@ -2819,7 +2805,7 @@ html[lang^="zh"] .cv-panel h2 {
 
   .mobile-header-row {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: var(--space-2);
     align-items: center;
   }
@@ -2827,11 +2813,6 @@ html[lang^="zh"] .cv-panel h2 {
   .brand {
     width: auto;
     min-width: 44px;
-  }
-
-  .brand-mark,
-  .brand-copy small {
-    display: none;
   }
 
   .brand-copy {
@@ -2855,12 +2836,14 @@ html[lang^="zh"] .cv-panel h2 {
   }
 
   .mobile-menu summary {
-    display: grid;
+    display: inline-flex;
     grid-column: 2;
     grid-row: 1;
-    min-width: 56px;
     min-height: 44px;
-    padding: 0 var(--space-3);
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: 0 0.875rem;
     border: 1px solid var(--border-control);
     border-radius: var(--radius-control);
     background: var(--surface);
@@ -2868,7 +2851,6 @@ html[lang^="zh"] .cv-panel h2 {
     font-size: var(--text-xs);
     font-weight: 800;
     list-style: none;
-    place-items: center;
   }
 
   .mobile-menu summary::-webkit-details-marker {
@@ -2882,6 +2864,48 @@ html[lang^="zh"] .cv-panel h2 {
   .mobile-menu[open] summary {
     border-color: var(--accent);
     background: var(--surface-subtle);
+  }
+
+  .mobile-menu-icon,
+  .mobile-menu-icon::before,
+  .mobile-menu-icon::after {
+    width: 16px;
+    height: 2px;
+    border-radius: 1px;
+    background: currentColor;
+    transition: transform 180ms ease, background-color 180ms ease;
+  }
+
+  .mobile-menu-icon {
+    position: relative;
+    display: block;
+  }
+
+  .mobile-menu-icon::before,
+  .mobile-menu-icon::after {
+    position: absolute;
+    left: 0;
+    content: "";
+  }
+
+  .mobile-menu-icon::before {
+    transform: translateY(-5px);
+  }
+
+  .mobile-menu-icon::after {
+    transform: translateY(5px);
+  }
+
+  .mobile-menu[open] .mobile-menu-icon {
+    background: transparent;
+  }
+
+  .mobile-menu[open] .mobile-menu-icon::before {
+    transform: rotate(45deg);
+  }
+
+  .mobile-menu[open] .mobile-menu-icon::after {
+    transform: rotate(-45deg);
   }
 
   .mobile-menu-panel {
@@ -2924,14 +2948,23 @@ html[lang^="zh"] .cv-panel h2 {
     font-weight: 650;
   }
 
-  .mobile-theme-group {
+  .mobile-menu-preferences {
     display: grid;
-    gap: var(--space-2);
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: var(--space-4);
     margin-top: var(--space-3);
     padding-top: var(--space-3);
     border-top: 1px solid var(--border-subtle);
   }
 
+  .mobile-language-group,
+  .mobile-theme-group {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .mobile-language-group p,
   .mobile-theme-group p {
     margin: 0;
     color: var(--text-secondary);
@@ -2946,7 +2979,7 @@ html[lang^="zh"] .cv-panel h2 {
   }
 
   .mobile-theme-options button {
-    min-height: 44px;
+    min-height: 52px;
     padding: var(--space-2);
     border: 1px solid var(--border-control);
     border-radius: var(--radius-control);
@@ -3014,10 +3047,6 @@ html[lang^="zh"] .cv-panel h2 {
   .profile-card,
   .hero-quote {
     grid-column: 1;
-  }
-
-  .hero-name {
-    font-size: clamp(2.5rem, 10vw, 3.5rem);
   }
 
   .hero-thesis {

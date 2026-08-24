@@ -127,7 +127,10 @@ const websiteData = {
           </a>
 
           <details class="mobile-menu">
-            <summary>{isZh ? "菜单" : "Menu"}</summary>
+            <summary>
+              <span>{isZh ? "菜单" : "Menu"}</span>
+              <span class="mobile-menu-icon" aria-hidden="true"></span>
+            </summary>
             <div class="mobile-menu-panel">
               <nav aria-label={isZh ? "移动页面导航" : "Mobile sections"}>
                 {nav.map((item) => (
@@ -137,28 +140,32 @@ const websiteData = {
                   </a>
                 ))}
               </nav>
-              <div class="mobile-theme-group">
-                <p>{isZh ? "显示主题" : "Display theme"}</p>
-                <div class="mobile-theme-options" role="group" aria-label={isZh ? "主题" : "Theme"}>
-                  {themeChoices.map((choice) => (
-                    <button
-                      type="button"
-                      data-theme-choice={choice.value}
-                      aria-pressed={choice.value === "auto" ? "true" : "false"}
-                      title={isZh ? choice.zh : choice.en}
-                    >
-                      {isZh ? choice.zh : choice.en}
-                    </button>
-                  ))}
+              <div class="mobile-menu-preferences">
+                <div class="mobile-language-group">
+                  <p>{isZh ? "语言" : "Language"}</p>
+                  <div class="segmented mobile-language-control" role="group" aria-label={isZh ? "语言" : "Language"}>
+                    <a href={localePath("en", path)} data-locale-choice="en" aria-current={!isZh ? "page" : undefined}>EN</a>
+                    <a href={localePath("zh", path)} data-locale-choice="zh" aria-current={isZh ? "page" : undefined}>中文</a>
+                  </div>
+                </div>
+                <div class="mobile-theme-group">
+                  <p>{isZh ? "显示主题" : "Display theme"}</p>
+                  <div class="mobile-theme-options" role="group" aria-label={isZh ? "主题" : "Theme"}>
+                    {themeChoices.map((choice) => (
+                      <button
+                        type="button"
+                        data-theme-choice={choice.value}
+                        aria-pressed={choice.value === "auto" ? "true" : "false"}
+                        title={isZh ? choice.zh : choice.en}
+                      >
+                        {isZh ? choice.zh : choice.en}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
           </details>
-
-          <div class="segmented mobile-language-control" role="group" aria-label={isZh ? "语言" : "Language"}>
-            <a href={localePath("en", path)} data-locale-choice="en" aria-current={!isZh ? "page" : undefined}>EN</a>
-            <a href={localePath("zh", path)} data-locale-choice="zh" aria-current={isZh ? "page" : undefined}>中文</a>
-          </div>
         </div>
 
         <nav class="main-nav" aria-label={isZh ? "页面" : "Sections"}>
