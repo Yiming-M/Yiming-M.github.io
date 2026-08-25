@@ -55,8 +55,8 @@ const personData = {
 const websiteData = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: site.displayName,
-  alternateName: [site.name, site.displayNameZh, "YM Research Notebook"],
+  name: site.name,
+  alternateName: [site.nameZh, "YM Research Notebook"],
   url: new URL(localePath("en"), Astro.site).href,
 };
 ---
@@ -79,7 +79,7 @@ const websiteData = {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:site_name" content={site.displayName} />
+    <meta property="og:site_name" content={site.name} />
     <meta property="og:locale" content={isZh ? "zh_CN" : "en_GB"} />
     {socialImage && <meta property="og:image" content={socialImage} />}
     {socialImage && imageAlt && <meta property="og:image:alt" content={imageAlt} />}

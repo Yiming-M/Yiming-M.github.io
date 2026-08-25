@@ -30,7 +30,7 @@ const topicGroups = groups.map((group) => ({
 }));
 ---
 
-<BaseLayout locale={locale} title={isZh ? "研究主题 — 马一铭博士" : "Research Topics — Dr Yiming Ma"} description={isZh ? "按照任务、方法与目标组织马一铭博士的研究。" : "Dr Yiming Ma's research organized by task, method, and goal."} path="/topics">
+<BaseLayout locale={locale} title={isZh ? "研究主题 — 马一铭" : "Research Topics — Yiming Ma"} description={isZh ? "按照任务、方法与目标组织马一铭的研究。" : "Yiming Ma's research organized by task, method, and goal."} path="/topics">
   <section class="page-intro"><p class="eyebrow">{isZh ? "标签体系" : "Research taxonomy"}</p><h1>{isZh ? "按主题浏览我的研究。" : "Browse my research by topic."}</h1><p class="page-intro-lead">{isZh ? `当前 ${publications.length} 篇出版物按照研究任务、主要方法和设计目标分类。` : `The current ${publications.length} publications are grouped by research task, main method, and design goal.`}</p></section>
   <section class="topic-groups">
     {topicGroups.map((group, index) => (

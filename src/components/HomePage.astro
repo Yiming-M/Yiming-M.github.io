@@ -15,11 +15,11 @@ const posts = (await getCollection("posts", ({ data }) => data.locale === locale
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 const latestPost = posts[0]!;
 const description = isZh
-  ? "马一铭博士的研究主页，聚焦多模态学习、医学影像 AI 与计算机视觉，包含论文、研究讲解与随笔。"
-  : "Dr Yiming Ma's research website on multimodal learning, medical imaging AI, and computer vision, featuring publications, explanations, and posts.";
+  ? "马一铭的研究主页，聚焦多模态学习、医学影像 AI 与计算机视觉，包含论文、研究讲解与随笔。"
+  : "Yiming Ma's research website on multimodal learning, medical imaging AI, and computer vision, featuring publications, explanations, and posts.";
 ---
 
-<BaseLayout locale={locale} title={isZh ? "马一铭博士 — 多模态医学影像 AI" : "Dr Yiming Ma — Multimodal Medical Imaging AI"} description={description} path="/">
+<BaseLayout locale={locale} title={isZh ? "马一铭 — 多模态医学影像 AI" : "Yiming Ma — Multimodal Medical Imaging AI"} description={description} path="/">
   <section class="hero" id="top">
     <div class="hero-copy">
       <p class="eyebrow">{isZh ? "多模态学习 · 计算机视觉 · 医学影像" : "Multimodal learning · Computer vision · Medical Imaging"}</p>

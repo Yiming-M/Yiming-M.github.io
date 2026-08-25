@@ -1700,7 +1700,8 @@ html[lang^="zh"] .post-title-column h1 {
   grid-column: 4 / span 5;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-4);
-  margin-top: var(--space-10);
+  align-self: start;
+  margin-top: var(--space-4);
 }
 
 .post-byline p {
@@ -1729,7 +1730,7 @@ html[lang^="zh"] .post-title-column h1 {
 
 .post-section-nav {
   position: sticky;
-  top: var(--space-6);
+  top: 8rem;
   grid-column: 1 / span 3;
   padding: var(--space-5) var(--space-5) var(--space-5) 0;
   border-top: 1px solid var(--border-strong);
@@ -1902,7 +1903,7 @@ html[lang^="zh"] .post-body h2 {
 }
 
 .post-end {
-  align-items: end;
+  align-items: center;
   margin-top: var(--space-16);
   padding: var(--space-10) 0;
   border-block: 1px solid var(--border-strong);
@@ -3663,7 +3664,7 @@ html[lang^="zh"] .cv-section-heading h2 {
   .post-body {
     grid-column: 1 / -1;
     max-width: 800px;
-    margin: var(--space-10) auto 0;
+    margin: var(--space-12) auto 0;
   }
 
   .post-end > div {

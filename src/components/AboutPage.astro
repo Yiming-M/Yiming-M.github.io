@@ -6,16 +6,16 @@ const { locale } = Astro.props;
 const isZh = locale === "zh";
 ---
 
-<BaseLayout locale={locale} title={isZh ? `关于${site.displayNameZh}` : `About ${site.displayName}`} description={isZh ? "马一铭博士的多模态学习、医学影像 AI 与计算机视觉研究简介。" : "About Dr Yiming Ma's research in multimodal learning, medical imaging AI, and computer vision."} path="/about">
+<BaseLayout locale={locale} title={isZh ? `关于${site.nameZh}` : `About ${site.name}`} description={isZh ? "马一铭的多模态学习、医学影像 AI 与计算机视觉研究简介。" : "About Yiming Ma's research in multimodal learning, medical imaging AI, and computer vision."} path="/about">
   <section class="page-intro about-page-intro">
     <p class="eyebrow">{isZh ? "关于" : "About"}</p>
-    <h1>{isZh ? site.displayNameZh : site.displayName}</h1>
+    <h1>{isZh ? site.nameZh : site.name}</h1>
     <p class="page-intro-lead">{isZh ? "专注于医学影像 AI 中的多模态学习，并以计算机视觉为更广泛的研究基础。" : "Focused on multimodal learning for medical imaging AI, with a broader foundation in computer vision."}</p>
   </section>
   <div class="about-page-grid">
-    <div class="about-portrait"><img src="/images/profile.jpg" width="400" height="400" loading="eager" decoding="async" fetchpriority="high" alt={isZh ? `${site.displayNameZh}的肖像` : `Portrait of ${site.displayName}`} /></div>
+    <div class="about-portrait"><img src="/images/profile.jpg" width="400" height="400" loading="eager" decoding="async" fetchpriority="high" alt={isZh ? `${site.nameZh}的肖像` : `Portrait of ${site.name}`} /></div>
     <div class="about-page-copy">
-      <p>{isZh ? "我是马一铭博士，目前专注于医学影像 AI 中的多模态学习，研究模型如何融合不同影像模态与互补信息。我的既有研究还涉及计算机视觉、人群计数、视觉–语言模型、多模态驾驶员监控，以及以人为中心的视觉系统。" : "I am Dr Yiming Ma. My current focus is multimodal learning for medical imaging AI: how models can combine different imaging modalities and complementary sources of information. My broader research background spans computer vision, crowd counting, vision–language models, multimodal driver monitoring, and human-centred visual systems."}</p>
+      <p>{isZh ? "我是马一铭，目前专注于医学影像 AI 中的多模态学习，研究模型如何融合不同影像模态与互补信息。我的既有研究还涉及计算机视觉、人群计数、视觉–语言模型、多模态驾驶员监控，以及以人为中心的视觉系统。" : "I am Yiming Ma. My current focus is multimodal learning for medical imaging AI: how models can combine different imaging modalities and complementary sources of information. My broader research background spans computer vision, crowd counting, vision–language models, multimodal driver monitoring, and human-centred visual systems."}</p>
       <p>{isZh ? "我尤其关心多模态模型在现实约束下是否仍然可靠：某个模态缺失时能否继续工作，标注稀疏时能否有效学习，计算预算有限时能否部署，以及实验结论在什么条件下才成立。这个网站既保存成果，也解释这些选择。" : "I am especially interested in whether multimodal models remain reliable under real constraints: whether they still work when a modality is missing, learn effectively from sparse labels, operate under limited compute, and state the conditions under which an empirical claim holds. This site records the outputs and explains those choices."}</p>
       <blockquote class="about-pull-quote">
         <p>{isZh ? "“凡人之患，蔽于一曲，而暗于大理。”" : "“False facts are highly injurious to the progress of science, for they often endure long.”"}</p>

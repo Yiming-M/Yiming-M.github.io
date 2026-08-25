@@ -19,7 +19,7 @@ const path = writingPath(post.data.route, post.data.date);
 
 <BaseLayout
   locale={locale}
-  title={`${post.data.title} — ${isZh ? "马一铭博士" : "Dr Yiming Ma"}`}
+  title={`${post.data.title} — ${isZh ? "马一铭" : "Yiming Ma"}`}
   description={post.data.description}
   path={path}
   type="article"
@@ -40,7 +40,7 @@ const path = writingPath(post.data.route, post.data.date);
           <p>{post.data.description}</p>
         </div>
         <div class="post-byline">
-          <p><span>{isZh ? "作者" : "Author"}</span>{isZh ? "马一铭博士" : "Dr Yiming Ma"}</p>
+          <p><span>{isZh ? "作者" : "Author"}</span>{isZh ? "马一铭" : "Yiming Ma"}</p>
           <p><span>{isZh ? "发布" : "Published"}</span><time datetime={post.data.date.toISOString()}>{formatDate(locale, post.data.date)}</time></p>
           <p><span>{isZh ? "阅读" : "Reading time"}</span>{post.data.readingTime}</p>
         </div>
