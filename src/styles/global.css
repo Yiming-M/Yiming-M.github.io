@@ -1827,6 +1827,28 @@ html[lang^="zh"] .post-body h2 {
   padding-left: 1.4rem;
 }
 
+.post-body table {
+  width: 100%;
+  margin: var(--space-6) 0;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+.post-body th,
+.post-body td {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-strong);
+  vertical-align: top;
+  text-align: left;
+}
+
+.post-body th {
+  background: var(--surface-subtle);
+  color: var(--text-primary);
+  font-weight: 800;
+}
+
 .post-body blockquote {
   margin: var(--space-8) 0;
   padding: var(--space-5) var(--space-6);
