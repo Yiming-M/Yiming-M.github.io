@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+  <title id="title">整体平移不改变 Query 与 Key 的相对旋转</title>
+  <desc id="desc">左侧的 Query 位于位置一、Key 位于位置三；右侧两者都向后平移三个位置。两根指针的绝对方向一起改变，但相对夹角始终是二倍 theta。</desc>
+  <defs>
+    <marker id="arrow-blue" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L9,4.5 L0,9 Z" fill="#2457d6" />
+    </marker>
+    <marker id="arrow-orange" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L9,4.5 L0,9 Z" fill="#dc5a2a" />
+    </marker>
+    <marker id="arrow-shift" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#687386" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="620" fill="#f7f5ef" />
+
+  <g font-family="Inter, -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+    <text x="600" y="48" text-anchor="middle" font-size="34" font-weight="700" fill="#172235">一起移动，只改变绝对角度</text>
+    <text x="600" y="80" text-anchor="middle" font-size="20" fill="#637083">两根指针都多转同一个角度，彼此之间仍然相差 2θ</text>
+
+    <rect x="55" y="108" width="500" height="390" rx="20" fill="#ffffff" stroke="#d8dde6" stroke-width="2" />
+    <rect x="645" y="108" width="500" height="390" rx="20" fill="#ffffff" stroke="#d8dde6" stroke-width="2" />
+
+    <g fill="#172235" font-size="24" font-weight="650">
+      <text x="305" y="147" text-anchor="middle">平移前</text>
+      <text x="895" y="147" text-anchor="middle">Query 与 Key 同时 +3 个位置</text>
+    </g>
+
+    <g stroke="#d7dde7" stroke-width="1.5" fill="none">
+      <circle cx="305" cy="315" r="126" />
+      <line x1="179" y1="315" x2="431" y2="315" />
+      <line x1="305" y1="189" x2="305" y2="441" />
+      <circle cx="895" cy="315" r="126" />
+      <line x1="769" y1="315" x2="1021" y2="315" />
+      <line x1="895" y1="189" x2="895" y2="441" />
+    </g>
+
+    <g stroke="#aeb8c7" stroke-width="2" stroke-dasharray="5 7">
+      <line x1="305" y1="315" x2="425" y2="315" />
+      <line x1="895" y1="315" x2="1015" y2="315" />
+    </g>
+
+    <line x1="305" y1="315" x2="405" y2="257" stroke="#2457d6" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow-blue)" />
+    <line x1="305" y1="315" x2="305" y2="199" stroke="#dc5a2a" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow-orange)" />
+    <path d="M 370 277 A 75 75 0 0 0 305 240" fill="none" stroke="#168276" stroke-width="4" stroke-linecap="round" />
+
+    <line x1="895" y1="315" x2="837" y2="215" stroke="#2457d6" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow-blue)" />
+    <line x1="895" y1="315" x2="779" y2="315" stroke="#dc5a2a" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow-orange)" />
+    <path d="M 858 250 A 75 75 0 0 0 820 315" fill="none" stroke="#168276" stroke-width="4" stroke-linecap="round" />
+
+    <g font-size="21" font-weight="650">
+      <text x="421" y="248" fill="#2457d6">Query · m = 1</text>
+      <text x="305" y="179" text-anchor="middle" fill="#dc5a2a">Key · n = 3</text>
+      <text x="820" y="197" text-anchor="end" fill="#2457d6">Query · m + 3 = 4</text>
+      <text x="790" y="350" fill="#dc5a2a">Key · n + 3 = 6</text>
+    </g>
+
+    <g fill="#168276" font-size="22" font-weight="700">
+      <text x="344" y="249">2θ</text>
+      <text x="821" y="271">2θ</text>
+    </g>
+
+    <g font-size="20" font-weight="600" fill="#344054">
+      <rect x="199" y="453" width="212" height="32" rx="16" fill="#edf6f4" />
+      <text x="305" y="475" text-anchor="middle">n − m = 2</text>
+      <rect x="753" y="453" width="284" height="32" rx="16" fill="#edf6f4" />
+      <text x="895" y="475" text-anchor="middle">(n + 3) − (m + 3) = 2</text>
+    </g>
+
+    <text x="600" y="278" text-anchor="middle" font-size="18" font-weight="650" fill="#687386">整体平移</text>
+    <line x1="568" y1="315" x2="628" y2="315" stroke="#687386" stroke-width="3" stroke-linecap="round" marker-end="url(#arrow-shift)" />
+    <text x="600" y="348" text-anchor="middle" font-size="19" font-weight="700" fill="#344054">+3θ</text>
+
+    <rect x="150" y="532" width="900" height="58" rx="18" fill="#172235" />
+    <circle cx="190" cy="561" r="7" fill="#2457d6" />
+    <circle cx="214" cy="561" r="7" fill="#dc5a2a" />
+    <text x="238" y="568" font-size="22" font-weight="650" fill="#ffffff">绝对方向一起转动；进入内积的相对旋转仍然只由 n − m 决定</text>
+  </g>
+</svg>

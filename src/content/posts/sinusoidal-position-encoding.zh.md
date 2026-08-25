@@ -17,7 +17,7 @@ seriesTitle: "重读 Transformer 升级之路"
 seriesPart: 1
 ---
 
-> **来源与改写目标**　本文以苏剑林的[《Transformer 升级之路：1、Sinusoidal 位置编码追根溯源》](https://kexue.fm/archives/8231)为主要阅读起点，并结合 Transformer 与 RoFormer 论文，把核心论证重新组织成一条可以独立阅读的主线。理解 Sinusoidal 位置编码的关键构造并不依赖 Taylor 展开，因此本文直接拆解 attention score。
+> **来源**　本文主要参考苏剑林的[《Transformer 升级之路：1、Sinusoidal 位置编码追根溯源》](https://kexue.fm/archives/8231)，以及 Transformer 与 RoFormer 论文。
 
 > **三十秒速览**　一对 sin/cos 可以看成一根在单位圆上旋转的指针。token 每向前移动一步，指针就旋转固定角度；两个位置之间的距离，因此变成两根指针之间的相位差。只用一根指针会周期性重复，所以实际编码并排使用许多转速不同的指针。Sinusoidal 位置编码最漂亮的地方，不是“给每个位置分配不同数字”，而是把**序列上的平移**变成**表示空间中的旋转**。
 

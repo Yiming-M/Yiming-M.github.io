@@ -17,7 +17,7 @@ seriesTitle: "Rereading the Transformer Upgrade Path"
 seriesPart: 1
 ---
 
-> **Source and rewriting goal.** This article takes Jianlin Su's [“Transformer Upgrade Path 1: Tracing Sinusoidal Positional Encoding to Its Source”](https://kexue.fm/archives/8231) as its main starting point and combines it with the Transformer and RoFormer papers to build a self-contained line of reasoning. The key construction behind sinusoidal positional encoding does not require a Taylor expansion, so this article analyzes the attention score directly.
+> **Sources.** This article primarily draws on Jianlin Su's [“Transformer Upgrade Path 1: Tracing Sinusoidal Positional Encoding to Its Source”](https://kexue.fm/archives/8231), together with the Transformer and RoFormer papers.
 
 > **Thirty-second summary.** A sin/cos pair can be viewed as a hand rotating around the unit circle. Every step forward by one token rotates the hand by a fixed angle, so the distance between two positions becomes a phase difference between two hands. One hand repeats periodically, so the full encoding places many hands with different speeds side by side. The most elegant feature of sinusoidal positional encoding is not that it “assigns different numbers to positions,” but that it turns **translation along a sequence** into **rotation in a representation space**.
 

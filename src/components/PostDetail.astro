@@ -44,7 +44,7 @@ const path = writingPath(post.data.route, post.data.date);
           <p><span>{isZh ? "发布" : "Published"}</span><time datetime={post.data.date.toISOString()}>{formatDate(locale, post.data.date)}</time></p>
           <p><span>{isZh ? "阅读" : "Reading time"}</span>{post.data.readingTime}</p>
         </div>
-        <PostTags tags={post.data.tags} locale={locale} linked />
+        <PostTags tags={post.data.tags} locale={locale} linked grouped />
       </div>
     </header>
 
@@ -66,7 +66,7 @@ const path = writingPath(post.data.route, post.data.date);
       <div>
         <p class="section-number">{isZh ? "系列" : "Series"}</p>
         <h2>{post.data.seriesTitle}</h2>
-        <p>{isZh ? "这是本系列的第 1 篇。后续文章会沿着相对位置编码、注意力结构与长上下文继续重读。" : "This is Part 1. Later notes will continue through relative position encodings, attention variants, and long-context methods."}</p>
+        <p>{isZh ? `这是本系列的第 ${post.data.seriesPart} 篇。后续文章会沿着相对位置编码、注意力结构与长上下文继续重读。` : `This is Part ${post.data.seriesPart}. Later notes will continue through relative position encodings, attention variants, and long-context methods.`}</p>
       </div>
       <a class="button button-primary" href={localePath(locale, "/writing")}><span>{isZh ? "返回随笔索引" : "Back to post index"}</span><span aria-hidden="true">↗</span></a>
     </footer>

@@ -8,6 +8,12 @@ export default defineConfig({
   output: "static",
   trailingSlash: "always",
   markdown: {
+    shikiConfig: {
+      themes: {
+        light: "github-light",
+        dark: "dracula",
+      },
+    },
     processor: unified({
       remarkPlugins: [remarkMath],
       rehypePlugins: [rehypeKatex],

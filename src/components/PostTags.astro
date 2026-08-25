@@ -1,25 +1,50 @@
 ---
-import { postTagLabel, postTagTaxonomy } from "../lib/post-taxonomy";
+import { postTagGroupLabels, postTagLabel, postTagTaxonomy, type PostTagGroup } from "../lib/post-taxonomy";
 import { localePath, type Locale } from "../lib/site";
 
 interface Props {
   tags: string[];
   locale: Locale;
   linked?: boolean;
+  grouped?: boolean;
 }
 
-const { tags, locale, linked = false } = Astro.props;
+const { tags, locale, linked = false, grouped = false } = Astro.props;
+const groupOrder: PostTagGroup[] = ["series", "topic", "lens"];
+const tagGroups = groupOrder
+  .map((group) => ({ group, tags: tags.filter((tag) => postTagTaxonomy[tag]?.group === group) }))
+  .filter(({ tags }) => tags.length > 0);
+const tagValue = (tag: string) => postTagLabel(tag, locale).replace(/^.*? · /, "");
 ---
 
-<div class="post-tag-row" aria-label={locale === "zh" ? "随笔标签" : "Post tags"}>
-  {tags.map((tag) => {
-    const group = postTagTaxonomy[tag]?.group ?? "topic";
-    return linked ? (
-      <a class="post-tag" data-post-kind={group} href={`${localePath(locale, "/writing")}?tag=${encodeURIComponent(tag)}`}>
-        {postTagLabel(tag, locale)}
-      </a>
-    ) : (
-      <span class="post-tag" data-post-kind={group}>{postTagLabel(tag, locale)}</span>
-    );
-  })}
-</div>
+{grouped ? (
+  <dl class="post-tag-meta" aria-label={locale === "zh" ? "随笔标签" : "Post tags"}>
+    {tagGroups.map(({ group, tags: groupTags }) => (
+      <div data-post-kind={group}>
+        <dt>{postTagGroupLabels[group][locale]}</dt>
+        <dd>
+          {groupTags.map((tag) => (
+            <span class="post-tag-meta-value">
+              {linked ? (
+                <a href={`${localePath(locale, "/writing")}?tag=${encodeURIComponent(tag)}`}>{tagValue(tag)}</a>
+              ) : tagValue(tag)}
+            </span>
+          ))}
+        </dd>
+      </div>
+    ))}
+  </dl>
+) : (
+  <div class="post-tag-row" aria-label={locale === "zh" ? "随笔标签" : "Post tags"}>
+    {tags.map((tag) => {
+      const group = postTagTaxonomy[tag]?.group ?? "topic";
+      return linked ? (
+        <a class="post-tag" data-post-kind={group} href={`${localePath(locale, "/writing")}?tag=${encodeURIComponent(tag)}`}>
+          {postTagLabel(tag, locale)}
+        </a>
+      ) : (
+        <span class="post-tag" data-post-kind={group}>{postTagLabel(tag, locale)}</span>
+      );
+    })}
+  </div>
+)}
