@@ -1,12 +1,12 @@
 ---
 title: "重读 Transformer 升级之路（2）：RoPE 如何把位置差写进 Attention"
-description: "从二维旋转的一条恒等式出发，解释 RoPE 如何把相对位置写进标准 Attention，以及它为什么能保留线性 Attention 的可分解计算。"
+description: "从二维旋转的一条恒等式出发，解释 RoPE 如何用同一组 sin/cos 旋转 Query 与 Key，并让 Attention score 对位置的依赖只通过相对位移出现。"
 route: "rotary-position-embedding"
 image: "/images/posts/rope/relative-rotation.svg"
 imageAlt: "两组整体平移前后的 Query 与 Key 旋转示意图，相对位置相同时相对旋转保持不变"
 locale: "zh"
 date: "2026-08-25"
-readingTime: "主线约 22 分钟"
+readingTime: "主线约 15 分钟 · 可选阅读约 7 分钟"
 tags:
   - "post:series:transformer-upgrade"
   - "post:topic:position-encoding"
@@ -19,7 +19,16 @@ seriesPart: 2
 
 > **来源**　本文主要参考苏剑林的[《Transformer 升级之路：2、博采众长的旋转式位置编码》](https://kexue.fm/archives/8265)，以及 RoFormer、Linear Transformer 与 Performer 论文。
 
-> **三十秒速览**　在[上一篇《重读 Transformer 升级之路（1）：Sinusoidal 位置编码追根溯源》](/zh/writing/2026-08-24/sinusoidal-position-encoding/)中，每对 sin/cos 像一只“位置钟”：它为位置生成一根指针。RoPE 更进一步，不再把位置向量加到 token 上，而是用位置对应的角度直接旋转内容产生的 Query 和 Key。位置 $m$ 旋转 $m\theta$，位置 $n$ 旋转 $n\theta$；两者做内积时，共同的绝对旋转会被抵消，只留下 $n-m$。在标准 Attention 中，这个相对旋转进入 softmax 之前的 score；在线性 Attention 中，只要旋转仍能分别作用于 Query 和 Key，先聚合 Key/Value 的计算顺序就可以保留。不过，“还能线性计算”不等于“权重仍然非负且和为 1”，这两个问题必须分开。
+> **三十秒速览**　在[上一篇《重读 Transformer 升级之路（1）：Sinusoidal 位置编码追根溯源》](/zh/writing/2026-08-24/sinusoidal-position-encoding/)中，每对 sin/cos 像一只“位置钟”：它把位置表示成单位圆上的坐标。RoPE 使用同一组位置角度，却不再把位置向量加到 token 上，而是把 sin/cos 填进旋转算子，直接旋转内容产生的 Query 和 Key。位置 $m$ 旋转 $m\theta$，位置 $n$ 旋转 $n\theta$；旋转后的两者做内积时，共同的绝对旋转会被抵消，只留下 $n-m$。因此，RoPE 不是在已经生成的 Attention logits 上乘距离权重，而是在 logits 出现之前改变 Query 与 Key 的比较方向。
+
+> **先建立全局图景：RoPE 在一次 Attention 计算中只做四步。**
+>
+> 1. 从 token representation 产生不含位置信息的 $q_m=W_Qx_m$ 与 $k_n=W_Kx_n$；
+> 2. 对第 $i$ 对特征维度，$\theta_i$ 表示位置每前进一个 token 增加的旋转角（弧度），因此位置 $m$ 的累计旋转角是 $m\theta_i$；根据位置 $m,n$ 取得对应的 $\cos(m\theta_i),\sin(m\theta_i)$ 与 $\cos(n\theta_i),\sin(n\theta_i)$；
+> 3. 在每个 attention head 的特征维度内旋转 Query 与 Key：$\tilde q_m=R_mq_m,\ \tilde k_n=R_nk_n$；
+> 4. 最后才计算 $s_{m,n}=\tilde q_m^\top\tilde k_n$，并把所有 $s_{m,n}$ 组成 $N\times N$ 的 logit matrix。
+>
+> $R_m$ 是作用在单个 token 特征维度上的 $d_h\times d_h$ 分块旋转，不是 $N\times N$ 的 Attention matrix。整个过程不存在“把 logit matrix 与旋转矩阵逐元素相乘”这一步。
 
 先约定本文会反复使用的符号：
 
@@ -33,7 +42,8 @@ seriesPart: 2
 | $R(\alpha)$ | 在二维平面中逆时针旋转 $\alpha$ 的矩阵 |
 | $R_m$ | 把一个完整 attention head 的每对维度分别旋转 $m\theta_i$ 的分块矩阵 |
 | $\theta_i$ | 第 $i$ 对维度每前进一个 token 所旋转的弧度 |
-| $\phi,\varphi$ | 线性 Attention 中作用于 Query、Key 的特征映射 |
+
+本文的 RoPE 主线在第 8 节“一页速查”结束。第 9 节讨论 RoPE 与线性 Attention 的组合方式；它不影响理解 RoPE 本身，可以完全跳过。
 
 ## 1. RoPE 想补上 Sinusoidal PE 的哪块缺口？
 
@@ -98,16 +108,20 @@ q_m^{\mathrm{pos}}=F_Q(q_m,m),
 k_n^{\mathrm{pos}}=F_K(k_n,n).
 $$
 
-我们希望它们满足
+> **RoPE 的核心动机**
+>
+> 我们要寻找一对位置变换 $F_Q$ 和 $F_K$：先分别把绝对位置 $m,n$ 写入 Query 和 Key，再计算变换后两者的内积；计算结果中的位置变量只能通过相对位移 $m-n$ 出现：
+>
+> $$
+> \boxed{
+> F_Q(q_m,m)^\top F_K(k_n,n)
+> =g(q_m,k_n,m-n)
+> }.
+> $$
+>
+> 左侧是“如何把位置写入 Query 和 Key”的待设计变换，右侧则是希望内积最终具有的形式。换句话说，我们不是先指定 $F_Q,F_K$ 再碰运气，而是从右侧的相对位置目标反过来寻找合适的变换。
 
-$$
-\boxed{
-F_Q(q_m,m)^\top F_K(k_n,n)
-=g(q_m,k_n,m-n)
-}.
-$$
-
-右侧仍然依赖 Query 和 Key 的内容；受到限制的只有位置变量，它只能以 $m-n$ 的形式出现。RoPE 接下来给出的具体选择，就是让 $F_Q$ 和 $F_K$ 都使用由位置决定的旋转。
+这里并不是要求 score 只依赖距离：右侧仍然保留 Query 和 Key 的内容 $q_m,k_n$。受到限制的只有位置变量，它只能以 $m-n$ 的形式出现。RoPE 接下来给出的具体选择，就是让 $F_Q$ 和 $F_K$ 都使用由位置决定的旋转。
 
 这个目标还有一个很直观的检验。如果把两个 token 同时向后平移 $c$ 个位置，那么它们的相对距离没有改变：
 
@@ -117,7 +131,7 @@ $$
 
 因此，我们也希望平移前后的内容匹配保持相同。接下来只需要构造一种满足这个目标的简单变换。
 
-## 2. 先把二维旋转拆开看懂
+## 2. 二维旋转矩阵的一些性质
 
 ### 2.1 旋转矩阵到底做了什么？
 
@@ -276,7 +290,7 @@ $$
 
 如果只记一句话，就是：**旋转做乘法，角度做加法。**
 
-## 3. RoPE 的核心为什么只有一行？
+## 3. RoPE 如何让内积只依赖相对位置？
 
 现在取一对二维 Query 和 Key：
 
@@ -292,7 +306,36 @@ k_1\\k_2
 \end{bmatrix}.
 $$
 
-选择一个固定的每步转角 $\theta$。RoPE 在位置 $m$ 把 Query 旋转 $m\theta$，在位置 $n$ 把 Key 旋转 $n\theta$：
+选择一个固定的每步转角 $\theta$。这里的 $\theta$ 不是突然出现的新信号，它正是上一篇 Sinusoidal PE 使用的每步相位增量。对第 $i$ 对维度，令
+
+$$
+s_{m,i}=\sin(m\theta_i),
+\qquad
+c_{m,i}=\cos(m\theta_i).
+$$
+
+Sinusoidal PE 把这两个数当作位置向量的一对坐标；RoPE 则把同样的两个数放进旋转算子：
+
+$$
+\underbrace{
+p_m^{(i)}=
+\begin{bmatrix}
+s_{m,i}\\c_{m,i}
+\end{bmatrix}
+}_{\text{Sinusoidal PE：位置坐标}},
+\qquad
+\underbrace{
+R(m\theta_i)=
+\begin{bmatrix}
+c_{m,i}&-s_{m,i}\\
+s_{m,i}&c_{m,i}
+\end{bmatrix}
+}_{\text{RoPE：位置算子}}.
+$$
+
+所以更准确的关系不是“先生成一个 Sinusoidal 位置向量，再把它转换成 RoPE”，而是：**两者从同一组位置角度生成 sin/cos；前者把它们作为需要相加的坐标，后者把它们作为需要相乘的旋转系数。** 实现 RoPE 时通常直接缓存这些 sin/cos，不需要显式构造 $p_m$ 或完整的 $R_m$。
+
+先继续看一对二维坐标。RoPE 在位置 $m$ 把 Query 旋转 $m\theta$，在位置 $n$ 把 Key 旋转 $n\theta$：
 
 $$
 \tilde q_m=R(m\theta)q_m,
@@ -346,9 +389,37 @@ $$
   <figcaption><strong>图 1｜整体平移改变绝对角度，却不改变相对旋转。</strong> 为了只展示位置造成的旋转，图中让 Query 与 Key 从同一参考方向出发，并以 θ = 30° 示意。左右两组位置分别是 (1, 3) 与 (4, 6)；后一组都增加 3，但位置差始终为 2，因此相对夹角始终是 2θ。图为作者制作的机制示意图。</figcaption>
 </figure>
 
-## 4. “旋转内容”到底改变了什么？
+## 4. RoPE 不是给 Attention logits 逐元素加权
 
-上一节证明了位置只以 $m-n$ 出现，但这还没有回答一个更直观的问题：**同一对 Query 和 Key，为什么换一个相对位置，匹配分数就会改变？**
+上一节证明了位置只以 $m-n$ 出现，但这里必须先排除一个很自然的误解：RoPE 不是先计算原始 logit matrix，再给每个 $s_{m,n}$ 乘一个由距离决定的权重。
+
+### 4.1 两种运算的顺序不同
+
+如果采用逐元素距离加权，计算顺序会是
+
+$$
+S=QK^\top,
+\qquad
+S'=S\odot W,
+$$
+
+其中 $S,W\in\mathbb{R}^{N\times N}$，每个原始 logit 只能被一个标量 $W_{m,n}$ 放大、缩小或翻转符号。
+
+RoPE 的顺序不同：它先在每个 token 的 $d_h$ 维特征空间内旋转 Query 和 Key，再生成 logit matrix：
+
+$$
+\tilde q_m=R_mq_m,
+\qquad
+\tilde k_n=R_nk_n,
+\qquad
+S'_{m,n}=\tilde q_m^\top\tilde k_n.
+$$
+
+$R_m,R_n\in\mathbb{R}^{d_h\times d_h}$ 会混合每一对特征坐标；它们与 $N\times N$ 的 $S$ 既不是同一个对象，也没有进行逐元素乘法。最直接的区别是：标量加权永远不能把原本为 $0$ 的 logit 变成非零值，而相对旋转可以改变坐标对齐关系，做到这一点。
+
+### 4.2 相对旋转怎样改变内容匹配？
+
+现在再回答更直观的问题：**同一对 Query 和 Key，为什么换一个相对位置，匹配分数就会改变？**
 
 令
 
@@ -652,7 +723,51 @@ $$
 
 这里还要划清一个边界：标准 Attention 仍然需要计算所有 $m,n$ 组合，形成 $N\times N$ 的 score matrix。RoPE 增加的是位置结构，不会把 $O(N^2)$ 的标准 Attention 自动变成线性复杂度。
 
-## 7. 线性 Attention 为什么叫“线性”？
+## 7. 核心结论与边界
+
+到这里，理解 RoPE 本身所需的主线已经结束。前面的推导严格给出或直接展示了：
+
+1. RoPE 与 Sinusoidal PE 使用同一类位置角度和 sin/cos 信号，但角色不同：前者把它们放进旋转算子，后者把它们放进位置向量；
+2. 二维 RoPE 是保持模长的旋转；
+3. $R_m^\top R_n=R_{n-m}$，所以 Query--Key score 对位置变量的依赖只通过相对位移出现；
+4. 整体平移 Query 与 Key 不会改变它们的相对旋转；
+5. RoPE 在 logit matrix 形成之前旋转 Q/K，不是对已有 logits 做逐元素距离加权；
+6. RoPE score 不只是原始点积乘一个距离余弦，还包含内容坐标之间的交叉匹配。
+
+这些推导没有证明：
+
+1. RoPE 是满足相对位置目标的唯一解；
+2. RoPE score 会随距离严格单调下降；
+3. 使用 RoPE 后模型一定偏爱附近 token；
+4. 能计算训练长度以外的旋转角，就代表模型一定能可靠完成长度外推；
+5. RoPE 会降低标准 Attention 的 $O(N^2)$ 复杂度。
+
+## 8. 一页速查
+
+| 问题 | 最短答案 |
+| --- | --- |
+| RoPE 的 sin/cos 从哪里来？ | 它与 Sinusoidal PE 从同一类位置角度和频率生成 sin/cos，但直接把它们用作旋转系数。 |
+| RoPE 旋转什么？ | 每个 attention head 中投影后的 Query 和 Key。 |
+| 旋转矩阵作用在哪里？ | 作用在单个 token 的 $d_h$ 维特征空间，不作用在 $N\times N$ 的 Attention matrix。 |
+| 为什么每两个维度配成一对？ | 二维正好可以表示一个保持长度的平面旋转。 |
+| 为什么得到相对位置？ | $R(m\theta)^\top R(n\theta)=R((n-m)\theta)$。 |
+| RoPE 是把一个位置向量加到内容上吗？ | 不是，它直接旋转内容产生的 Q/K。 |
+| RoPE 会和 logit matrix 逐元素相乘吗？ | 不会。它先旋转 Q/K，再由旋转后的向量生成 logits。 |
+| RoPE 只是给点积乘一个余弦吗？ | 不是，还会产生由正弦控制的交叉坐标匹配。 |
+| 为什么通常不旋转 Value？ | 相对位置已经进入选取 Value 的 Attention 权重，Value 本身可以直接被聚合。 |
+| 标准 Attention 会因此变成线性复杂度吗？ | 不会，仍需计算 $N^2$ 个 Query--Key score。 |
+
+整篇 RoPE 主线最值得记住的一句话是：
+
+> RoPE 使用与 Sinusoidal PE 同源的 sin/cos，把位置写成作用于 Query 与 Key 的旋转；两者比较时，绝对旋转相消，只留下相对位移。
+
+## 9. 可选阅读：RoPE 与线性 Attention
+
+下面讨论的是另一个问题：已经理解 RoPE 之后，能否把它与线性 Attention 的乘法重排结合？这不是 RoPE 定义的一部分，也不影响前面关于标准 Attention 的结论。只关心 RoPE 本身的读者可以直接跳到参考文献。
+
+本节额外使用两个符号：$\phi,\varphi$ 分别表示线性 Attention 作用于 Query 与 Key 的特征映射。
+
+### 9.1 线性 Attention 为什么叫“线性”？
 
 这里的“线性”是指计算量随序列长度 $N$ 线性增长，不是说整个模块没有非线性函数。
 
@@ -749,9 +864,9 @@ $$
 
 位置 $m$ 只能读取截至当前位置累积的状态，因此不会看到未来 token。
 
-## 8. RoPE 怎样进入线性 Attention？
+### 9.2 RoPE 怎样进入线性 Attention？
 
-### 8.1 为什么 RoPE 不会破坏乘法重排？
+#### 9.2.1 为什么 RoPE 不会破坏乘法重排？
 
 假设特征维度同样可以两两配对。对 Query/Key 特征分别旋转：
 
@@ -783,7 +898,7 @@ $$
 
 再让旋转后的 Query 读取它。RoPE 的位置变换发生在每个 Query 和 Key 自己身上，不需要先知道某个完整的 $N\times N$ score matrix，所以线性 Attention 最重要的乘法重排仍然成立。
 
-### 8.2 为什么分母会遇到麻烦？
+#### 9.2.2 为什么分母会遇到麻烦？
 
 很多线性 Attention 选择值域非负的 $\phi,\varphi$。这样
 
@@ -814,7 +929,7 @@ $$
 
 也可能为负。如果直接把它们加到分母中，正负项可能互相抵消，分母甚至可能接近 $0$。
 
-### 8.3 RoFormer 论文采用了什么处理？
+#### 9.2.3 RoFormer 论文采用了什么处理？
 
 RoFormer 给出的线性 Attention 形式，是只在分子中使用旋转后的特征，分母仍使用原始非负特征：
 
@@ -851,7 +966,7 @@ $$
 
 所以这时的输出仍是一个有归一化尺度的内容聚合，却不再是严格的概率加权平均。
 
-### 8.4 先旋转还是先做特征映射？
+#### 9.2.4 先旋转还是先做特征映射？
 
 阅读不同实现时，还会遇到两种看似相近、实际不同的顺序：
 
@@ -862,7 +977,7 @@ $$
 
 例如 Performer 的 FAVOR+ 使用正随机特征近似 softmax kernel。先对原始 Query/Key 使用 RoPE，再对旋转后的向量做这种特征映射，可以近似标准 RoPE Attention，同时继续利用线性计算。它与上一小节的 RoFormer 线性公式是两种不同的组合，不能只用一句“把 RoPE 加进去”混为一谈。
 
-## 9. “适合线性 Attention”真正需要什么条件？
+### 9.3 “适合线性 Attention”真正需要什么条件？
 
 线性 Attention 真正需要的，不是某一种特定位置编码名称，而是带位置的相似度能够分解为
 
@@ -887,43 +1002,13 @@ $$
 
 > RoPE 的优势，是用分别作用于 Query 与 Key 的绝对位置旋转，构造出显式的相对位置交互；这种可分解结构天然适合线性 Attention，但它不是唯一可能的结构。
 
-## 10. 这些推导证明了什么，又没有证明什么？
+可选部分可以压缩成三点：
 
-它严格给出或直接展示了：
+1. 线性 Attention 依赖 Query 侧与 Key 侧可以分别计算的相似度分解；
+2. RoPE 分别旋转 Query 与 Key，因此可以保留这种乘法重排；
+3. “仍能线性计算”不代表旋转后的权重仍然非负或和为 $1$，具体性质取决于特征映射、旋转顺序与归一化方式。
 
-1. 二维 RoPE 是保持模长的旋转；
-2. $R_m^\top R_n=R_{n-m}$，所以 Query--Key score 中的位置只以相对位移出现；
-3. 整体平移 Query 与 Key 不会改变它们的相对旋转；
-4. RoPE score 不只是原始点积乘一个距离余弦，还包含内容坐标之间的交叉匹配；
-5. RoPE 可以分别施加到 Query 与 Key，因此不会自动破坏线性 Attention 的乘法重排。
-
-它没有证明：
-
-1. RoPE 是满足相对位置目标的唯一解；
-2. RoPE score 会随距离严格单调下降；
-3. 使用 RoPE 后模型一定偏爱附近 token；
-4. 能计算训练长度以外的旋转角，就代表模型一定能可靠完成长度外推；
-5. 任意线性 Attention 加入 RoPE 后都仍有非负、和为 $1$ 的概率权重；
-6. RoPE 会降低标准 Attention 的 $O(N^2)$ 复杂度。
-
-## 11. 一页速查
-
-| 问题 | 最短答案 |
-| --- | --- |
-| RoPE 旋转什么？ | 每个 attention head 中投影后的 Query 和 Key。 |
-| 为什么每两个维度配成一对？ | 二维正好可以表示一个保持长度的平面旋转。 |
-| 为什么得到相对位置？ | $R(m\theta)^\top R(n\theta)=R((n-m)\theta)$。 |
-| RoPE 是把一个位置向量加到内容上吗？ | 不是，它直接旋转内容产生的 Q/K。 |
-| RoPE 只是给点积乘一个余弦吗？ | 不是，还会产生由正弦控制的交叉坐标匹配。 |
-| 为什么通常不旋转 Value？ | 相对位置已经进入选取 Value 的 Attention 权重，Value 本身可以直接被聚合。 |
-| 标准 Attention 会因此变成线性复杂度吗？ | 不会，仍需计算 $N^2$ 个 Query--Key score。 |
-| 为什么 RoPE 适合线性 Attention？ | 它能分别作用于 Query 与 Key，保留可分解计算。 |
-| 线性 Attention 中权重仍是概率吗？ | 不一定。旋转特征可能产生负相似度，取决于特征映射和归一化方案。 |
-| RoPE 是线性 Attention 唯一可用的相对位置方案吗？ | 不是。关键条件是位置相关相似度能否分解。 |
-
-整篇文章最值得记住的一句话是：
-
-> RoPE 不是给 token 贴上一个位置标签，而是让 Query 与 Key 在各自的位置坐标系里旋转；两者比较时，绝对坐标相消，只留下相对位移。
+> **可选部分最值得记住的一句话：** RoPE 与线性 Attention 的关系来自“可以分别作用于 Query 与 Key”的可分解结构；这是 RoPE 的一个兼容性结果，不是理解或定义 RoPE 的前提。
 
 ## 参考文献与图像来源
 

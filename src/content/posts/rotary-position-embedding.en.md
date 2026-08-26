@@ -1,12 +1,12 @@
 ---
 title: "Rereading the Transformer Upgrade Path (2): How RoPE Writes Relative Position into Attention"
-description: "Starting from a single identity for two-dimensional rotations, this article explains how RoPE writes relative position into standard attention and why it preserves the separable computation of linear attention."
+description: "Starting from a single identity for two-dimensional rotations, this article explains how RoPE uses the same sin/cos signals to rotate Queries and Keys so that position enters the attention score only through relative displacement."
 route: "rotary-position-embedding"
 image: "/images/posts/rope/relative-rotation.en.svg"
 imageAlt: "Query and Key rotations before and after a shared position shift, showing that equal relative positions preserve the same relative rotation"
 locale: "en"
 date: "2026-08-25"
-readingTime: "About 22 minutes"
+readingTime: "Core path about 15 minutes · optional section about 7 minutes"
 tags:
   - "post:series:transformer-upgrade"
   - "post:topic:position-encoding"
@@ -19,7 +19,16 @@ seriesPart: 2
 
 > **Sources.** This article primarily draws on Jianlin Su's [“Transformer Upgrade Path 2: Rotary Position Embedding That Combines the Best of Both Worlds”](https://kexue.fm/archives/8265), together with the RoFormer, Linear Transformer, and Performer papers.
 
-> **Thirty-second summary.** In [the previous article, “Rereading the Transformer Upgrade Path (1): Tracing Sinusoidal Positional Encoding to Its Source”](/writing/2026-08-24/sinusoidal-position-encoding/), every sin/cos pair acts like a “position clock” that generates a hand for each position. RoPE goes one step further: instead of adding a position vector to a token, it uses the angle associated with that position to rotate the content-derived Query and Key directly. Position $m$ rotates by $m\theta$, and position $n$ by $n\theta$; when their inner product is taken, the shared absolute rotation cancels, leaving only $n-m$. In standard attention, this relative rotation enters the score before softmax. In linear attention, the computational reordering that aggregates Keys and Values first can be preserved as long as the rotations still act separately on the Query and Key. However, “the computation remains linear” does not mean “the weights remain nonnegative and sum to one.” These are two separate questions.
+> **Thirty-second summary.** In [the previous article, “Rereading the Transformer Upgrade Path (1): Tracing Sinusoidal Positional Encoding to Its Source”](/writing/2026-08-24/sinusoidal-position-encoding/), every sin/cos pair acts like a “position clock” that represents a position as coordinates on the unit circle. RoPE uses the same position angles but no longer adds a position vector to the token. Instead, it places the sin/cos values inside a rotation operator and directly rotates the content-derived Query and Key. Position $m$ rotates by $m\theta$, and position $n$ by $n\theta$; when the rotated vectors are compared by an inner product, the shared absolute rotation cancels, leaving only $n-m$. RoPE therefore does not multiply an already constructed attention-logit matrix by distance weights. It changes how Queries and Keys are compared before those logits exist.
+
+> **First establish the global picture: RoPE performs only four steps inside one attention computation.**
+>
+> 1. Produce position-free vectors $q_m=W_Qx_m$ and $k_n=W_Kx_n$ from the token representations;
+> 2. For the $i$-th feature pair, $\theta_i$ is the rotation increment in radians for each one-token step, so the accumulated angle at position $m$ is $m\theta_i$; for positions $m,n$, obtain the corresponding $\cos(m\theta_i),\sin(m\theta_i)$ and $\cos(n\theta_i),\sin(n\theta_i)$;
+> 3. Rotate the Query and Key within the feature dimensions of each attention head: $\tilde q_m=R_mq_m,\ \tilde k_n=R_nk_n$;
+> 4. Only then compute $s_{m,n}=\tilde q_m^\top\tilde k_n$ and assemble all $s_{m,n}$ into the $N\times N$ logit matrix.
+>
+> $R_m$ is a $d_h\times d_h$ block rotation acting on the feature dimensions of one token. It is not the $N\times N$ attention matrix. At no point does RoPE take an elementwise product between a logit matrix and a rotation matrix.
 
 We will repeatedly use the following notation:
 
@@ -33,7 +42,8 @@ We will repeatedly use the following notation:
 | $R(\alpha)$ | Matrix that rotates a vector counterclockwise by $\alpha$ in the two-dimensional plane |
 | $R_m$ | Block matrix that rotates every dimension pair in a complete attention head by $m\theta_i$ |
 | $\theta_i$ | Radians rotated by the $i$-th dimension pair for each token step |
-| $\phi,\varphi$ | Feature maps applied to Queries and Keys in linear attention |
+
+The core RoPE path ends with the quick reference in Section 8. Section 9 discusses ways to combine RoPE with linear attention; it is not required for understanding RoPE itself and can be skipped entirely.
 
 ## 1. What Gap in Sinusoidal PE Is RoPE Trying to Fill?
 
@@ -98,16 +108,20 @@ q_m^{\mathrm{pos}}=F_Q(q_m,m),
 k_n^{\mathrm{pos}}=F_K(k_n,n).
 $$
 
-We want them to satisfy
+> **RoPE's core motivation**
+>
+> We want to find a pair of position transformations, $F_Q$ and $F_K$. They first write the absolute positions $m,n$ into the Query and Key; after the transformed vectors are compared by an inner product, the position variables should appear only through the relative displacement $m-n$:
+>
+> $$
+> \boxed{
+> F_Q(q_m,m)^\top F_K(k_n,n)
+> =g(q_m,k_n,m-n)
+> }.
+> $$
+>
+> The left-hand side contains the transformations we still need to design; the right-hand side states the form we want their inner product to take. In other words, we work backward from the relative-position target instead of choosing $F_Q,F_K$ first and merely hoping that the desired structure emerges.
 
-$$
-\boxed{
-F_Q(q_m,m)^\top F_K(k_n,n)
-=g(q_m,k_n,m-n)
-}.
-$$
-
-The right-hand side still depends on the content of the Query and Key. The only restriction is on the position variables: they may appear only through $m-n$. RoPE's concrete choice is to let both $F_Q$ and $F_K$ use rotations determined by position.
+This does not require the score to depend on distance alone: the right-hand side still retains the Query and Key content $q_m,k_n$. Only the position variables are restricted, and they may appear only through $m-n$. RoPE's concrete choice is to let both $F_Q$ and $F_K$ use rotations determined by position.
 
 This objective has an intuitive test. If both tokens are shifted backward by $c$ positions, their relative distance does not change:
 
@@ -117,7 +131,7 @@ $$
 
 We therefore also want the content match to remain unchanged after this shared shift. All that remains is to construct a simple transformation with this property.
 
-## 2. First, Understand Two-Dimensional Rotation Step by Step
+## 2. Properties of Two-Dimensional Rotation Matrices
 
 ### 2.1 What Exactly Does a Rotation Matrix Do?
 
@@ -278,7 +292,7 @@ $$
 
 If there is only one sentence to remember, it is this: **rotations multiply; their angles add.**
 
-## 3. Why Does the Core of RoPE Fit in One Line?
+## 3. How Does RoPE Make the Inner Product Depend Only on Relative Position?
 
 Now take one two-dimensional Query and Key:
 
@@ -294,7 +308,36 @@ k_1\\k_2
 \end{bmatrix}.
 $$
 
-Choose a fixed per-step rotation angle $\theta$. At position $m$, RoPE rotates the Query by $m\theta$; at position $n$, it rotates the Key by $n\theta$:
+Choose a fixed per-step rotation angle $\theta$. This $\theta$ is not a new signal that appears from nowhere. It is the same per-step phase increment used by Sinusoidal PE. For the $i$-th dimension pair, define
+
+$$
+s_{m,i}=\sin(m\theta_i),
+\qquad
+c_{m,i}=\cos(m\theta_i).
+$$
+
+Sinusoidal PE treats these two numbers as a pair of coordinates in a position vector. RoPE places the same two numbers inside a rotation operator:
+
+$$
+\underbrace{
+p_m^{(i)}=
+\begin{bmatrix}
+s_{m,i}\\c_{m,i}
+\end{bmatrix}
+}_{\text{Sinusoidal PE: position coordinates}},
+\qquad
+\underbrace{
+R(m\theta_i)=
+\begin{bmatrix}
+c_{m,i}&-s_{m,i}\\
+s_{m,i}&c_{m,i}
+\end{bmatrix}
+}_{\text{RoPE: position operator}}.
+$$
+
+The precise relationship is therefore not “first construct a Sinusoidal position vector and then convert it into RoPE.” Instead, **both methods generate sin/cos values from the same position angles; Sinusoidal PE uses them as coordinates to add, whereas RoPE uses them as rotation coefficients to multiply.** Implementations normally cache these sin/cos values directly, without explicitly constructing $p_m$ or the full matrix $R_m$.
+
+Continue with one two-dimensional pair. At position $m$, RoPE rotates the Query by $m\theta$; at position $n$, it rotates the Key by $n\theta$:
 
 $$
 \tilde q_m=R(m\theta)q_m,
@@ -348,9 +391,37 @@ The shared $c$ disappears. This is the matrix form of “a global shift does not
   <figcaption><strong>Figure 1 | A global shift changes absolute angles but not the relative rotation.</strong> To isolate the rotation caused by position, both the Query and Key start from the same reference direction, with θ = 30° used for illustration. The two position pairs are (1, 3) and (4, 6); the latter adds 3 to both positions, but the position difference remains 2, so the relative angle remains 2θ. Author-created mechanism diagram.</figcaption>
 </figure>
 
-## 4. What Does “Rotating Content” Actually Change?
+## 4. RoPE Does Not Reweight an Existing Attention-Logit Matrix
 
-The previous section proved that position appears only through $m-n$, but it has not yet answered a more intuitive question: **for the same Query and Key, why does changing the relative position change their matching score?**
+The previous section proved that position appears only through $m-n$, but we must first rule out a natural misconception. RoPE does not compute the original logit matrix and then multiply every $s_{m,n}$ by a distance-dependent weight.
+
+### 4.1 The Two Operations Use a Different Order
+
+Elementwise distance weighting would have the form
+
+$$
+S=QK^\top,
+\qquad
+S'=S\odot W,
+$$
+
+where $S,W\in\mathbb{R}^{N\times N}$. Each original logit can only be enlarged, reduced, or sign-flipped by the scalar $W_{m,n}$.
+
+RoPE uses a different order. It first rotates the Query and Key inside the $d_h$-dimensional feature space of each token and only then constructs the logit matrix:
+
+$$
+\tilde q_m=R_mq_m,
+\qquad
+\tilde k_n=R_nk_n,
+\qquad
+S'_{m,n}=\tilde q_m^\top\tilde k_n.
+$$
+
+$R_m,R_n\in\mathbb{R}^{d_h\times d_h}$ mix each pair of feature coordinates. They are not the same object as the $N\times N$ matrix $S$, and no elementwise product is taken between them. The simplest distinction is that scalar reweighting can never turn an original zero logit into a nonzero value, whereas relative rotation can change the coordinate alignment and do exactly that.
+
+### 4.2 How Does Relative Rotation Change Content Matching?
+
+We can now answer the more intuitive question: **for the same Query and Key, why does changing the relative position change their matching score?**
 
 Let
 
@@ -654,7 +725,51 @@ which is exactly the part of the rotation matrix multiplied by $\sin$.
 
 One boundary still needs to be explicit: standard attention must compute every $m,n$ combination and form an $N\times N$ score matrix. RoPE adds positional structure; it does not automatically turn the $O(N^2)$ complexity of standard attention into linear complexity.
 
-## 7. Why Is Linear Attention Called “Linear”?
+## 7. Core Conclusions and Boundaries
+
+At this point, the core path needed to understand RoPE itself is complete. The preceding derivations establish or directly demonstrate that:
+
+1. RoPE and Sinusoidal PE use the same kind of position angles and sin/cos signals, but assign them different roles: RoPE places them inside a rotation operator, whereas Sinusoidal PE places them inside a position vector;
+2. Two-dimensional RoPE is a length-preserving rotation;
+3. $R_m^\top R_n=R_{n-m}$, so the position variables enter the Query--Key score only through relative displacement;
+4. Shifting the Query and Key together does not change their relative rotation;
+5. RoPE rotates Q/K before the logit matrix is formed; it does not apply elementwise distance weights to existing logits;
+6. The RoPE score is not merely the original dot product multiplied by a distance cosine, because it also contains cross-coordinate content matching.
+
+These derivations do not prove that:
+
+1. RoPE is the unique solution to the relative-position objective;
+2. the RoPE score decreases strictly and monotonically with distance;
+3. a model using RoPE must prefer nearby tokens;
+4. being able to compute rotation angles beyond the training length guarantees reliable length extrapolation;
+5. RoPE reduces the $O(N^2)$ complexity of standard attention.
+
+## 8. Quick Reference
+
+| Question | Shortest answer |
+| --- | --- |
+| Where do RoPE's sin/cos values come from? | It generates sin/cos from the same kind of position angles and frequencies as Sinusoidal PE, but uses them directly as rotation coefficients. |
+| What does RoPE rotate? | The projected Query and Key in each attention head. |
+| Where does the rotation matrix act? | In the $d_h$-dimensional feature space of one token, not on the $N\times N$ attention matrix. |
+| Why pair every two dimensions? | Two dimensions are exactly enough to represent a length-preserving planar rotation. |
+| Why does relative position appear? | $R(m\theta)^\top R(n\theta)=R((n-m)\theta)$. |
+| Does RoPE add a position vector to content? | No. It directly rotates the content-derived Q/K vectors. |
+| Does RoPE multiply the logit matrix elementwise? | No. It rotates Q/K first and constructs the logits from the rotated vectors. |
+| Does RoPE merely multiply the dot product by a cosine? | No. It also introduces cross-coordinate matching controlled by the sine term. |
+| Why is the Value usually not rotated? | Relative position already enters the attention weights that select the Values, so the Values can be aggregated directly. |
+| Does standard attention become linear as a result? | No. It must still compute $N^2$ Query--Key scores. |
+
+The single most important sentence from the core RoPE path is:
+
+> RoPE uses sin/cos signals from the same source as Sinusoidal PE to express position as rotations acting on Queries and Keys; when the two are compared, their absolute rotations cancel and only relative displacement remains.
+
+## 9. Optional Reading: RoPE and Linear Attention
+
+The remainder addresses a separate question: once RoPE is understood, can it be combined with the multiplication reordering used by linear attention? This is not part of RoPE's definition and does not affect the preceding conclusions about standard attention. Readers interested only in RoPE itself can skip directly to the references.
+
+This section introduces two additional symbols: $\phi,\varphi$ denote the feature maps applied to Queries and Keys in linear attention.
+
+### 9.1 Why Is Linear Attention Called “Linear”?
 
 Here “linear” means that the amount of computation grows linearly with sequence length $N$, not that the entire module contains no nonlinear functions.
 
@@ -751,9 +866,9 @@ $$
 
 Position $m$ can read only the state accumulated up to that position, so it cannot see future tokens.
 
-## 8. How Does RoPE Enter Linear Attention?
+### 9.2 How Does RoPE Enter Linear Attention?
 
-### 8.1 Why Does RoPE Preserve the Multiplication Reordering?
+#### 9.2.1 Why Does RoPE Preserve the Multiplication Reordering?
 
 Assume that the feature dimensions can also be paired. Rotate the Query and Key features separately:
 
@@ -785,7 +900,7 @@ $$
 
 before allowing the rotated Query to read it. RoPE's position transformation acts on each Query and Key separately; it does not require a complete $N\times N$ score matrix to exist first. The multiplication reordering that matters most to linear attention therefore remains valid.
 
-### 8.2 Why Does the Denominator Become a Problem?
+#### 9.2.2 Why Does the Denominator Become a Problem?
 
 Many linear-attention methods choose $\phi,\varphi$ with nonnegative outputs. Then
 
@@ -816,7 +931,7 @@ $$
 
 may be negative. If these values are summed directly in the denominator, positive and negative terms can cancel, and the denominator may even approach $0$.
 
-### 8.3 What Treatment Does the RoFormer Paper Use?
+#### 9.2.3 What Treatment Does the RoFormer Paper Use?
 
 The linear-attention form presented in RoFormer uses the rotated features only in the numerator, while the denominator retains the original nonnegative features:
 
@@ -853,7 +968,7 @@ $$
 
 The output is therefore still a content aggregation with a normalized scale, but it is no longer a strict probability-weighted average.
 
-### 8.4 Rotate Before or After the Feature Map?
+#### 9.2.4 Rotate Before or After the Feature Map?
 
 When reading different implementations, we also encounter two orders that look similar but are genuinely different:
 
@@ -864,7 +979,7 @@ When reading different implementations, we also encounter two orders that look s
 
 For example, Performer's FAVOR+ uses positive random features to approximate the softmax kernel. Applying RoPE to the original Queries and Keys before mapping the rotated vectors through these features can approximate standard RoPE attention while retaining linear computation. This is a different combination from the RoFormer linear formula in the previous subsection; both should not be collapsed into the single phrase “add RoPE.”
 
-## 9. What Does “Suitable for Linear Attention” Actually Require?
+### 9.3 What Does “Suitable for Linear Attention” Actually Require?
 
 What linear attention truly requires is not one particular positional-encoding name, but a position-aware similarity that can be factored as
 
@@ -889,43 +1004,13 @@ This is not a uniqueness theorem for RoPE. Any other position function that can 
 
 > RoPE's advantage is that it uses absolute-position rotations applied separately to the Query and Key to construct an explicit relative-position interaction. This separable structure is naturally suited to linear attention, but it is not the only possible structure.
 
-## 10. What Do These Derivations Prove—and What Do They Not?
+The optional material can be compressed into three points:
 
-They establish or directly demonstrate that:
+1. linear attention depends on a similarity that can be computed separately on the Query and Key sides;
+2. RoPE rotates Queries and Keys separately, so it can preserve this multiplication reordering;
+3. “the computation remains linear” does not imply that the rotated weights remain nonnegative or sum to one—the exact behavior depends on the feature map, rotation order, and normalization scheme.
 
-1. Two-dimensional RoPE is a length-preserving rotation.
-2. $R_m^\top R_n=R_{n-m}$, so position appears in the Query--Key score only through relative displacement.
-3. Shifting the Query and Key together does not change their relative rotation.
-4. A RoPE score is not merely the original dot product multiplied by a distance cosine; it also includes cross-coordinate matches between content dimensions.
-5. RoPE can be applied separately to the Query and Key, so it does not automatically break the multiplication reordering used by linear attention.
-
-They do not establish that:
-
-1. RoPE is the unique solution to the relative-position objective.
-2. A RoPE score decreases strictly and monotonically with distance.
-3. A model using RoPE must prefer nearby tokens.
-4. Being able to compute rotation angles beyond the training length guarantees reliable length extrapolation.
-5. Every linear-attention method retains nonnegative probability weights that sum to $1$ after RoPE is added.
-6. RoPE reduces the $O(N^2)$ complexity of standard attention.
-
-## 11. Quick Reference
-
-| Question | Shortest answer |
-| --- | --- |
-| What does RoPE rotate? | The projected Queries and Keys in each attention head. |
-| Why pair every two dimensions? | Two dimensions are exactly enough to represent a length-preserving planar rotation. |
-| Why does relative position appear? | $R(m\theta)^\top R(n\theta)=R((n-m)\theta)$. |
-| Does RoPE add a position vector to content? | No. It directly rotates the content-derived Q/K vectors. |
-| Does RoPE merely multiply a dot product by a cosine? | No. It also introduces sine-controlled cross-coordinate matches. |
-| Why are Values usually not rotated? | Relative position already enters the attention weights that select the Values, so the Values themselves can be aggregated directly. |
-| Does standard attention become linear in complexity? | No. It still computes $N^2$ Query--Key scores. |
-| Why is RoPE suited to linear attention? | It acts separately on the Query and Key, preserving separable computation. |
-| Are the weights in linear attention still probabilities? | Not necessarily. Rotated features can produce negative similarities, depending on the feature map and normalization scheme. |
-| Is RoPE the only relative-position method compatible with linear attention? | No. The key condition is whether the position-aware similarity can be factored. |
-
-The single most important sentence to remember is:
-
-> RoPE does not attach a position label to a token. It rotates the Query and Key in their respective positional coordinate systems; when they are compared, the absolute coordinates cancel and only relative displacement remains.
+> **The single most important sentence from the optional section:** RoPE's relationship to linear attention comes from its separable structure—its transformations can act independently on Queries and Keys. This is a compatibility result, not a prerequisite for defining or understanding RoPE.
 
 ## References and Image Sources
 
