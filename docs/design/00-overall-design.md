@@ -1,306 +1,355 @@
-# Yiming Ma Research Notebook — 总体设计方案
+# Yiming Ma 个人网站：总体设计（v2）
 
-> 状态：Step 1 基准方案
-> 适用范围：英文与中文全站
-> 设计方向：Editorial Research Index（编辑型研究索引）
+> 状态：**第二稿**，已吸收 2026-11-17 的审阅意见
+> 日期：2026-11-17
+> 取代：2026-08 的 “Editorial Research Index” 方案（旧版见 git 历史）
+> 来源：2026-11-16 至 11-17 的四轮问答，以及对现有仓库和 Obsidian 笔记库的扫描
 
-## 1. 定位与设计命题
+## 1. 定位
 
-这不是一张“论文清单”，而是一份可持续增长的研究手记。访问者应先快速判断马一铭研究什么、代表工作是什么，再按需进入论文的“问题—方法—证据—边界”解释。网站同时服务三类读者：
+个人学术主页 + 笔记 + 摄影。当前不找工作（最早 2028 年 1 月），首页的任务是让人记住你，而不是速览简历。
 
-1. 同行研究者：快速确认研究方向、论文贡献与原始链接；
-2. 学生或跨方向读者：通过白话解释建立问题与方法的联系；
-3. 招聘、合作或评审者：快速了解个人背景、研究轨迹与联系方式。
+全站分两种节奏：
 
-总体视觉不模仿某个公司的品牌，而借鉴成熟设计系统中的可复用原则，形成克制、清晰、可信的学术风格。
-
-## 2. 设计目标
-
-### 2.1 核心目标
-
-- **内容先于装饰**：首屏在 5 秒内回答“是谁、研究什么、从哪里开始看”。
-- **解释先于罗列**：出版物的研究问题和一句话结论比年份、会议信息更醒目。
-- **简约但不匿名**：保留暖纸色、蓝色强调和衬线标题，形成稳定的个人辨识度。
-- **一致但不机械**：主页允许表达性排版，索引与详情页采用更高效的生产性排版。
-- **双语同构**：中英文的层级、功能和完成度一致；允许句长导致自然换行，不要求逐行镜像。
-- **全尺寸可用**：桌面、平板、手机均保留导航、筛选、主题、语言与论文链接等完整功能。
-
-### 2.2 成功感受
-
-页面应该给人“冷静、严谨、开放”的感觉，像一本排版良好的研究期刊，而不是营销落地页、仪表盘或作品集模板。
-
-## 3. 参考设计系统与借鉴原则
-
-用户指定的 [awesome-design-systems](https://github.com/alexpate/awesome-design-systems) 将设计系统定义为原则、最佳实践、组件和语言规范的集合。本方案从其中选择四个与学术内容站最相关的系统，只借鉴原则，不复制品牌资产、字体、组件代码或商标。
-
-### 3.1 IBM Carbon
-
-参考：
-
-- [2x Grid](https://v10.carbondesignsystem.com/guidelines/2x-grid/overview/)
-- [Typography strategy](https://carbondesignsystem.com/elements/typography/style-strategies/)
-- [Color tokens](https://v10.carbondesignsystem.com/guidelines/color/overview/)
-
-借鉴：
-
-- 使用 8px 基础单元建立间距、网格、图像与组件节奏；
-- 用可见的纵横关键线让标题、元数据、正文和操作对齐；
-- 区分“表达性排版”和“生产性排版”：首页标题可表达，论文索引与正文优先效率；
-- 色彩按角色命名，主题切换只替换值，不改变颜色角色。
-
-### 3.2 GitHub Primer
-
-参考：
-
-- [Layout](https://primer.style/product/getting-started/foundations/layout/)
-- [Responsive](https://primer.style/product/getting-started/foundations/responsive)
-- [Accessibility fundamentals](https://primer.style/accessibility/foundations/accessibility-fundamentals/)
-- [Text resizing and spacing](https://www.primer.style/accessibility/design-guidance/text-resize-and-spacing/)
-
-借鉴：
-
-- 页面保持聚焦、平静、少干扰，沿自然阅读顺序组织内容；
-- 响应式意味着功能不丢失，而不只是“排得下”；
-- 最小支持 320px 宽视口，并在 200% 文本缩放下不截断内容；
-- 使用熟悉、可辨识的链接和控件模式，避免只在悬停时出现关键操作。
-
-### 3.3 Adobe Spectrum
-
-参考：
-
-- [Color system](https://spectrum.adobe.com/page/color-system/)
-- [Using color](https://spectrum.adobe.com/page/using-color/)
-
-借鉴：
-
-- 中性色承担结构，品牌蓝只用于链接、选中状态和少量强调；
-- 亮暗主题使用语义 token，而不是在组件内写死颜色；
-- 颜色不单独表达 Task / Method / Goal，标签必须同时显示文字类别；
-- 交互状态必须在亮暗主题下都有清晰的明度变化和焦点标识。
-
-### 3.4 GOV.UK Design System
-
-参考：
-
-- [Layout](https://design-system.service.gov.uk/styles/layout/)
-- [Type scale](https://design-system.service.gov.uk/styles/type-scale/)
-- [Spacing](https://design-system.service.gov.uk/styles/spacing/)
-
-借鉴：
-
-- 从单栏小屏开始设计，再扩展到多栏；
-- 长正文控制在约 65–75 个拉丁字符宽，中文正文控制在舒适的阅读宽度；
-- 字号和间距随屏幕响应，而不是等比例压缩桌面版；
-- 使用有限、重复的字号与间距点，保持稳定垂直节奏。
-
-## 4. 视觉语言
-
-### 4.1 核心概念
-
-**Warm paper + editorial blue + research grid**：温暖但不复古，理性但不冷漠。背景是轻微暖灰纸色；正文以接近黑色的中性墨色承载；蓝色标记链接、当前状态和研究路径；细线构成页面结构。
-
-### 4.2 保留与收敛
-
-保留：
-
-- 暖纸色背景与亮暗主题；
-- 衬线大标题和无衬线正文的组合；
-- 蓝色强调；
-- 肖像原色展示；
-- 论文“问题—想法—证据—边界”的内容结构。
-
-收敛：
-
-- 移除全页点阵背景，避免与正文和论文图争夺注意力；
-- 将大面积阴影改为边线、层级色和轻微 elevation；
-- 降低圆角泛滥：内容块 12px，功能控件 6–8px，真正的胶囊只用于短标签；
-- 首屏名言由主标题降为导语性质的 pull quote，不再占据大部分首屏；
-- 不用孤立的装饰编号；编号只表达阅读顺序或栏目结构。
-
-## 5. Design tokens
-
-所有值在 `src/styles/global.css` 的 `:root` 和 `[data-theme="dark"]` 集中定义。组件只能使用语义 token。
-
-### 5.1 色彩
-
-| 角色 | Light | Dark | 用途 |
-| --- | --- | --- | --- |
-| `--canvas` | `#F6F4EE` | `#111318` | 页面底色 |
-| `--surface` | `#FCFBF8` | `#191C22` | 卡片、浮层、导航 |
-| `--surface-subtle` | `#EFEEE8` | `#20242B` | 次级区域、悬停 |
-| `--text-primary` | `#17181C` | `#F3F1EA` | 标题、正文重点 |
-| `--text-secondary` | `#5E626B` | `#B4B7C0` | 正文说明、元数据 |
-| `--border-subtle` | `#D8D4CA` | `#353A43` | 分隔线、装饰边界 |
-| `--border-strong` | `#8B8982` | `#767B86` | 重要区域边界 |
-| `--accent` | `#2455D6` | `#8DA8FF` | 链接、选中、关键强调 |
-| `--accent-hover` | `#173DA8` | `#B0C1FF` | 悬停/激活 |
-| `--accent-soft` | `#E4EAFC` | `#26304E` | 选中背景、图像占位 |
-| `--focus` | `#F4C430` | `#FFD84D` | 键盘焦点；不得作普通装饰 |
-
-约束：
-
-- 正文与背景达到 WCAG 2.2 AA 4.5:1；大字至少 3:1；控件边界/状态至少 3:1。
-- Task / Method / Goal 的视觉差异采用“前缀文本 + 边框/填充模式”，不能只靠颜色。
-- 不新增第三个品牌色；警告或错误只在未来存在相应语义时添加。
-
-### 5.2 排版
-
-字体栈不引入新的远程依赖：
-
-- `--font-sans`: `Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif`
-- `--font-serif`: `Iowan Old Style, Baskerville, "Times New Roman", "Songti SC", STSong, serif`
-
-字号使用 `rem` 与 `clamp()`：
-
-| Token | 建议值 | 用途 |
+| 节奏 | 页面 | 原则 |
 | --- | --- | --- |
-| `--text-xs` | `0.75rem / 1.4` | 元数据、标签 |
-| `--text-sm` | `0.875rem / 1.55` | 辅助说明 |
-| `--text-body` | `1rem / 1.7` | 正文 |
-| `--text-lead` | `clamp(1.1rem, 1.2vw, 1.3rem) / 1.6` | 导语 |
-| `--text-h3` | `clamp(1.5rem, 2.2vw, 2.25rem) / 1.12` | 卡片标题 |
-| `--text-h2` | `clamp(2.25rem, 4vw, 4.5rem) / 1.02` | 章节标题 |
-| `--text-display` | `clamp(3.4rem, 7vw, 7.25rem) / 0.94` | 仅首页主命题 |
+| 展示 | 首页、Albums | 炫酷、沉浸式视觉：3D、全屏图像、滚动叙事 |
+| 阅读 | About Me、Publications、Posts | 沉浸式阅读：安静、专注、少干扰 |
 
-规则：
+全站中英双语，两种语言的结构和功能完全一致。
 
-- 页面永远只有一个语义 `h1`；视觉字号不改变语义层级。
-- 正文最大宽度 `68ch`，中文在视觉上约 34–42 个汉字一行。
-- 正文不使用全大写；仅 12px 以上的短 eyebrow/元数据允许大写和字距。
-- 英文标题 `letter-spacing` 不小于 `-0.045em`；中文标题恢复到 `-0.015em` 或 `normal`，避免汉字粘连。
+## 2. 信息架构
 
-### 5.3 间距、圆角与阴影
+**导航**：四个标签 **About Me · Publications · Posts · Albums**，另有搜索、语言切换和主题切换（Auto / Light / Dark）。
 
-8px 主节奏，允许 4px 半步：
+| 路径（英文；中文加 `/zh` 前缀） | 内容 |
+| --- | --- |
+| `/` | 首页：全屏 3D MRI + 四个标签 |
+| `/about/` | About Me：头像、简介、联系方式、CV 下载 |
+| `/publications/` | 论文列表，按年份分组 |
+| `/publications/<slug>/` | 论文详情 |
+| `/posts/` | 文章索引：分类 Papers（论文）/ Books（书籍）/ Notes（随笔），以及系列 |
+| `/posts/<slug>/` | 文章 |
+| `/posts/graph/` | 全站关系图 |
+| `/albums/` | 相册索引 |
+| `/albums/<slug>/` | 单个相册（主题展） |
 
-`4, 8, 12, 16, 24, 32, 48, 64, 96, 128px`
+**不兼容旧网站**：这是推倒重建。旧网站的路由（`/writing/`、`/topics/`、`/cv/`、`/publications/<date>/<slug>/` 以及现有的重定向页）全部删除，不做重定向。
 
-- 页面外边距：手机 16px，平板 24px，桌面 32px；
-- 内容区最大宽度：1200px；长文列最大宽度：760px；
-- 章节垂直间距：手机 64px，平板 80px，桌面 112px；
-- `--radius-control: 8px`；`--radius-surface: 12px`；`--radius-pill: 999px`；
-- 阴影仅用于 sticky header/浮层：`0 8px 24px rgb(17 19 24 / 8%)`；普通内容卡不使用大阴影。
+## 3. 视觉语言
 
-## 6. 网格与断点
+### 3.1 字体
 
-采用 mobile-first：
+- **全站**：LXGW Bright GB（霞鹜文楷 Bright 简体规范字形版），使用 Regular、Medium、Italic 三款。
+- **加载方式**：自托管，不依赖第三方 CDN。用 `cn-font-split` 把字体按字符切成带 `unicode-range` 的 woff2 小文件，浏览器只下载页面上出现的字。切分结果提交进 `public/fonts/`，附 OFL 许可证。源 TTF 不进仓库。`font-display: swap`。
+  - 不整包直接放的原因：单个字重的 TTF 就有 13.6MB，首次访问要等很久，文字还会在系统字体和文楷之间跳变。
+- **代码**：系统等宽字体。
+- **公式**：MathJax（构建时渲染为 SVG）。
 
-| 范围 | 宽度 | 网格 | 页面边距 | 核心行为 |
-| --- | --- | --- | --- | --- |
-| Narrow | `320–767px` | 4 列 | 16px | 单栏；导航折叠；触控优先 |
-| Regular / tablet | `768–1023px` | 8 列 | 24px | 允许 5+3、4+4 双栏；导航分两行 |
-| Wide | `≥1024px` | 12 列 | 32px | 允许 7+5、8+4 组合；内容最大 1200px |
+### 3.2 颜色与主题
 
-额外验证宽度：320、375、768、1024、1280、1440px。布局断点由内容是否拥挤决定，不按具体设备型号命名。
+- 保留三种主题：Auto、Light、Dark。
+- 首页 3D 区域不随主题变化。它的背景色和全站强调色，等 MRI 实际渲染出来后再定（Phase 4），定好之后回填到全站的颜色 token。
+- 在那之前（Phase 1–3），沿用现有的语义化 token：亮色为暖纸色，暗色为深墨色，作为过渡。
 
-## 7. 内容层级与页面骨架
+### 3.3 动效
 
-### 7.1 全局顺序
+- **展示页面**：3D、滚动叙事、图像转场。
+- **阅读页面**：只有不超过 200ms 的颜色和透明度过渡。
+- **页面切换**：用 CSS 的跨文档 View Transitions（`@view-transition { navigation: auto; }`），不写 JS；不支持的浏览器照常跳转。
+- **`prefers-reduced-motion: reduce`**：所有 3D 和滚动动画换成静态图和静态布局。
 
-1. Skip link；
-2. 品牌、主导航、语言、主题；
-3. 页面 `h1` 与一句定位；
-4. 页面主任务（查看研究、阅读解释、浏览主题等）；
-5. 补充内容与外链；
-6. 简洁页脚。
+### 3.4 可访问性底线
 
-### 7.2 首页信息层级
+正文对比度达到 WCAG AA；所有交互键盘可达；焦点可见；每页设置正确的 `lang`；图片有 alt；灯箱支持键盘和屏幕阅读器。
 
-1. 姓名与研究定位（主）；
-2. 一句话研究主张（主）；
-3. 研究入口（主操作）；
-4. 肖像与外部联系（次）；
-5. 代表研究及解释（主内容）；
-6. 写作、About 摘要（次内容）；
-7. 名人名言作为语气标识，不作为核心信息。
+## 4. 首页
 
-### 7.3 出版物层级
+**构成**：全屏 3D 前列腺 MRI，左上角小字号姓名 “Yiming Ma / 马一铭”，四个标签，语言和主题控件，角落一行数据来源署名。首页不放简介、CV、论文列表和搜索框，这些都在其他页面。
 
-索引：题目/研究问题 → 一句话结论 → 年份/venue → 标签 → 详情入口。
-详情：研究问题 → 核心想法 → 证据 → 边界 → Paper/Code/Demo 原始资源。
+**3D 场景**：
 
-## 8. 组件与交互原则
+- **数据**：PI-CAI 公开数据集中的一例，包括 T2W 序列、腺体分割，以及分区和病灶标注（如果数据里有）。许可预期为 CC BY-NC 4.0，具体条款和病例在 Phase 4 核对；下载前先征得你的同意。
+- **呈现**：体渲染（在 3D 纹理上做光线步进）打底，腺体轮廓高亮，再标出一个病灶。
+- **交互**：鼠标位置映射为旋转角度，水平和垂直各 ±20°，带阻尼缓动；鼠标移出画面后回到正中。
+- **背景**：渲染出来后再定，不一定是纯黑。
+- **降级**：手机（粗指针或窄屏）、开启了 `prefers-reduced-motion`、或浏览器不支持 WebGL2 时，显示同一场景离线渲染的静态图。
+- **预算**：three.js 只在首页按需加载；体数据压缩后不超过 3MB；桌面宽带下 3 秒内可以交互。
+- **预处理**：`scripts/mri/` 下的 Python 脚本（SimpleITK、numpy）把 `.mha` 重采样，裁剪到前列腺周围，归一化为 uint8，导出二进制体数据和元数据 JSON。离线产物进仓库，原始数据不进仓库。
+- **研究方向变化时**：替换数据和着色参数即可。由你告诉我，再重新制作。
 
-- **链接就是链接**：正文链接有下划线或明确箭头；不能只靠颜色区分。
-- **按钮有动作等级**：每个视区至多一个实心主按钮，其余使用描边或文字链接。
-- **筛选可恢复**：当前筛选有 `aria-pressed`、URL 参数和可见结果状态；没有结果时显示解释。
-- **详情展开可预测**：`details/summary` 保留原生键盘行为，图标旋转只是辅助反馈。
-- **主题三态明确**：Auto / Light / Dark 都可见；手机端不能隐藏 Auto；当前状态有文本或可访问名称。
-- **语言保持上下文**：切换语言后进入对应的同一路径，不跳回首页。
-- **触控目标**：所有主要交互最小 44×44px，标签链接间距避免误触。
-- **动效克制**：只使用 120–200ms 的颜色、边框、位移过渡；无滚动驱动动画。
+## 5. About Me
 
-## 9. 可访问性
+- **头像**：`public/images/profile.jpg`，先占位，之后由你替换。
+- **内容**：姓名；职位和单位；研究简介（现在做前列腺癌主动监测，博士期间做人群计数和驾驶员监控）；外部链接（Email、Google Scholar、GitHub、LinkedIn）。
+- **CV 下载**：按页面语言给出对应的 PDF。英文页链接 `/cv/Yiming-Ma-CV-en.pdf`，中文页链接 `/cv/Yiming-Ma-CV-zh.pdf`。PDF 由你提供，更新时直接覆盖同名文件。
 
-目标为 WCAG 2.2 AA：
+## 6. Publications
 
-- 语义 landmarks 完整：`header/nav/main/footer`；
-- 标题层级连续，无视觉标签冒充标题；
-- 键盘顺序与视觉顺序一致；所有焦点清晰；
-- 320px 宽、200% 文本缩放无横向页面滚动（必要的局部代码/表格除外）；
-- 主题、标签、状态不只依赖颜色或图形；
-- `prefers-reduced-motion` 禁用非必要移动；
-- `prefers-contrast: more` 和 `forced-colors: active` 至少保证边界、焦点和链接可辨；
-- 图片具有与上下文匹配的 alt；论文方法图的图注不假装替代论文原始图注；
-- 外链在当前窗口打开，避免无提示的新窗口；
-- 中英文分别设置正确 `lang`。
+**列表页**：按年份分组，没有筛选器，没有标签。等论文多了，再建立标签系统。每条包括：
 
-## 10. 响应式内容策略
+- 标题；
+- 作者（你的名字加粗，共同一作标 `*`，通讯作者标 `†`）；
+- venue 简称和类型徽标（Conference / Journal / Workshop / Preprint）；
+- 一句话总结；
+- 链接（Paper / Code / Demo / Project）。
 
-- 小屏不是删减版：主导航、Auto 主题、所有论文链接和筛选均保留；
-- 多栏按阅读顺序折为单栏，不能用 CSS `order` 造成视觉与 DOM 顺序冲突；
-- 表达性标题在小屏下缩小，同时放松行高与字距；
-- 论文图使用固定宽度、自动高度和 `object-fit: contain`，避免裁掉方法内容；
-- 长作者列表、论文标题、URL 与标签必须换行；
-- 平板横竖屏均不依赖 hover；卡片操作常显。
+**详情页**：标题、作者、venue 全称、日期、方法图、一句话总结、摘要、链接，以及一个 Cite 块（BibTeX 纯文本，可一键复制）。
 
-## 11. 语气与微文案
+**机器可读**：每个详情页输出 `citation_*` meta 标签和 JSON-LD `ScholarlyArticle`。BibTeX 以纯文本形式直接写在 HTML 里，AI agent 和学术爬虫无需点击就能读到。
 
-- 准确、直接、可证实，不使用“革命性”“领先”等宣传语；
-- 研究介绍明确区分结果、解释和局限；
-- 暂无内容时说明真实状态和下一步，不制造假文章或失效下载；
-- 英文避免 Title Case 泛滥；中文使用自然标点和全角引号；
-- 行动文字描述目的，例如“阅读完整讲解”，不使用“Click here”。
+**数据格式**：每篇论文一个文件夹，方法图和 YAML 放在一起。
 
-## 12. 非目标
+```text
+src/content/publications/zip/
+  index.yaml
+  overview.png
+```
 
-- 不改写论文事实或扩大研究结论；
-- 不添加博客 CMS、搜索后端、账号或评论系统；
-- 不引入大型 UI 框架或整套第三方设计系统；
-- 不复制 Carbon、Primer、Spectrum、GOV.UK 的品牌视觉；
-- 不生成装饰性 AI 插图；论文图仍使用真实论文资产；
-- 不以动画、3D、玻璃拟态或过度圆角制造“现代感”；
-- 不在没有 PDF/正文时伪造 CV 或随笔内容。
+```yaml
+title: "ZIP: Scalable Crowd Counting via Zero-Inflated Poisson Modeling"
+date: 2025-07-31
+type: preprint            # conference | journal | workshop | preprint
+venue: { short: arXiv, full: arXiv preprint }
+authors:
+  - { name: Yiming Ma }
+  - { name: Victor Sanchez }
+  - { name: Tanaya Guha }
+  # 可选标记：equal: true（共同一作）、corresponding: true（通讯作者）
+links: { paper: "https://arxiv.org/abs/2506.19955", code: "…", demo: "…" }
+image: ./overview.png
+tldr: { en: "…", zh: "…" }
+abstract: { en: "…", zh: "…" }
+bibtex: |
+  @article{…}
+```
 
-## 13. 实现边界
+**测试数据**：把现有 6 篇转成新格式，只转换格式，不改写内容。
 
-设计主要通过现有 Astro 组件和 `global.css` 落地，不新增依赖。优先使用语义 HTML、CSS Grid、`clamp()`、原生 `details` 与少量现有客户端脚本。每个模块只修改文档中列出的文件；跨模块 token 变更集中在第一个模块完成，后续复用。
+## 7. Posts
 
-## 14. 全站验收标准
+### 7.1 来源与同步流程
 
-- [ ] 首页首屏在 1280×800 内可同时看到姓名/研究定位、主行动和肖像的主要部分。
-- [ ] 320、375、768、1024、1280、1440px 无非预期横向滚动。
-- [ ] 手机端仍能访问 Research、Writing、Topics、About、语言和三态主题。
-- [ ] 中英同一路径可互换，页面层级和功能一致。
-- [ ] 6 篇出版物在索引和详情页均可访问，Paper/Code/Demo 不被隐藏。
-- [ ] Task / Method / Goal 不只靠颜色区分。
-- [ ] 所有正文列控制在约 68ch；论文解释可连续阅读。
-- [ ] 键盘可以完成导航、主题切换、语言切换、筛选和详情展开。
-- [ ] 焦点、正文、交互控件达到 WCAG 2.2 AA 对比度目标。
-- [ ] 200% 文本缩放无裁切、重叠或功能损失。
-- [ ] `prefers-reduced-motion` 下无非必要位移动画。
-- [ ] 亮暗主题均无写死的不可读颜色。
-- [ ] `npm run build` 成功，所有中英路由和旧论文重定向仍然生成。
+- **唯一来源**：Obsidian 笔记库，路径记录在 `AGENTS.md` 里。
+- **发布范围**：只发布 frontmatter 里写了 `publish: true` 的笔记。
+- **同步由 AI agent 按操作手册完成，不写同步脚本。** 手册写在 `AGENTS.md` 的“同步笔记”一节，Claude 和 Codex 用同一份。步骤：
+  1. 只读访问笔记库，找出 `publish: true` 的笔记。
+  2. 把笔记原文和它引用的附件复制到 `src/content/posts/<slug>/`：中文原文存为 `zh.md`，附件和它放在同一个文件夹。原文语法不改写，转换由构建时的插件完成。
+  3. 按下面的检查项逐条检查，把问题列给你。不自动修改笔记库。
+  4. 如果笔记库里 Admonition 插件的配置（自定义类型的颜色、图标、标题）有变化，同步更新 `src/data/admonitions.json`。
+  5. 把新增或改动的笔记译成英文，存为同一文件夹下的 `en.md`。
+  6. 构建通过后，在本地预览给你检查。
+- **检查项**：
+  - 缺少 `slug` 或 `description`；
+  - `slug` 重复；
+  - `series_order` 重复，或与标题里的编号不一致；
+  - 引用了不存在的标题或块；
+  - 附件缺失。
 
-## 15. 模块实施顺序
+  构建本身也会兜底：frontmatter 不符合 schema 时构建失败；无法解析的块引用会输出警告。
+- **对笔记库只读**，除非你明确要求修改。
+- **翻译**：英文版只存在于仓库，笔记库保持纯中文。
+- **发布**：由你检查，由你决定是否提交和推送。**agent 不推送。**
+- **草稿预览**：模板阶段，或者你想先看看效果时，agent 把未标记发布的笔记复制到 `src/content/posts-drafts/`。这个目录被 gitignore，只在本地开发服务器里可见，不进生产构建。DINOv3 01、02 就走这个通道。
 
-总体方案落地拆为 6 个外层模块，每个模块执行两轮：程序员按方案初改 → 设计师评审 → 程序员按反馈改第二轮。
+### 7.2 frontmatter
 
-1. 全局基础、导航与主题；
-2. 首页首屏与个人卡片；
-3. 研究展示、出版物索引与标签；
-4. 出版物详情叙事；
-5. Writing / Topics / About / CV 次级页面；
-6. 全站响应式、可访问性与最终一致性。
+沿用你现在的字段，只新增两个：
 
-具体规格与验收见 `docs/design/modules/`。
+```yaml
+title: "手撕 DINOv3（一）：研究背景与核心动机"
+description: "…"
+date: 2026-11-13
+updated: 2026-11-13
+series: "手撕 DINOv3"
+series_order: 1
+tags: [ai/deep-learning, ai/computer-vision]
+slug: dinov3-01     # 新增：网址，只用小写字母、数字和连字符
+publish: true       # 新增：发布开关
+```
+
+- **slug** 由你写在笔记里。如果缺失，agent 会提议一个，征得你同意后才写入笔记库。
+- **分类**由笔记所在的文件夹决定：`论文/` 对应 Papers（论文），`书籍/` 对应 Books（书籍），`随笔/` 对应 Notes（随笔）。
+- **阅读时长**自动计算。
+- **不需要封面图。**
+
+### 7.3 Obsidian 语法支持
+
+依据 2026-11-17 对笔记库的扫描：
+
+| 语法 | 网站上的处理 |
+| --- | --- |
+| `[[笔记]]`、`[[笔记\|别名]]`、`[[笔记#标题]]` | 解析为站内链接。目标不存在或未发布时，显示为灰色、不可点击的文字 |
+| `[[笔记#^块ID]]` 和行尾的 `^块ID` | 链接跳到对应块的锚点；块 ID 本身不显示 |
+| `![[图.png]]`、`![[图.png\|说明]]`、`![[图.png\|说明\|320]]` | 图片加图注（遵循 image-captions 插件的语义），可指定宽度 |
+| `![[视频.mp4]]` | `<video controls>` |
+| ` ```ad-<type> ` 代码块，支持 `title:` 和 `collapse:` | 13 种自定义类型加插件内置类型；颜色和 lucide 图标与 Obsidian 一致；`collapse` 转成 `<details>` |
+| 原生 callout `> [!note]` | 套用同一套样式（目前没用到，一并支持） |
+| ` ```mermaid ` | 只在含图的页面按需加载 Mermaid，在浏览器端渲染 |
+| `$…$`、`$$…$$` | MathJax，构建时渲染 |
+| 层级标签 `ai/computer-vision` | 标签按层级聚合 |
+
+**你的 13 种自定义 Admonition**（英文标题用于英文版）：
+
+| 类型 | 中文 | 英文 |
+| --- | --- | --- |
+| abs | 摘要 | Abstract |
+| def | 定义 | Definition |
+| lem | 引理 | Lemma |
+| the | 定理 | Theorem |
+| cor | 推论 | Corollary |
+| pro | 证明 | Proof |
+| axi | 公理 | Axiom |
+| exa | 例子 | Example |
+| rem | 注记 | Remark |
+| str | 优点 | Strengths |
+| wea | 缺点 | Weaknesses |
+| fut | 展望 | Outlook |
+| que | 疑问 | Question |
+
+**首版不支持**（同步时在报告里列出）：Dataview 查询、Excalidraw 画板。整篇笔记嵌入 `![[笔记]]` 降级为链接卡片。
+
+### 7.4 阅读页（沉浸式阅读）
+
+- **布局**：
+  - ≥1200px：左栏是大纲（固定在视口内），中间是正文（中文约每行 40 字，英文约每行 70 字符），右栏是局部关系图和反向链接。
+  - 1024–1199px：右栏内容移到正文末尾。
+  - <1024px：大纲收进顶部的抽屉，关系图和反向链接放在文末。
+- **页头**：向下滚动时自动隐藏，向上滚动时出现。页顶有一条细的阅读进度条。
+- **系列**：文首显示“系列 · 第 n 篇 / 共 m 篇”，文末有上一篇和下一篇。
+- **悬停预览**：桌面端鼠标在站内链接上停留 300ms，弹出目标笔记的标题和开头段落（同源抓取目标页面并缓存）。触屏设备不启用。
+- **元信息**：发布日期；更新日期（与发布日期不同时才显示）；阅读时长；标签。英文页不加 AI 翻译声明。
+
+### 7.5 关系图
+
+- **节点**：已发布的笔记为实心节点。被链接但尚未创建或未发布的笔记为灰色空心节点，这与 Obsidian 中未创建笔记的显示方式一致；灰色节点不可点击，悬停时显示名称。
+- **边**：笔记之间的双链。
+- **局部图**：当前笔记加上它的一跳邻居，包括灰色节点。
+- **全站图**：`/posts/graph/`，2D，与 Obsidian 一致。可拖拽、缩放，点击节点跳转，按分类着色。
+- **实现**：构建时生成 `graph.json`；前端用 d3-force 计算布局、Canvas 绘制，只在需要的页面加载。中英文各一张图。
+
+### 7.6 索引页 `/posts/`
+
+分类切换 All / Papers / Books / Notes；系列聚合显示，每个系列下列出篇目；按日期倒序。
+
+### 7.7 搜索
+
+- 用 Pagefind，在构建后对 `dist/` 建索引。中英文按 `lang` 分别建索引。
+- 搜索范围覆盖 Posts、Publications、Albums 和 About。
+- 导航栏里一个搜索按钮，打开搜索面板，快捷键 ⌘K / Ctrl+K。
+- 中文分词效果在 Phase 3 实测。
+
+## 8. Albums
+
+### 8.1 数据结构
+
+每个相册一个文件夹，里面是照片和一个 `album.yaml`：
+
+```text
+src/content/albums/2025-scotland/
+  album.yaml
+  IMG_0001.jpg
+  IMG_0002.jpg
+```
+
+```yaml
+title: { zh: 苏格兰高地, en: Scottish Highlands }
+date: 2025-08                  # 用于排序
+place: { zh: 苏格兰, en: Scotland }
+cover: IMG_0001.jpg
+intro: { zh: "…", en: "…" }    # 可选
+photos:
+  - src: IMG_0001.jpg                    # 同目录下的文件名
+    caption: { zh: "…", en: "…" }
+  - src: https://example.com/photo.jpg   # 或完整链接
+    caption: { zh: "…", en: "…" }
+    exif: { camera: Canon EOS R8, lens: "…", focal: 35mm, aperture: f/8, shutter: 1/250, iso: 100 }
+    # exif 可选：链接图片读不到 EXIF 时手写；写了就覆盖自动读取的值
+```
+
+- **本地文件**：
+  - 构建时读取 EXIF 并显示：相机、镜头、焦距、光圈、快门、ISO、拍摄时间。
+  - 构建时生成多尺寸的 AVIF/WebP，用于网格和正文展示。
+  - 灯箱里的“查看原图”提供原文件。**不限制原图分辨率。**
+- **链接图片**：直接引用，不做处理。尺寸在构建时探测；探测失败时，需要在 YAML 里写明 `width` 和 `height`。
+- **GPS**：不剥离，也不在页面上展示。
+- **体积提醒**：构建结束时打印 `dist/` 的总大小。GitHub Pages 站点上限为 1GB，超过 800MB 时给出警告。
+- **文字**：中文由你写，哪怕只写地名；英文由 AI 翻译。AI 不编造经历。
+
+### 8.2 视觉
+
+具体效果在 Phase 5 先出两版样稿，由你选。方向如下：
+
+- **索引页**：全屏展示，相册封面大图随滚动逐个切换（scroll-snap），封面缓慢推近；桌面端悬停时有 WebGL 液态扭曲过渡；每个相册的强调色从封面图中提取。
+- **相册页**：全屏封面开场，之后照片按节奏排版（满幅、并排、留白交替），滚动时渐显；照片下方用小字显示 EXIF；点击进入灯箱（PhotoSwipe：缩放、手势、键盘操作）。
+- **主题**：页面框架（导航、文字）跟随主题；照片本身不加任何滤镜。
+- **降级**：开启 `prefers-reduced-motion` 时去掉推近、扭曲和渐显；手机上不做 WebGL 扭曲。
+- **测试数据**：模板阶段使用生成的占位图，并明确标注为占位。你提供照片后替换。
+
+## 9. 技术栈
+
+- **保留**：Astro 7（静态输出）、GitHub Actions 部署到 Pages。
+- **新增依赖**：
+
+| 依赖 | 用途 |
+| --- | --- |
+| three | 首页 3D |
+| photoswipe | 灯箱 |
+| d3-force | 关系图布局 |
+| mermaid | 流程图，按需加载 |
+| rehype-mathjax | 公式，替换 rehype-katex / katex |
+| pagefind | 构建后建立搜索索引 |
+| exifr | 读取 EXIF |
+| cn-font-split | 开发依赖，用于切分字体 |
+
+- **Obsidian 语法插件**：自己写，放在 `src/lib/obsidian/`。
+- **本地离线 Python**：MRI 预处理。
+- **移除**：katex、rehype-katex，以及基于 reportlab 的 CV 生成脚本。
+- **不用 Quartz 的原因**：Quartz 自带 Obsidian Publish 式的双链、关系图和悬停预览，但它是另一套框架。用它的话，Posts 会变成一个独立的站点，外观和中英双语都很难与主站统一。自己写插件更可控。
+
+### 9.1 可维护性
+
+日常维护（同步笔记、添加论文和相册）都由 AI agent 完成，所以代码要让下一个 agent 能读懂、能放心改。
+
+- **注释写足，用中文**：
+  - 每个组件、插件和脚本开头，说明它负责什么、输入输出是什么、和哪些文件相关。
+  - 非显而易见的逻辑，写明原因而不只是做法。
+  - 每个可调参数（比如 3D 的旋转角度、断点、预算）都写清楚含义和取值依据。
+- **内容 schema**（`src/content.config.ts`）逐字段注释，并附上 YAML 或 frontmatter 示例。
+- **`AGENTS.md`** 包含规则和操作手册：
+  - 规则：不推送；事实必须有出处；对笔记库只读，除非你明确要求；翻译规则；提交前构建必须通过。
+  - 操作手册：同步笔记、添加论文、添加相册、更换首页 3D 数据。
+- **`CLAUDE.md`** 只写一行 `@AGENTS.md`，引用同一份内容，避免两份文件不同步。
+
+## 10. 删除清单（执行时）
+
+- **页面和路由**：旧网站的全部页面，包括 Topics、HTML 版 CV、Writing 和现有的重定向页。不做重定向。
+- **数据和脚本**：`src/data/cv.json`、`scripts/generate_cv_pdfs.py`、`src/lib/post-taxonomy.ts`，以及 `src/lib/site.ts` 里论文的 Task/Method/Goal 分类。
+- **内容**：
+  - 正弦位置编码和 RoPE 两篇（中英文），以及 `public/images/posts/sinusoidal-pe/`、`public/images/posts/rope/`。
+  - DINOv1 系列 6 篇及 `public/images/posts/dino/`，连同工作区里配套的未提交改动。**这些从未提交，删除后无法恢复，执行前再确认一次。**
+
+## 11. 决策记录（2026-11-17 审阅）
+
+| 决策 | 结论 |
+| --- | --- |
+| 首页左上角小字号显示姓名 | 采纳 |
+| 英文文章页注明 AI 辅助翻译 | **不采纳** |
+| Publications 取消 Task/Method/Goal 标签 | 采纳；论文多了以后再建标签系统 |
+| 论文和相册数据统一用 YAML | 采纳 |
+| 全站关系图做 2D | 采纳 |
+| 新增 `AGENTS.md` / `CLAUDE.md` | 采纳（见 §9.1） |
+| About Me 不放精选论文 | 采纳 |
+| 保留旧路由并做重定向 | **不采纳**：推倒重建，不兼容旧网站 |
+| 用 npm 脚本同步笔记 | **不采纳**：由 agent 按操作手册同步（见 §7.1） |
+
+## 12. 首版不做
+
+- 3D 地球和地图
+- RSS、评论、访问统计、News
+- 整篇笔记嵌入、Dataview、Excalidraw
+- 色彩管理
+- 自定义域名
+- 旧网站路由的兼容和重定向
+- 英文页的 AI 翻译声明
+- 笔记同步脚本
