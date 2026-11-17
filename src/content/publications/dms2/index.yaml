@@ -1,0 +1,21 @@
+# 论文数据。字段含义见 src/content.config.ts；添加论文的步骤见 AGENTS.md「添加论文」。
+# 从旧网站转换而来（2026-11-17），只转了格式；摘要、venue 全称和官方 BibTeX 待填写真实内容时补充。
+title: "Robust Multiview Multimodal Driver Monitoring System Using Masked Multi-Head Self-Attention"
+date: 2023-04-13
+type: workshop
+venue:
+  short: "CVPRW 2023"
+authors:
+  - name: "Yiming Ma"
+  - name: "Victor Sanchez"
+  - name: "Soodeh Nikan"
+  - name: "Devesh Upadhyay"
+  - name: "Bhushan Atote"
+  - name: "Tanaya Guha"
+links:
+  paper: "https://arxiv.org/abs/2304.06370"
+  code: "https://github.com/Yiming-M/MHSA"
+image: ./overview.png
+tldr:
+  en: "Fuse top/front and depth/infrared features with source-aware self-attention, and randomly mask feature patches during training to simulate missing views or modalities."
+  zh: "用带信息源标识的自注意力融合顶视/前视与深度/红外特征，并在训练中随机遮挡特征块以模拟视角或模态缺失。"

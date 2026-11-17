@@ -1,0 +1,19 @@
+# 论文数据。字段含义见 src/content.config.ts；添加论文的步骤见 AGENTS.md「添加论文」。
+# 从旧网站转换而来（2026-11-17），只转了格式；摘要、venue 全称和官方 BibTeX 待填写真实内容时补充。
+title: "ZIP: Scalable Crowd Counting via Zero-Inflated Poisson Modeling"
+date: 2025-07-31
+type: preprint
+venue:
+  short: "Preprint"
+authors:
+  - name: "Yiming Ma"
+  - name: "Victor Sanchez"
+  - name: "Tanaya Guha"
+links:
+  paper: "https://arxiv.org/abs/2506.19955"
+  code: "https://github.com/Yiming-M/EBC-ZIP"
+  demo: "https://huggingface.co/spaces/Yiming-M/ZIP"
+image: ./overview.png
+tldr:
+  en: "Use a zero-inflated Poisson likelihood to separate structurally empty regions from discrete counts, without requiring segmentation masks or Gaussian-smoothed targets."
+  zh: "用零膨胀泊松似然分开结构性空区域与离散计数，不再依赖分割掩码或高斯平滑标签。"

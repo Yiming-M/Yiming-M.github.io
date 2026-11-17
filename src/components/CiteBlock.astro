@@ -1,0 +1,90 @@
+---
+/**
+ * 论文详情页的 Cite 块：显示 BibTeX 原文，附一个“复制”按钮。
+ * BibTeX 直接写在 HTML 里（不是点击后才生成），AI agent 和爬虫不需要执行脚本就能读到（设计文档 §6）。
+ * BibTeX 的来源规则见 src/lib/publications.ts 的 bibtexFor。
+ */
+import type { Locale } from "../lib/site";
+
+interface Props {
+  bibtex: string;
+  locale: Locale;
+}
+
+const { bibtex, locale } = Astro.props;
+const isZh = locale === "zh";
+---
+
+<section class="cite" aria-labelledby="cite-heading">
+  <div class="cite-header">
+    <h2 id="cite-heading">{isZh ? "引用" : "Cite"}</h2>
+    <button
+      type="button"
+      data-copy-bibtex
+      data-label-done={isZh ? "已复制" : "Copied"}
+      data-label-failed={isZh ? "复制失败" : "Copy failed"}
+    >
+      {isZh ? "复制 BibTeX" : "Copy BibTeX"}
+    </button>
+  </div>
+  <pre><code data-bibtex>{bibtex}</code></pre>
+</section>
+
+<script>
+  // 点击“复制”后把 BibTeX 放进剪贴板，按钮文字短暂变成“已复制”，2 秒后恢复。
+  document.querySelectorAll<HTMLButtonElement>("[data-copy-bibtex]").forEach((button) => {
+    const code = button.closest(".cite")?.querySelector("[data-bibtex]");
+    const original = button.textContent ?? "";
+    button.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(code?.textContent ?? "");
+        button.textContent = button.dataset.labelDone ?? original;
+      } catch {
+        button.textContent = button.dataset.labelFailed ?? original;
+      }
+      setTimeout(() => (button.textContent = original), 2000);
+    });
+  });
+</script>
+
+<style>
+  .cite-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  h2 {
+    font-size: var(--text-xl);
+  }
+
+  button {
+    min-height: 2rem;
+    padding: 0 var(--space-3);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+    cursor: pointer;
+  }
+
+  button:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-subtle);
+  }
+
+  pre {
+    margin-top: var(--space-3);
+    padding: var(--space-4);
+    overflow-x: auto;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-surface);
+    background: var(--surface);
+    font-size: var(--text-xs);
+    line-height: 1.6;
+    /* BibTeX 很宽，只在代码框内部横向滚动，页面本身不出现横向滚动条。 */
+    overscroll-behavior-inline: contain;
+  }
+</style>

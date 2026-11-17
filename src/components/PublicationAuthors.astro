@@ -1,0 +1,67 @@
+---
+/**
+ * 论文作者列表：网站主人的名字加粗；共同一作后加 *，通讯作者后加 †（设计文档 §6）。
+ * 有任何标记时，在列表末尾附一行小字说明标记含义。
+ */
+import { isSelf, type Publication } from "../lib/publications";
+import type { Locale } from "../lib/site";
+
+interface Props {
+  authors: Publication["data"]["authors"];
+  locale: Locale;
+  /** 是否显示标记说明。列表页为了紧凑不显示，详情页显示。 */
+  showLegend?: boolean;
+}
+
+const { authors, locale, showLegend = false } = Astro.props;
+const isZh = locale === "zh";
+const hasEqual = authors.some((author) => author.equal);
+const hasCorresponding = authors.some((author) => author.corresponding);
+---
+
+<p class="authors">
+  {
+    authors.map((author, index) => (
+      <>
+        {index > 0 && ", "}
+        <span class:list={{ self: isSelf(author.name) }}>
+          {author.name}
+          {author.equal && <sup aria-label={isZh ? "共同一作" : "equal contribution"}>*</sup>}
+          {author.corresponding && <sup aria-label={isZh ? "通讯作者" : "corresponding author"}>†</sup>}
+        </span>
+      </>
+    ))
+  }
+</p>
+{
+  showLegend && (hasEqual || hasCorresponding) && (
+    <p class="legend">
+      {hasEqual && <span>{isZh ? "* 共同一作" : "* Equal contribution"}</span>}
+      {hasCorresponding && <span>{isZh ? "† 通讯作者" : "† Corresponding author"}</span>}
+    </p>
+  )
+}
+
+<style>
+  .authors {
+    color: var(--text-secondary);
+  }
+
+  .self {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  sup {
+    margin-left: 1px;
+    font-size: 0.75em;
+  }
+
+  .legend {
+    display: flex;
+    gap: var(--space-4);
+    margin-top: var(--space-1);
+    color: var(--text-secondary);
+    font-size: var(--text-xs);
+  }
+</style>

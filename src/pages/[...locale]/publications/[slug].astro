@@ -1,0 +1,216 @@
+---
+/**
+ * 论文详情页：英文 /publications/<slug>/，中文 /zh/publications/<slug>/（设计文档 §6）。
+ * <slug> 是 src/content/publications/ 下的文件夹名。
+ *
+ * 内容顺序：类型与 venue → 标题 → 作者 → 链接 → 方法图 → 一句话总结 → 摘要（有才显示）→ Cite（有 BibTeX 才显示）。
+ * <head> 里额外输出 citation_* meta 和 JSON-LD，供 Google Scholar 等学术爬虫和 AI agent 识别。
+ */
+import { Image, getImage } from "astro:assets";
+import CiteBlock from "../../../components/CiteBlock.astro";
+import PublicationAuthors from "../../../components/PublicationAuthors.astro";
+import PublicationLinks from "../../../components/PublicationLinks.astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import {
+  bibtexFor,
+  citationMeta,
+  getPublications,
+  scholarlyArticleJsonLd,
+  typeLabels,
+  venueText,
+  type Publication,
+} from "../../../lib/publications";
+import { localeStaticPaths, sections } from "../../../lib/routes";
+import { formatDate, localePath, localize, type Locale } from "../../../lib/site";
+
+/** 每篇论文 × 两种语言，各生成一个页面。 */
+export async function getStaticPaths() {
+  const publications = await getPublications();
+  return localeStaticPaths().flatMap(({ params, props }) =>
+    publications.map((pub) => ({
+      params: { locale: params.locale, slug: pub.id },
+      props: { locale: props.locale, pub },
+    })),
+  );
+}
+
+interface Props {
+  locale: Locale;
+  pub: Publication;
+}
+
+const { locale, pub } = Astro.props;
+const isZh = locale === "zh";
+const { data } = pub;
+const path = `/publications/${pub.id}/`;
+const listLabel = localize(locale, sections.find((item) => item.key === "publications")!.label);
+
+const bibtex = bibtexFor(pub);
+const imageAlt = isZh ? `论文《${data.title}》的方法总览图` : `Overview figure from the paper “${data.title}”`;
+
+// 分享卡片和 JSON-LD 用的图片：转成 1200px 宽的 PNG（社交平台对 AVIF/WebP 支持不一）。
+const shareImage = data.image ? await getImage({ src: data.image, width: 1200, format: "png" }) : undefined;
+const shareImageUrl = shareImage ? new URL(shareImage.src, Astro.site) : undefined;
+const pageUrl = new URL(localePath(locale, path), Astro.site);
+const jsonLd = scholarlyArticleJsonLd(pub, pageUrl, shareImageUrl);
+---
+
+<BaseLayout
+  locale={locale}
+  path={path}
+  title={data.title}
+  description={localize(locale, data.tldr)}
+  ogType="article"
+  ogImage={shareImageUrl?.href}
+>
+  <Fragment slot="head">
+    {citationMeta(pub).map((meta) => <meta name={meta.name} content={meta.content} />)}
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+
+  <article class="publication">
+    <header class="intro">
+      <a class="back" href={localePath(locale, "/publications/")}>
+        <span aria-hidden="true">←</span>
+        {listLabel}
+      </a>
+      <p class="meta">
+        <span class="badge">{localize(locale, typeLabels[data.type])}</span>
+        {
+          venueText(pub, "full") && (
+            <>
+              <span>{venueText(pub, "full")}</span>
+              <span aria-hidden="true">·</span>
+            </>
+          )
+        }
+        <time datetime={data.date.toISOString().slice(0, 10)}>{formatDate(locale, data.date)}</time>
+      </p>
+      <h1>{data.title}</h1>
+      <PublicationAuthors authors={data.authors} locale={locale} showLegend />
+      <PublicationLinks pub={pub} locale={locale} />
+    </header>
+
+    {
+      data.image && (
+        <figure class="figure">
+          <Image
+            src={data.image}
+            alt={imageAlt}
+            widths={[640, 960, 1280, 1920]}
+            sizes="(min-width: 960px) 56rem, calc(100vw - 2rem)"
+            loading="eager"
+          />
+        </figure>
+      )
+    }
+
+    <div class="body">
+      <section aria-labelledby="tldr-heading">
+        <h2 id="tldr-heading">{isZh ? "一句话总结" : "TL;DR"}</h2>
+        <p class="lead">{localize(locale, data.tldr)}</p>
+      </section>
+
+      {
+        data.abstract && (
+          <section aria-labelledby="abstract-heading">
+            <h2 id="abstract-heading">{isZh ? "摘要" : "Abstract"}</h2>
+            <p>{localize(locale, data.abstract)}</p>
+          </section>
+        )
+      }
+
+      {bibtex && <CiteBlock bibtex={bibtex} locale={locale} />}
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .publication {
+    padding: var(--space-12) var(--gutter) 0;
+  }
+
+  /* 文字部分用正文宽度；方法图可以更宽一些，看清细节。 */
+  .intro,
+  .body {
+    max-width: var(--measure);
+    margin: 0 auto;
+  }
+
+  .back {
+    display: inline-flex;
+    gap: var(--space-2);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    text-decoration: none;
+  }
+
+  .back:hover {
+    color: var(--text-primary);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-8);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+  }
+
+  .badge {
+    padding: 0 var(--space-2);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-xs);
+    line-height: 1.6;
+  }
+
+  h1 {
+    margin-top: var(--space-3);
+    font-size: var(--text-2xl);
+    line-height: 1.3;
+  }
+
+  .intro :global(.authors) {
+    margin-top: var(--space-4);
+  }
+
+  .intro :global(.links) {
+    margin-top: var(--space-6);
+  }
+
+  /* 方法图：论文图通常是白底，深色主题下放在白色卡片里，避免和深色背景硬拼接。 */
+  .figure {
+    max-width: 56rem;
+    margin: var(--space-12) auto 0;
+    padding: var(--space-4);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-surface);
+    background: #fff;
+  }
+
+  .figure :global(img) {
+    width: 100%;
+    height: auto;
+  }
+
+  .body {
+    display: grid;
+    gap: var(--space-12);
+    margin-top: var(--space-12);
+  }
+
+  h2 {
+    font-size: var(--text-xl);
+  }
+
+  .body p {
+    margin-top: var(--space-3);
+  }
+
+  .lead {
+    font-size: var(--text-lg);
+  }
+</style>

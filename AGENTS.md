@@ -8,7 +8,7 @@
 - 网站正在按 `docs/design/` 推倒重建。设计文档是实现的唯一依据：
   - [`docs/design/00-overall-design.md`](docs/design/00-overall-design.md)：总体设计
   - [`docs/design/01-implementation-plan.md`](docs/design/01-implementation-plan.md)：分阶段计划与验收标准
-- 当前进度：**Phase 1（基础框架）已完成，待作者预览确认；下一步是 Phase 2（About Me 与 Publications）。** 每完成一个阶段，更新这一行。
+- 当前进度：**Phase 2（About Me 与 Publications）已完成，待作者预览确认；下一步是 Phase 3（Posts 与 Obsidian 流程）。** 每完成一个阶段，更新这一行。
 
 ## 规则
 
@@ -42,7 +42,20 @@ Phase 3 补全。
 
 ### 添加论文
 
-Phase 3 补全（Phase 2 定下数据结构之后）。
+数据格式见 `src/content.config.ts` 的 `publications` 注释，设计依据见设计文档 §6。
+
+1. **确定 slug**：用论文简称的小写加连字符，如 `clip-ebc`。它会出现在网址里，发布后不要再改。
+2. **建文件夹** `src/content/publications/<slug>/`，在里面新建 `index.yaml`。可以复制一篇现有论文的 YAML 作模板。
+3. **填写字段**，每一项都要以论文原文（arXiv 或正式出版版本）为准：
+   - `title`、`authors`：按论文署名的顺序。共同一作加 `equal: true`，通讯作者加 `corresponding: true`。
+   - `date`：论文首次公开的日期（通常是 arXiv 第一版）。
+   - `type`、`venue.short`：例如 `conference` 和 `"ICME 2025"`。`venue.full` 只在能核对会议或期刊官方全称时才填。
+   - `links`：`paper` 必填，`code`、`demo`、`project` 有就填。
+   - `tldr`：一句话总结，中英文各一句，内容必须能在论文摘要或正文里找到依据。
+   - `abstract`：英文从论文原文原样复制；中文按 AGENTS.md 的翻译规则翻译。
+   - `bibtex`：优先粘贴官方 BibTeX（会议论文集、出版社页面或 Google Scholar 导出）。不填时，如果论文链接是 arXiv，网站会自动生成一条 arXiv 引用。
+4. **方法图（可选）**：放进同一文件夹，命名为 `overview.png`，并在 YAML 里写 `image: ./overview.png`。只用论文里的原图，不自己画。
+5. **验证**：`npm run build` 通过后，在本地预览里检查 `/publications/` 和 `/publications/<slug>/` 的中英文两个版本，然后交给作者确认。
 
 ### 添加相册
 
@@ -71,15 +84,17 @@ Phase 4 补全。
 | `src/pages/[...locale]/` | 所有双语页面。一个文件同时生成英文版（根路径）和中文版（`/zh` 前缀），见 `src/lib/routes.ts` 的 `localeStaticPaths` |
 | `src/pages/404.astro`、`src/pages/sitemap.xml.ts` | 404 页（中英文合在一页）和站点地图（新增详情页时要在这里登记） |
 | `src/layouts/BaseLayout.astro` | 页面骨架：head 元信息、字体、主题初始化、页头、页脚 |
-| `src/components/` | 页头 `SiteHeader`、页脚 `SiteFooter`、主题与语言切换、搜索按钮（占位）、图标、栏目占位页 |
+| `src/pages/[...locale]/about/` | About Me 页面。文案、头像路径和 CV 文件名都写在这个文件开头 |
+| `src/pages/[...locale]/publications/` | 论文列表 `index.astro` 和详情页 `[slug].astro` |
+| `src/components/` | 页头 `SiteHeader`、页脚 `SiteFooter`、主题与语言切换、搜索按钮（占位）、图标、栏目占位页；论文用的作者列表、链接和 Cite 块 |
+| `src/lib/publications.ts` | 论文排序、分组、BibTeX 生成规则、citation meta 和 JSON-LD |
 | `src/styles/tokens.css` | 颜色、字体、字号、间距等设计变量；深色主题的变量要写两处，见文件开头的说明 |
 | `src/styles/base.css` | 全站基础样式、焦点、页面切换动画、减少动态效果 |
 | `src/lib/routes.ts` | 四个栏目的名称和路径（导航和 sitemap 都读这里） |
 | `src/lib/site.ts` | 站点信息与语言工具函数 |
-| `src/content.config.ts` | 内容集合定义，目前只有论文，Phase 2 换成新结构 |
-| `src/content/publications/` | 论文数据：旧 JSON 格式，作为 Phase 2 的测试数据 |
+| `src/content.config.ts` | 内容集合定义（数据格式和字段说明） |
+| `src/content/publications/<slug>/` | 每篇论文一个文件夹：`index.yaml` 和可选的 `overview.png`。目前的 6 篇是从旧网站转换的模板测试数据 |
 | `scripts/fonts/split-lxgw-bright.mjs` | 把霞鹜文楷 Bright GB 切分成网页字体，见上方“重新生成网页字体” |
 | `public/fonts/lxgw-bright-gb/` | 切分后的网页字体、`fonts.css` 和许可证；由脚本生成，不要手改 |
 | `public/cv/` | 作者提供的中英文 CV PDF；覆盖同名文件即可更新 |
 | `public/images/profile.jpg` | 头像，目前是占位图 |
-| `public/publications/` | 论文方法图，Phase 2 迁移到各论文的文件夹 |

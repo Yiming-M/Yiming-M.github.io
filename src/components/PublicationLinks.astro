@@ -1,0 +1,64 @@
+---
+/**
+ * 论文的外部链接（Paper / Code / Demo / Project），显示为一排小的描边按钮。
+ * 链接在当前窗口打开（设计规范：不无提示地开新窗口）；箭头 ↗ 表示站外链接。
+ */
+import { publicationLinks, type Publication } from "../lib/publications";
+import type { Locale } from "../lib/site";
+
+interface Props {
+  pub: Publication;
+  locale: Locale;
+}
+
+const { pub, locale } = Astro.props;
+const links = publicationLinks(pub, locale);
+---
+
+<ul class="links" role="list">
+  {
+    links.map((link) => (
+      <li>
+        <a href={link.href}>
+          {link.label}
+          <span aria-hidden="true">↗</span>
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    min-height: 2rem;
+    padding: 0 var(--space-3);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-pill);
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    transition:
+      border-color var(--duration-fast) var(--ease),
+      background-color var(--duration-fast) var(--ease);
+  }
+
+  a:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-subtle);
+    color: var(--text-primary);
+  }
+
+  span {
+    color: var(--text-secondary);
+    font-size: 0.85em;
+  }
+</style>

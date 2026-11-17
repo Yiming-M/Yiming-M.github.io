@@ -1,14 +1,171 @@
 ---
 /**
- * 论文（Publications）栏目首页：英文 /publications/，中文 /zh/publications/。
- * 目前是占位页，Phase 2 替换为正式页面（见 docs/design/01-implementation-plan.md）。
+ * 论文列表：英文 /publications/，中文 /zh/publications/（设计文档 §6）。
+ * 按年份分组、从新到旧排列；不设筛选器和标签（论文多了以后再建标签系统）。
+ * 每条显示：类型与 venue 简称、标题（链接到详情页）、作者、一句话总结、外部链接。
  */
-import SectionPlaceholder from "../../../components/SectionPlaceholder.astro";
-import { localeStaticPaths } from "../../../lib/routes";
+import PublicationAuthors from "../../../components/PublicationAuthors.astro";
+import PublicationLinks from "../../../components/PublicationLinks.astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getPublications, groupByYear, typeLabels, venueText } from "../../../lib/publications";
+import { localeStaticPaths, sections } from "../../../lib/routes";
+import { localePath, localize, site } from "../../../lib/site";
 
 export const getStaticPaths = localeStaticPaths;
 
 const { locale } = Astro.props;
+const isZh = locale === "zh";
+const section = sections.find((item) => item.key === "publications")!;
+const title = localize(locale, section.label);
+
+const publications = await getPublications();
+const groups = groupByYear(publications);
 ---
 
-<SectionPlaceholder locale={locale} section="publications" phase={2} />
+<BaseLayout
+  locale={locale}
+  path={section.path}
+  title={title}
+  description={isZh ? `${site.nameZh}的论文列表，按年份从新到旧排列。` : `Publications by ${site.name}, newest first.`}
+>
+  <div class="page">
+    <header class="page-header">
+      <h1>{title}</h1>
+      <p class="lead">
+        {isZh ? `共 ${publications.length} 篇，按时间从新到旧排列。完整引用数据见 ` : `${publications.length} papers, newest first. Citation data is on `}
+        <a href={site.scholar}>Google Scholar<span aria-hidden="true"> ↗</span></a>{isZh ? "。" : "."}
+      </p>
+    </header>
+
+    {
+      groups.map((group) => (
+        <section class="year-group" aria-labelledby={`year-${group.year}`}>
+          <h2 class="year" id={`year-${group.year}`}>
+            {group.year}
+          </h2>
+          <ol class="items" role="list">
+            {group.items.map((pub) => (
+              <li class="item">
+                <p class="meta">
+                  <span class="badge">{localize(locale, typeLabels[pub.data.type])}</span>
+                  {venueText(pub) && <span>{venueText(pub)}</span>}
+                </p>
+                <h3>
+                  <a href={localePath(locale, `/publications/${pub.id}/`)}>{pub.data.title}</a>
+                </h3>
+                <PublicationAuthors authors={pub.data.authors} locale={locale} />
+                <p class="tldr">{localize(locale, pub.data.tldr)}</p>
+                <PublicationLinks pub={pub} locale={locale} />
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  /* 整体宽度：左侧年份栏 + 右侧条目栏，居中。 */
+  .page {
+    max-width: calc(var(--measure) + 9rem);
+    margin: 0 auto;
+    padding: var(--space-16) var(--gutter) 0;
+  }
+
+  .page-header {
+    margin-bottom: var(--space-12);
+  }
+
+  h1 {
+    font-size: var(--text-3xl);
+  }
+
+  .lead {
+    margin-top: var(--space-4);
+    color: var(--text-secondary);
+  }
+
+  /* 宽屏：年份在左栏，随滚动吸附在页头下方；窄屏：年份作为条目上方的小标题。 */
+  .year-group {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .year-group + .year-group {
+    margin-top: var(--space-12);
+  }
+
+  .year {
+    color: var(--text-secondary);
+    font-size: var(--text-lg);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (min-width: 768px) {
+    .year-group {
+      grid-template-columns: 9rem 1fr;
+      gap: 0;
+    }
+
+    .year {
+      position: sticky;
+      top: calc(var(--header-height) + var(--space-6));
+      align-self: start;
+    }
+  }
+
+  .item + .item {
+    margin-top: var(--space-12);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+  }
+
+  /* 类型徽标：文字本身就说明类型，不只靠颜色区分。 */
+  .badge {
+    padding: 0 var(--space-2);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-xs);
+    line-height: 1.6;
+  }
+
+  h3 {
+    margin-top: var(--space-2);
+    font-size: var(--text-xl);
+    line-height: 1.35;
+  }
+
+  h3 a {
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+
+  h3 a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .item :global(.authors) {
+    margin-top: var(--space-2);
+    font-size: var(--text-sm);
+  }
+
+  .tldr {
+    margin-top: var(--space-3);
+  }
+
+  .item :global(.links) {
+    margin-top: var(--space-4);
+  }
+</style>

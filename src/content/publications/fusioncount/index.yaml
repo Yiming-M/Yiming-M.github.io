@@ -1,0 +1,17 @@
+# 论文数据。字段含义见 src/content.config.ts；添加论文的步骤见 AGENTS.md「添加论文」。
+# 从旧网站转换而来（2026-11-17），只转了格式；摘要、venue 全称和官方 BibTeX 待填写真实内容时补充。
+title: "FusionCount: Efficient Crowd Counting via Multiscale Feature Fusion"
+date: 2022-02-28
+type: conference
+venue:
+  short: "ICIP 2022"
+authors:
+  - name: "Yiming Ma"
+  - name: "Victor Sanchez"
+  - name: "Tanaya Guha"
+links:
+  paper: "https://arxiv.org/abs/2202.13660"
+  code: "https://github.com/Yiming-M/FusionCount"
+tldr:
+  en: "Reuse 15 intermediate VGG-16 feature maps, learn spatially varying fusion weights from their contrasts, and decode them with a lightweight saliency-preserving reduction block."
+  zh: "复用 VGG-16 的 15 层中间特征，从特征差异中学习随空间变化的融合权重，再用保留显著性的轻量通道压缩模块完成解码。"

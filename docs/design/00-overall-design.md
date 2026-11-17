@@ -101,6 +101,11 @@
 
 **机器可读**：每个详情页输出 `citation_*` meta 标签和 JSON-LD `ScholarlyArticle`。BibTeX 以纯文本形式直接写在 HTML 里，AI agent 和学术爬虫无需点击就能读到。
 
+**可选字段的处理**：
+- `venue.full` 没填时，页面显示简称，citation meta 里也不输出会议或期刊名，不推测全称。
+- `abstract` 没填时，不显示摘要一节。
+- `bibtex` 没填时：论文链接是 arXiv 的，用 YAML 里已有的信息自动生成一条 arXiv 引用（`@misc`）；不是 arXiv 的，不显示 Cite 块。
+
 **数据格式**：每篇论文一个文件夹，方法图和 YAML 放在一起。
 
 ```text

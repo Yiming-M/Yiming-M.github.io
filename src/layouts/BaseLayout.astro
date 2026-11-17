@@ -30,9 +30,23 @@ interface Props {
   hasAlternate?: boolean;
   /** 不希望被搜索引擎收录的页面（如 404）设为 true。 */
   noindex?: boolean;
+  /** 社交平台分享卡片的类型：普通页面是 website，论文和文章详情页是 article。 */
+  ogType?: "website" | "article";
+  /** 分享卡片的图片，绝对地址。 */
+  ogImage?: string;
 }
 
-const { locale, path, title, description, variant = "page", hasAlternate = true, noindex = false } = Astro.props;
+const {
+  locale,
+  path,
+  title,
+  description,
+  variant = "page",
+  hasAlternate = true,
+  noindex = false,
+  ogType = "website",
+  ogImage,
+} = Astro.props;
 
 const isZh = locale === "zh";
 const htmlLang = isZh ? "zh-CN" : "en";
@@ -65,7 +79,8 @@ const chineseUrl = new URL(localePath("zh", path), Astro.site);
       )
     }
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
     <meta property="og:site_name" content={siteName} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
@@ -84,6 +99,9 @@ const chineseUrl = new URL(localePath("zh", path), Astro.site);
     <!-- 霞鹜文楷 Bright GB 网页字体：只声明 @font-face，浏览器按页面上出现的字按需下载对应的小文件。
          生成方式见 scripts/fonts/split-lxgw-bright.mjs。 -->
     <link rel="stylesheet" href="/fonts/lxgw-bright-gb/fonts.css" />
+
+    <!-- 页面自己的额外 head 内容（如论文详情页的 citation meta 和 JSON-LD），通过 slot="head" 传入。 -->
+    <slot name="head" />
 
     <!-- 在页面首次绘制前应用用户保存的主题，避免先显示浅色再跳成深色。
          必须内联、同步执行；切换逻辑见 src/components/ThemeSwitch.astro。 -->

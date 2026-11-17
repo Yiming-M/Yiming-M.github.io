@@ -1,0 +1,20 @@
+# 论文数据。字段含义见 src/content.config.ts；添加论文的步骤见 AGENTS.md「添加论文」。
+# 从旧网站转换而来（2026-11-17），只转了格式；摘要、venue 全称和官方 BibTeX 待填写真实内容时补充。
+title: "Interact with me: Joint Egocentric Forecasting of Intent to Interact, Attitude and Social Actions"
+date: 2024-12-21
+type: conference
+venue:
+  short: "ICME 2025"
+authors:
+  - name: "Tongfei Bian"
+  - name: "Yiming Ma"
+  - name: "Mathieu Chollet"
+  - name: "Victor Sanchez"
+  - name: "Tanaya Guha"
+links:
+  paper: "https://arxiv.org/abs/2412.16698"
+  code: "https://github.com/biantongfei/SocialEgoNet"
+image: ./overview.png
+tldr:
+  en: "Represent face, body, and hand keypoints as graphs, model their temporal evolution, and forecast intent, attitude, and action through a chained task hierarchy."
+  zh: "把面部、身体和手部关键点建成图，建模它们的时序变化，再通过链式任务层级联合预判意图、态度和动作。"

@@ -1,14 +1,258 @@
 ---
 /**
- * 关于我（About Me）栏目首页：英文 /about/，中文 /zh/about/。
- * 目前是占位页，Phase 2 替换为正式页面（见 docs/design/01-implementation-plan.md）。
+ * About Me：英文 /about/，中文 /zh/about/（设计文档 §5）。
+ *
+ * 内容：头像、姓名、职位与单位、研究简介、研究兴趣、联系方式与外部链接、CV 下载。
+ *
+ * 文案来源（模板阶段）：简介和研究兴趣沿用旧网站 About 页（main 分支 src/components/AboutPage.astro），
+ * 职位沿用旧网站 CV 数据（main 分支 src/data/cv.json 的 headline）。填写真实内容时整体替换下面的 copy。
+ *
+ * 头像：public/images/profile.jpg，目前是占位图；作者提供照片后直接覆盖同名文件即可。
+ * CV：public/cv/Yiming-Ma-CV-en.pdf 和 -zh.pdf，由作者提供，覆盖同名文件即可更新。
+ *     页面按当前语言链接对应的 PDF，并在构建时读取文件大小；文件缺失时构建会报错，避免出现失效链接。
  */
-import SectionPlaceholder from "../../../components/SectionPlaceholder.astro";
-import { localeStaticPaths } from "../../../lib/routes";
+import fs from "node:fs";
+import path from "node:path";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { localeStaticPaths, sections } from "../../../lib/routes";
+import { localize, site, type LocalizedText } from "../../../lib/site";
 
 export const getStaticPaths = localeStaticPaths;
 
 const { locale } = Astro.props;
+const isZh = locale === "zh";
+const section = sections.find((item) => item.key === "about")!;
+
+/** 页面文案（中英文）。 */
+const copy = {
+  position: {
+    en: "Postdoctoral Research Associate at King's College London",
+    zh: "伦敦国王学院博士后研究员",
+  },
+  intro: [
+    {
+      en: "I am Yiming Ma. My current focus is multimodal learning for medical imaging AI: how models can combine different imaging modalities and complementary sources of information. My broader research background spans computer vision, crowd counting, vision–language models, multimodal driver monitoring, and human-centred visual systems.",
+      zh: "我是马一铭，目前专注于医学影像 AI 中的多模态学习，研究模型如何融合不同影像模态与互补信息。我的既有研究还涉及计算机视觉、人群计数、视觉–语言模型、多模态驾驶员监控，以及以人为中心的视觉系统。",
+    },
+    {
+      en: "I am especially interested in whether multimodal models remain reliable under real constraints: whether they still work when a modality is missing, learn effectively from sparse labels, operate under limited compute, and state the conditions under which an empirical claim holds.",
+      zh: "我尤其关心多模态模型在现实约束下是否仍然可靠：某个模态缺失时能否继续工作，标注稀疏时能否有效学习，计算预算有限时能否部署，以及实验结论在什么条件下才成立。",
+    },
+  ],
+  interests: [
+    { en: "Multimodal medical imaging", zh: "多模态医学影像" },
+    { en: "Multimodal representation learning", zh: "多模态表征学习" },
+    { en: "Vision–language learning", zh: "视觉–语言学习" },
+    { en: "Reliable AI under missing modalities", zh: "模态缺失条件下的可靠 AI" },
+  ],
+} satisfies { position: LocalizedText; intro: LocalizedText[]; interests: LocalizedText[] };
+
+// CV：按页面语言选择文件，构建时读取大小（单位 KB）。process.cwd() 是仓库根目录。
+const cvHref = `/cv/Yiming-Ma-CV-${locale}.pdf`;
+const cvKb = Math.round(fs.statSync(path.join(process.cwd(), "public", cvHref)).size / 1024);
+
+const links = [
+  { label: "Email", value: site.email, href: `mailto:${site.email}` },
+  { label: "Google Scholar", href: site.scholar },
+  { label: "GitHub", href: site.github },
+  { label: "LinkedIn", href: site.linkedin },
+];
+
+/** schema.org Person：告诉搜索引擎这个网站属于谁。 */
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: site.name,
+  alternateName: site.nameZh,
+  jobTitle: "Postdoctoral Research Associate",
+  worksFor: { "@type": "Organization", name: "King's College London" },
+  email: `mailto:${site.email}`,
+  url: new URL("/", Astro.site).href,
+  image: new URL("/images/profile.jpg", Astro.site).href,
+  sameAs: [site.scholar, site.github, site.linkedin],
+};
 ---
 
-<SectionPlaceholder locale={locale} section="about" phase={2} />
+<BaseLayout
+  locale={locale}
+  path={section.path}
+  title={localize(locale, section.label)}
+  description={localize(locale, copy.intro[0])}
+>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(personJsonLd)} />
+
+  <article class="about">
+    <div class="portrait">
+      <img
+        src="/images/profile.jpg"
+        width="400"
+        height="400"
+        alt={isZh ? `${site.nameZh}的头像` : `Portrait of ${site.name}`}
+        loading="eager"
+        decoding="async"
+      />
+    </div>
+
+    <div class="content">
+      <header>
+        <h1>{isZh ? site.nameZh : site.name}</h1>
+        <p class="position">{localize(locale, copy.position)}</p>
+      </header>
+
+      <div class="intro">
+        {copy.intro.map((paragraph) => <p>{localize(locale, paragraph)}</p>)}
+      </div>
+
+      <section aria-labelledby="interests-heading">
+        <h2 id="interests-heading">{isZh ? "研究兴趣" : "Research interests"}</h2>
+        <ul class="interests">
+          {copy.interests.map((item) => <li>{localize(locale, item)}</li>)}
+        </ul>
+      </section>
+
+      <section aria-labelledby="contact-heading">
+        <h2 id="contact-heading">{isZh ? "联系与链接" : "Contact & links"}</h2>
+        <ul class="links" role="list">
+          {
+            links.map((link) => (
+              <li>
+                <span class="link-label">{link.label}</span>
+                <a href={link.href}>{link.value ?? link.href.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <a class="cv-button" href={cvHref} download>
+        {isZh ? "下载简历" : "Download CV"}
+        <span class="cv-meta">PDF · {cvKb} KB</span>
+      </a>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  /* 窄屏：头像在上、文字在下；宽屏（≥900px）：头像在左栏并吸附，文字在右栏。 */
+  .about {
+    display: grid;
+    gap: var(--space-8);
+    max-width: calc(var(--measure) + 18rem);
+    margin: 0 auto;
+    padding: var(--space-12) var(--gutter) 0;
+  }
+
+  @media (min-width: 900px) {
+    .about {
+      grid-template-columns: 14rem 1fr;
+      gap: var(--space-12);
+      padding-top: var(--space-16);
+    }
+
+    .portrait {
+      position: sticky;
+      top: calc(var(--header-height) + var(--space-8));
+      align-self: start;
+    }
+  }
+
+  .portrait img {
+    width: 9rem;
+    aspect-ratio: 1;
+    border-radius: var(--radius-surface);
+    object-fit: cover;
+  }
+
+  @media (min-width: 900px) {
+    .portrait img {
+      width: 100%;
+    }
+  }
+
+  .content {
+    display: grid;
+    gap: var(--space-12);
+    max-width: var(--measure);
+  }
+
+  h1 {
+    font-size: var(--text-3xl);
+  }
+
+  .position {
+    margin-top: var(--space-2);
+    color: var(--text-secondary);
+    font-size: var(--text-lg);
+  }
+
+  .intro {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  h2 {
+    font-size: var(--text-xl);
+  }
+
+  .interests {
+    margin-top: var(--space-3);
+    padding-left: 1.25em;
+  }
+
+  .interests li + li {
+    margin-top: var(--space-1);
+  }
+
+  /* 联系方式：左边是名称，右边是可点击的地址；窄屏换成上下排列。 */
+  .links {
+    margin-top: var(--space-3);
+  }
+
+  .links li {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: var(--space-4);
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .link-label {
+    color: var(--text-secondary);
+  }
+
+  .links a {
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 479.98px) {
+    .links li {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+  }
+
+  /* CV 下载：页面上唯一的实心主按钮。 */
+  .cv-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    justify-self: start;
+    min-height: 2.75rem;
+    padding: 0 var(--space-6);
+    border-radius: var(--radius-pill);
+    background: var(--text-primary);
+    color: var(--canvas);
+    text-decoration: none;
+    transition: background-color var(--duration-fast) var(--ease);
+  }
+
+  .cv-button:hover {
+    background: var(--accent);
+    color: var(--canvas);
+  }
+
+  .cv-meta {
+    font-size: var(--text-xs);
+    opacity: 0.75;
+  }
+</style>

@@ -1,0 +1,19 @@
+# 论文数据。字段含义见 src/content.config.ts；添加论文的步骤见 AGENTS.md「添加论文」。
+# 从旧网站转换而来（2026-11-17），只转了格式；摘要、venue 全称和官方 BibTeX 待填写真实内容时补充。
+title: "Real-Time Driver Monitoring Systems through Modality and View Analysis"
+date: 2022-10-17
+type: preprint
+venue:
+  short: "Preprint"
+authors:
+  - name: "Yiming Ma"
+  - name: "Victor Sanchez"
+  - name: "Soodeh Nikan"
+  - name: "Devesh Upadhyay"
+  - name: "Bhushan Atote"
+  - name: "Tanaya Guha"
+links:
+  paper: "https://arxiv.org/abs/2210.09441"
+tldr:
+  en: "Use only the last frame of each 16-frame clip, then measure how top/front views and depth/infrared modalities trade accuracy for latency."
+  zh: "每个 16 帧片段只使用最后一帧，再系统测量顶视/前视与深度/红外在准确率和延迟之间的权衡。"

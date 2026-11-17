@@ -1,0 +1,19 @@
+# 论文数据。字段含义见 src/content.config.ts；添加论文的步骤见 AGENTS.md「添加论文」。
+# 从旧网站转换而来（2026-11-17），只转了格式；摘要、venue 全称和官方 BibTeX 待填写真实内容时补充。
+title: "CLIP-EBC: CLIP Can Count Accurately through Enhanced Blockwise Classification"
+date: 2024-03-14
+type: conference
+venue:
+  short: "ICME 2025"
+authors:
+  - name: "Yiming Ma"
+  - name: "Victor Sanchez"
+  - name: "Tanaya Guha"
+links:
+  paper: "https://arxiv.org/abs/2403.09281"
+  code: "https://github.com/Yiming-M/CLIP-EBC"
+  demo: "https://huggingface.co/spaces/Yiming-M/CLIP-EBC"
+image: ./overview.png
+tldr:
+  en: "Turn each local count into an unambiguous integer class, match local CLIP image features to natural-language count prompts, and recover a density map from the class probabilities."
+  zh: "把局部人数变成无歧义的整数类别，让 CLIP 的局部图像特征匹配自然语言计数提示，再从类别概率恢复密度图。"
