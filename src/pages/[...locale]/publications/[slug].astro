@@ -5,6 +5,7 @@
  *
  * 内容顺序：类型与 venue → 标题 → 作者 → 链接 → 方法图 → 一句话总结 → 摘要（有才显示）→ Cite（有 BibTeX 才显示）。
  * <head> 里额外输出 citation_* meta 和 JSON-LD，供 Google Scholar 等学术爬虫和 AI agent 识别。
+ * 整篇带 data-pagefind-body，会被站内搜索收录（BibTeX 和返回链接除外）。
  */
 import { Image, getImage } from "astro:assets";
 import CiteBlock from "../../../components/CiteBlock.astro";
@@ -68,9 +69,9 @@ const jsonLd = scholarlyArticleJsonLd(pub, pageUrl, shareImageUrl);
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </Fragment>
 
-  <article class="publication">
+  <article class="publication" data-pagefind-body>
     <header class="intro">
-      <a class="back" href={localePath(locale, "/publications/")}>
+      <a class="back" href={localePath(locale, "/publications/")} data-pagefind-ignore>
         <span aria-hidden="true">←</span>
         {listLabel}
       </a>
@@ -120,7 +121,7 @@ const jsonLd = scholarlyArticleJsonLd(pub, pageUrl, shareImageUrl);
         )
       }
 
-      {bibtex && <CiteBlock bibtex={bibtex} locale={locale} />}
+      {bibtex && <div data-pagefind-ignore><CiteBlock bibtex={bibtex} locale={locale} /></div>}
     </div>
   </article>
 </BaseLayout>

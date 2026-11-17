@@ -1,0 +1,283 @@
+/**
+ * 文章正文（Markdown 渲染结果）的排版：只作用于 .prose 容器内部。
+ * 包括标题、段落、列表、引用、代码、表格、图片与视频、公式、Admonition/callout、双链、高亮、Mermaid。
+ * 由文章页（src/pages/[...locale]/posts/[slug].astro）引入。
+ * HTML 结构来自 Astro 的 Markdown 管线和 src/lib/obsidian/remark-obsidian.mjs。
+ */
+
+.prose {
+  font-size: var(--text-base);
+  overflow-wrap: break-word;
+}
+
+/* —— 段落与块之间的垂直节奏 —— */
+.prose > * + * {
+  margin-top: 1.1em;
+}
+
+.prose :is(h2, h3, h4) {
+  /* 标题前留更大空白，标示新段落的开始 */
+  margin-top: 2.2em;
+  scroll-margin-top: calc(var(--header-height) + var(--space-4));
+}
+
+.prose h2 {
+  font-size: var(--text-2xl);
+}
+
+.prose h3 {
+  font-size: var(--text-xl);
+}
+
+.prose h4 {
+  font-size: var(--text-lg);
+}
+
+.prose :is(h2, h3, h4) + * {
+  margin-top: 0.75em;
+}
+
+/* —— 列表 —— */
+.prose :is(ul, ol) {
+  padding-left: 1.5em;
+}
+
+.prose li + li,
+.prose li > :is(ul, ol) {
+  margin-top: 0.35em;
+}
+
+.prose li::marker {
+  color: var(--text-secondary);
+}
+
+/* —— 引用、分隔线 —— */
+.prose blockquote {
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--border-subtle);
+  color: var(--text-secondary);
+}
+
+.prose hr {
+  margin: 2.5em 0;
+  border: 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* —— 高亮 ==文字== —— */
+.prose mark {
+  padding: 0 0.15em;
+  border-radius: 3px;
+  background: rgb(255 214 10 / 35%);
+  color: inherit;
+}
+
+/* —— 代码 —— */
+.prose :not(pre) > code {
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: var(--surface-subtle);
+  font-size: 0.88em;
+}
+
+.prose pre {
+  padding: var(--space-4);
+  overflow-x: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-surface);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  overscroll-behavior-inline: contain;
+}
+
+/* Shiki 双主题：每个字的浅色和深色颜色都写在 CSS 变量里，这里按当前主题选用。
+ * 与 tokens.css 的三种主题规则一致：Auto 跟随系统，Light/Dark 由 data-theme 强制。 */
+.prose .astro-code,
+.prose .astro-code span {
+  color: var(--shiki-light);
+  background-color: var(--shiki-light-bg);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .prose .astro-code,
+  :root:not([data-theme="light"]) .prose .astro-code span {
+    color: var(--shiki-dark);
+    background-color: var(--shiki-dark-bg);
+  }
+}
+
+:root[data-theme="dark"] .prose .astro-code,
+:root[data-theme="dark"] .prose .astro-code span {
+  color: var(--shiki-dark);
+  background-color: var(--shiki-dark-bg);
+}
+
+/* —— 表格：宽表格只在自身范围内横向滚动 —— */
+.prose table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.prose :is(th, td) {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-subtle);
+  text-align: left;
+  vertical-align: top;
+}
+
+.prose th {
+  background: var(--surface-subtle);
+  font-weight: 600;
+}
+
+/* —— 图片、视频（Obsidian 嵌入 ![[…]]）——
+ * --embed-width 来自嵌入写法里的宽度（如 ![[图|说明|320]]），没写时铺满正文宽度。 */
+.prose figure.embed {
+  max-width: var(--embed-width, 100%);
+  margin-inline: auto;
+}
+
+.prose figure.embed :is(img, video) {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-control);
+}
+
+.prose figcaption {
+  margin-top: var(--space-2);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+/* —— 公式（MathJax SVG）——
+ * 行间公式过宽时在公式自身范围内横向滚动，不撑破页面。 */
+.prose mjx-container[display="true"] {
+  display: block;
+  max-width: 100%;
+  margin: 1.2em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.prose mjx-container svg {
+  display: inline-block;
+  max-width: none;
+}
+
+/* —— Mermaid ——
+ * 渲染前显示原始代码（灰色小字），渲染后替换成 SVG。 */
+.prose pre.mermaid {
+  border: 1px solid var(--border-subtle);
+  background: var(--surface);
+  color: var(--text-secondary);
+  text-align: center;
+  white-space: pre-wrap;
+}
+
+.prose pre.mermaid[data-processed] {
+  color: inherit;
+}
+
+.prose pre.mermaid svg {
+  display: inline-block;
+  height: auto;
+}
+
+/* —— 双链 ——
+ * 已发布的笔记：普通链接样式。未发布或不存在的笔记：灰色文字、虚线下划线、不可点击（设计文档 §7.3）。 */
+.prose .wikilink.is-unresolved {
+  color: var(--text-secondary);
+  text-decoration: underline dotted;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 0.2em;
+  cursor: help;
+}
+
+/* —— Admonition / callout ——
+ * --callout-color 由插件按类型写入（RGB 三个数字，如 "136, 147, 156"），见 src/data/admonitions.json。 */
+.prose .callout {
+  --callout-rgb: var(--callout-color, 136, 147, 156);
+  margin-top: 1.4em;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid rgb(var(--callout-rgb) / 35%);
+  border-left: 4px solid rgb(var(--callout-rgb));
+  border-radius: var(--radius-control);
+  background: rgb(var(--callout-rgb) / 7%);
+}
+
+.prose .callout-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: rgb(var(--callout-rgb));
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* 深色主题下，部分颜色（如灰蓝）直接做文字会偏暗，标题文字改用正文色，只让图标和边框带颜色。 */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .prose .callout-title > span {
+    color: var(--text-primary);
+  }
+}
+
+:root[data-theme="dark"] .prose .callout-title > span {
+  color: var(--text-primary);
+}
+
+.prose .callout-icon {
+  flex: none;
+  color: rgb(var(--callout-rgb));
+}
+
+.prose summary.callout-title {
+  cursor: pointer;
+  list-style: none;
+}
+
+.prose summary.callout-title::-webkit-details-marker {
+  display: none;
+}
+
+/* 可折叠的 callout：标题右侧的箭头，展开时旋转 */
+.prose summary.callout-title::after {
+  content: "";
+  width: 0.5em;
+  height: 0.5em;
+  margin-left: auto;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform var(--duration) var(--ease);
+}
+
+.prose details.callout[open] > summary.callout-title::after {
+  transform: rotate(45deg);
+}
+
+.prose .callout-content > * + * {
+  margin-top: 0.8em;
+}
+
+.prose .callout-title + .callout-content {
+  margin-top: var(--space-3);
+}
+
+.prose details.callout:not([open]) > .callout-content {
+  display: none;
+}
+
+/* 块 ID 跳转（[[笔记#^块ID]]）到达时，短暂高亮目标块，方便找到位置。 */
+.prose :target {
+  animation: target-flash 1.6s var(--ease);
+}
+
+@keyframes target-flash {
+  from {
+    background-color: var(--accent-soft);
+  }
+}

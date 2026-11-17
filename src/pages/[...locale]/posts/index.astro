@@ -1,14 +1,283 @@
 ---
 /**
- * 文章（Posts）栏目首页：英文 /posts/，中文 /zh/posts/。
- * 目前是占位页，Phase 3 替换为正式页面（见 docs/design/01-implementation-plan.md）。
+ * 文章索引：英文 /posts/，中文 /zh/posts/（设计文档 §7.6）。
+ *
+ * - 顶部的分类按钮（全部 / 论文笔记 / 读书笔记 / 随笔）在浏览器端筛选，当前分类写进网址的 ?c= 参数，
+ *   刷新或分享链接后仍保留。没有脚本时显示全部文章。
+ * - 同一系列的文章合成一张卡片，按 series_order 列出各篇；不属于系列的文章单独列出。
+ *   卡片和单篇文章按最近一次发布的日期从新到旧排列。
+ * - 每张系列卡片有 id（seriesAnchor），文章页上的“系列 · 第 n 篇”链接会跳到这里。
  */
-import SectionPlaceholder from "../../../components/SectionPlaceholder.astro";
-import { localeStaticPaths } from "../../../lib/routes";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { categories, getPosts, seriesAnchor, type Category, type Post } from "../../../lib/posts";
+import { localeStaticPaths, sections } from "../../../lib/routes";
+import { formatDate, localePath, localize } from "../../../lib/site";
 
 export const getStaticPaths = localeStaticPaths;
 
 const { locale } = Astro.props;
+const isZh = locale === "zh";
+const section = sections.find((item) => item.key === "posts")!;
+const title = localize(locale, section.label);
+
+const posts = await getPosts(locale);
+
+/** 索引里的一项：一个系列（含多篇）或一篇独立文章。 */
+type Item =
+  | { kind: "series"; name: string; category: Category; latest: Date; posts: Post[] }
+  | { kind: "post"; category: Category; latest: Date; post: Post };
+
+const seriesMap = new Map<string, Post[]>();
+const items: Item[] = [];
+for (const post of posts) {
+  const series = post.entry.data.series;
+  if (series) {
+    seriesMap.set(series, [...(seriesMap.get(series) ?? []), post]);
+  } else {
+    items.push({ kind: "post", category: post.category, latest: post.entry.data.date, post });
+  }
+}
+for (const [name, list] of seriesMap) {
+  const sorted = [...list].sort((a, b) => (a.entry.data.series_order ?? 0) - (b.entry.data.series_order ?? 0));
+  const latest = new Date(Math.max(...list.map((post) => post.entry.data.date.getTime())));
+  items.push({ kind: "series", name, category: sorted[0].category, latest, posts: sorted });
+}
+items.sort((a, b) => b.latest.getTime() - a.latest.getTime());
+
+const categoryLabel = (key: Category) => localize(locale, categories.find((item) => item.key === key)!.label);
 ---
 
-<SectionPlaceholder locale={locale} section="posts" phase={3} />
+<BaseLayout
+  locale={locale}
+  path={section.path}
+  title={title}
+  description={isZh ? "论文笔记、读书笔记与随笔，从 Obsidian 笔记库发布。" : "Paper notes, book notes and essays, published from an Obsidian vault."}
+>
+  <div class="page">
+    <header class="page-header">
+      <h1>{title}</h1>
+      <p class="lead">
+        {isZh ? `共 ${posts.length} 篇。` : `${posts.length} ${posts.length === 1 ? "post" : "posts"}.`}
+        <a href={localePath(locale, "/posts/graph/")}>{isZh ? "查看关系图" : "Open the graph view"} →</a>
+      </p>
+    </header>
+
+    <div class="filters" role="group" aria-label={isZh ? "按分类筛选" : "Filter by category"} data-filters>
+      <button type="button" data-filter="all" aria-pressed="true">{isZh ? "全部" : "All"}</button>
+      {
+        categories.map((category) => (
+          <button type="button" data-filter={category.key} aria-pressed="false">
+            {localize(locale, category.label)}
+          </button>
+        ))
+      }
+    </div>
+
+    <ol class="items" role="list" data-items>
+      {
+        items.map((item) =>
+          item.kind === "series" ? (
+            <li class="series" id={seriesAnchor(item.name)} data-category={item.category}>
+              <p class="meta">
+                <span class="badge">{categoryLabel(item.category)}</span>
+                <span>{isZh ? `系列 · ${item.posts.length} 篇` : `Series · ${item.posts.length} parts`}</span>
+              </p>
+              <h2>{item.name}</h2>
+              <ol class="parts" role="list">
+                {item.posts.map((post) => (
+                  <li>
+                    <a href={post.href}>{post.entry.data.title}</a>
+                    {post.draft && <span class="draft">{isZh ? "草稿" : "Draft"}</span>}
+                    <time datetime={post.entry.data.date.toISOString().slice(0, 10)}>{formatDate(locale, post.entry.data.date)}</time>
+                  </li>
+                ))}
+              </ol>
+            </li>
+          ) : (
+            <li class="single" data-category={item.category}>
+              <p class="meta">
+                <span class="badge">{categoryLabel(item.category)}</span>
+                <time datetime={item.post.entry.data.date.toISOString().slice(0, 10)}>{formatDate(locale, item.post.entry.data.date)}</time>
+                {item.post.draft && <span class="draft">{isZh ? "草稿" : "Draft"}</span>}
+              </p>
+              <h2>
+                <a href={item.post.href}>{item.post.entry.data.title}</a>
+              </h2>
+              <p class="description">{item.post.entry.data.description}</p>
+            </li>
+          ),
+        )
+      }
+    </ol>
+    <p class="empty" data-empty hidden>{isZh ? "这个分类还没有文章。" : "No posts in this category yet."}</p>
+    {posts.length === 0 && <p class="empty">{isZh ? "还没有发布文章。" : "No posts have been published yet."}</p>}
+  </div>
+</BaseLayout>
+
+<script>
+  // 分类筛选：切换按钮的按下状态，隐藏不属于该分类的条目，并把分类写进网址（?c=papers）。
+  const group = document.querySelector<HTMLElement>("[data-filters]");
+  const items = [...document.querySelectorAll<HTMLElement>("[data-items] > li")];
+  const empty = document.querySelector<HTMLElement>("[data-empty]");
+
+  if (group) {
+    const apply = (filter: string) => {
+      group.querySelectorAll<HTMLButtonElement>("[data-filter]").forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.filter === filter));
+      });
+      let visible = 0;
+      items.forEach((item) => {
+        const show = filter === "all" || item.dataset.category === filter;
+        item.hidden = !show;
+        if (show) visible++;
+      });
+      if (empty) empty.hidden = visible > 0 || items.length === 0;
+    };
+
+    group.addEventListener("click", (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-filter]");
+      if (!button) return;
+      const filter = button.dataset.filter!;
+      apply(filter);
+      const url = new URL(window.location.href);
+      if (filter === "all") url.searchParams.delete("c");
+      else url.searchParams.set("c", filter);
+      history.replaceState(null, "", url);
+    });
+
+    const initial = new URL(window.location.href).searchParams.get("c");
+    if (initial && group.querySelector(`[data-filter="${CSS.escape(initial)}"]`)) apply(initial);
+  }
+</script>
+
+<style>
+  .page {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: var(--space-16) var(--gutter) 0;
+  }
+
+  h1 {
+    font-size: var(--text-3xl);
+  }
+
+  .lead {
+    margin-top: var(--space-4);
+    color: var(--text-secondary);
+  }
+
+  /* 分类按钮：按下的一个用实心底色。 */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: var(--space-8) 0 var(--space-6);
+  }
+
+  .filters button {
+    min-height: 2.25rem;
+    padding: 0 var(--space-4);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    cursor: pointer;
+  }
+
+  .filters button:hover {
+    color: var(--text-primary);
+    border-color: var(--border-strong);
+  }
+
+  .filters button[aria-pressed="true"] {
+    border-color: var(--text-primary);
+    background: var(--text-primary);
+    color: var(--canvas);
+  }
+
+  .items > li {
+    padding: var(--space-6) 0;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+  }
+
+  .badge {
+    padding: 0 var(--space-2);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-xs);
+    line-height: 1.6;
+  }
+
+  .draft {
+    color: var(--focus);
+    font-size: var(--text-xs);
+  }
+
+  h2 {
+    margin-top: var(--space-2);
+    font-size: var(--text-xl);
+    line-height: 1.35;
+  }
+
+  h2 a {
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+
+  h2 a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .description {
+    margin-top: var(--space-2);
+    color: var(--text-secondary);
+  }
+
+  /* 系列卡片里的各篇：标题在左，日期在右；窄屏换行。 */
+  .parts {
+    margin-top: var(--space-3);
+    counter-reset: part;
+  }
+
+  .parts li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-3);
+    padding: var(--space-2) 0;
+    counter-increment: part;
+  }
+
+  .parts li::before {
+    content: counter(part, decimal-leading-zero);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .parts a {
+    flex: 1;
+    min-width: 12rem;
+  }
+
+  .parts time {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+  }
+
+  .empty {
+    padding: var(--space-8) 0;
+    color: var(--text-secondary);
+  }
+</style>

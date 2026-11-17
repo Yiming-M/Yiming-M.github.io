@@ -1,0 +1,325 @@
+{
+  "_comment": "Admonition / callout 类型：标题、lucide 图标名、颜色（RGB）。自定义类型来自作者 Obsidian 的 Admonition 插件配置；同步笔记时若插件配置有变，按 AGENTS.md「同步笔记」更新本文件。",
+  "types": {
+    "abs": {
+      "title": {
+        "zh": "摘要",
+        "en": "Abstract"
+      },
+      "icon": "clipboard-list",
+      "color": "61, 153, 166"
+    },
+    "def": {
+      "title": {
+        "zh": "定义",
+        "en": "Definition"
+      },
+      "icon": "book-open",
+      "color": "131, 110, 176"
+    },
+    "lem": {
+      "title": {
+        "zh": "引理",
+        "en": "Lemma"
+      },
+      "icon": "puzzle",
+      "color": "92, 153, 117"
+    },
+    "the": {
+      "title": {
+        "zh": "定理",
+        "en": "Theorem"
+      },
+      "icon": "scroll",
+      "color": "196, 146, 61"
+    },
+    "cor": {
+      "title": {
+        "zh": "推论",
+        "en": "Corollary"
+      },
+      "icon": "git-branch",
+      "color": "188, 132, 98"
+    },
+    "pro": {
+      "title": {
+        "zh": "证明",
+        "en": "Proof"
+      },
+      "icon": "check-check",
+      "color": "88, 115, 157"
+    },
+    "axi": {
+      "title": {
+        "zh": "公理",
+        "en": "Axiom"
+      },
+      "icon": "anchor",
+      "color": "163, 101, 124"
+    },
+    "exa": {
+      "title": {
+        "zh": "例子",
+        "en": "Example"
+      },
+      "icon": "lightbulb",
+      "color": "212, 119, 117"
+    },
+    "rem": {
+      "title": {
+        "zh": "注记",
+        "en": "Remark"
+      },
+      "icon": "message-circle-more",
+      "color": "136, 147, 156"
+    },
+    "str": {
+      "title": {
+        "zh": "优点",
+        "en": "Strengths"
+      },
+      "icon": "thumbs-up",
+      "color": "76, 163, 139"
+    },
+    "wea": {
+      "title": {
+        "zh": "缺点",
+        "en": "Weaknesses"
+      },
+      "icon": "thumbs-down",
+      "color": "189, 101, 111"
+    },
+    "fut": {
+      "title": {
+        "zh": "展望",
+        "en": "Outlook"
+      },
+      "icon": "telescope",
+      "color": "125, 143, 199"
+    },
+    "que": {
+      "title": {
+        "zh": "疑问",
+        "en": "Question"
+      },
+      "icon": "circle-help",
+      "color": "107, 159, 201"
+    },
+    "note": {
+      "title": {
+        "zh": "笔记",
+        "en": "Note"
+      },
+      "icon": "pencil",
+      "color": "68, 138, 255"
+    },
+    "abstract": {
+      "title": {
+        "zh": "摘要",
+        "en": "Abstract"
+      },
+      "icon": "clipboard-list",
+      "color": "0, 176, 255"
+    },
+    "info": {
+      "title": {
+        "zh": "信息",
+        "en": "Info"
+      },
+      "icon": "info",
+      "color": "0, 184, 212"
+    },
+    "todo": {
+      "title": {
+        "zh": "待办",
+        "en": "Todo"
+      },
+      "icon": "circle-check",
+      "color": "0, 184, 212"
+    },
+    "tip": {
+      "title": {
+        "zh": "提示",
+        "en": "Tip"
+      },
+      "icon": "flame",
+      "color": "0, 191, 165"
+    },
+    "success": {
+      "title": {
+        "zh": "成功",
+        "en": "Success"
+      },
+      "icon": "check",
+      "color": "0, 200, 83"
+    },
+    "question": {
+      "title": {
+        "zh": "问题",
+        "en": "Question"
+      },
+      "icon": "circle-help",
+      "color": "100, 221, 23"
+    },
+    "warning": {
+      "title": {
+        "zh": "警告",
+        "en": "Warning"
+      },
+      "icon": "triangle-alert",
+      "color": "255, 145, 0"
+    },
+    "failure": {
+      "title": {
+        "zh": "失败",
+        "en": "Failure"
+      },
+      "icon": "x",
+      "color": "255, 82, 82"
+    },
+    "danger": {
+      "title": {
+        "zh": "危险",
+        "en": "Danger"
+      },
+      "icon": "zap",
+      "color": "255, 23, 68"
+    },
+    "bug": {
+      "title": {
+        "zh": "缺陷",
+        "en": "Bug"
+      },
+      "icon": "bug",
+      "color": "245, 0, 87"
+    },
+    "example": {
+      "title": {
+        "zh": "例子",
+        "en": "Example"
+      },
+      "icon": "list",
+      "color": "124, 77, 255"
+    },
+    "quote": {
+      "title": {
+        "zh": "引用",
+        "en": "Quote"
+      },
+      "icon": "quote",
+      "color": "158, 158, 158"
+    },
+    "summary": {
+      "title": {
+        "zh": "总结",
+        "en": "Summary"
+      },
+      "icon": "clipboard-list",
+      "color": "0, 176, 255"
+    },
+    "tldr": {
+      "title": {
+        "zh": "太长不看",
+        "en": "TL;DR"
+      },
+      "icon": "clipboard-list",
+      "color": "0, 176, 255"
+    },
+    "hint": {
+      "title": {
+        "zh": "提示",
+        "en": "Hint"
+      },
+      "icon": "flame",
+      "color": "0, 191, 165"
+    },
+    "important": {
+      "title": {
+        "zh": "重要",
+        "en": "Important"
+      },
+      "icon": "flame",
+      "color": "0, 191, 165"
+    },
+    "check": {
+      "title": {
+        "zh": "检查",
+        "en": "Check"
+      },
+      "icon": "check",
+      "color": "0, 200, 83"
+    },
+    "done": {
+      "title": {
+        "zh": "完成",
+        "en": "Done"
+      },
+      "icon": "check",
+      "color": "0, 200, 83"
+    },
+    "help": {
+      "title": {
+        "zh": "帮助",
+        "en": "Help"
+      },
+      "icon": "circle-help",
+      "color": "100, 221, 23"
+    },
+    "faq": {
+      "title": {
+        "zh": "常见问题",
+        "en": "FAQ"
+      },
+      "icon": "circle-help",
+      "color": "100, 221, 23"
+    },
+    "caution": {
+      "title": {
+        "zh": "注意",
+        "en": "Caution"
+      },
+      "icon": "triangle-alert",
+      "color": "255, 145, 0"
+    },
+    "attention": {
+      "title": {
+        "zh": "注意",
+        "en": "Attention"
+      },
+      "icon": "triangle-alert",
+      "color": "255, 145, 0"
+    },
+    "fail": {
+      "title": {
+        "zh": "失败",
+        "en": "Fail"
+      },
+      "icon": "x",
+      "color": "255, 82, 82"
+    },
+    "missing": {
+      "title": {
+        "zh": "缺失",
+        "en": "Missing"
+      },
+      "icon": "x",
+      "color": "255, 82, 82"
+    },
+    "error": {
+      "title": {
+        "zh": "错误",
+        "en": "Error"
+      },
+      "icon": "zap",
+      "color": "255, 23, 68"
+    },
+    "cite": {
+      "title": {
+        "zh": "引用",
+        "en": "Cite"
+      },
+      "icon": "quote",
+      "color": "158, 158, 158"
+    }
+  }
+}

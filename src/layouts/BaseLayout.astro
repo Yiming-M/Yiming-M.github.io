@@ -14,6 +14,7 @@
  */
 import "../styles/tokens.css";
 import "../styles/base.css";
+import SearchDialog from "../components/SearchDialog.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import { localePath, localize, site, type Locale } from "../lib/site";
@@ -123,6 +124,7 @@ const chineseUrl = new URL(localePath("zh", path), Astro.site);
       <slot />
     </main>
     {variant === "page" && <SiteFooter locale={locale} />}
+    {variant === "page" && <SearchDialog locale={locale} />}
   </body>
 </html>
 

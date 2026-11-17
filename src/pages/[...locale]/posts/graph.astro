@@ -1,0 +1,117 @@
+---
+/**
+ * 全站关系图：英文 /posts/graph/，中文 /zh/posts/graph/（设计文档 §7.5）。
+ * 2D，与 Obsidian 一致：实心点是已发布的文章（按分类着色），灰色空心点是还没写或没发布的笔记。
+ * 交互：拖动画布平移、滚轮缩放、拖动节点、点击文章节点跳转。实现见 src/components/GraphView.astro。
+ */
+import GraphView from "../../../components/GraphView.astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { buildGraph, categories, getPosts } from "../../../lib/posts";
+import { localeStaticPaths } from "../../../lib/routes";
+import { localePath, localize } from "../../../lib/site";
+
+export const getStaticPaths = localeStaticPaths;
+
+const { locale } = Astro.props;
+const isZh = locale === "zh";
+const graph = buildGraph(await getPosts(locale));
+const ghostCount = graph.nodes.filter((node) => node.ghost).length;
+const title = isZh ? "关系图" : "Graph";
+---
+
+<BaseLayout
+  locale={locale}
+  path="/posts/graph/"
+  title={title}
+  description={isZh ? "所有笔记之间的双向链接关系。" : "How all notes link to each other."}
+>
+  <div class="page">
+    <header>
+      <a class="back" href={localePath(locale, "/posts/")}><span aria-hidden="true">←</span> {isZh ? "文章" : "Posts"}</a>
+      <h1>{title}</h1>
+      <p class="lead">
+        {
+          isZh
+            ? `${graph.nodes.length - ghostCount} 篇文章，${ghostCount} 篇待写的笔记，${graph.links.length} 条链接。拖动画布平移，滚轮缩放，点击文章跳转。`
+            : `${graph.nodes.length - ghostCount} posts, ${ghostCount} notes not yet written, ${graph.links.length} links. Drag to pan, scroll to zoom, click a post to open it.`
+        }
+      </p>
+    </header>
+
+    <GraphView data={graph} variant="full" locale={locale} />
+
+    <ul class="legend" role="list" aria-label={isZh ? "图例" : "Legend"}>
+      {
+        categories.map((category) => (
+          <li>
+            <span class:list={["dot", category.key]} aria-hidden="true" />
+            {localize(locale, category.label)}
+          </li>
+        ))
+      }
+      <li><span class="dot ghost" aria-hidden="true"></span>{isZh ? "还没写或未发布的笔记" : "Not yet written or published"}</li>
+    </ul>
+  </div>
+</BaseLayout>
+
+<style>
+  .page {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: var(--space-12) var(--gutter) 0;
+  }
+
+  .back {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    text-decoration: none;
+  }
+
+  h1 {
+    margin-top: var(--space-6);
+    font-size: var(--text-3xl);
+  }
+
+  .lead {
+    margin: var(--space-4) 0 var(--space-8);
+    color: var(--text-secondary);
+  }
+
+  /* 图例颜色与关系图节点一致，都来自 tokens.css 的 --category-* 变量。 */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    margin-top: var(--space-4);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+  }
+
+  .legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .dot {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+  }
+
+  .dot.papers {
+    background: var(--category-papers);
+  }
+
+  .dot.books {
+    background: var(--category-books);
+  }
+
+  .dot.notes {
+    background: var(--category-notes);
+  }
+
+  .dot.ghost {
+    border: 1.5px solid var(--border-strong);
+  }
+</style>

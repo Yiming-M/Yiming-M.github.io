@@ -1,0 +1,648 @@
+---
+/**
+ * 文章页：英文 /posts/<slug>/，中文 /zh/posts/<slug>/（设计文档 §7.4 沉浸式阅读）。
+ *
+ * 版式：
+ * - ≥1200px：左栏大纲（随滚动吸附）｜中间正文｜右栏局部关系图和反向链接。
+ * - 1024–1199px：左栏大纲｜正文；关系图和反向链接移到正文下方。
+ * - <1024px：大纲收进正文上方可展开的“目录”；关系图和反向链接在文末。
+ * 页面顶部有阅读进度条；页头向下滚动时自动隐藏（SiteHeader）。
+ *
+ * 浏览器端功能（本文件底部的脚本）：
+ * - 大纲高亮当前阅读到的小节；
+ * - 阅读进度条；
+ * - 悬停预览：桌面端鼠标停在站内双链上 300ms，弹出目标笔记的标题和开头；
+ * - Mermaid：页面里有流程图时才加载 Mermaid 并渲染，切换深浅主题后重新渲染。
+ *
+ * 搜索：整篇文章（article）带 data-pagefind-body，构建后会被 Pagefind 收录，标题取自 h1；
+ * 返回链接、元信息、大纲、侧栏和系列导航用 data-pagefind-ignore 排除。
+ * （草稿只出现在带草稿的本地构建里，正式构建根本不会生成草稿页面，所以不需要单独排除。）
+ */
+import "../../../styles/prose.css";
+import { render } from "astro:content";
+import GraphView from "../../../components/GraphView.astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import {
+  backlinksOf,
+  buildGraph,
+  categories,
+  getAllPosts,
+  getPosts,
+  localGraph,
+  seriesAnchor,
+  seriesOf,
+  type Post,
+} from "../../../lib/posts";
+import { noteKey } from "../../../lib/obsidian/notes.mjs";
+import { localeStaticPaths, sections } from "../../../lib/routes";
+import { formatDate, localePath, localize, type Locale } from "../../../lib/site";
+
+/** 每篇文章的每种语言版本各生成一个页面。 */
+export async function getStaticPaths() {
+  const posts = await getAllPosts();
+  const localeParams = Object.fromEntries(localeStaticPaths().map(({ params, props }) => [props.locale, params.locale]));
+  return posts.map((post) => ({
+    params: { locale: localeParams[post.locale], slug: post.slug },
+    props: { locale: post.locale, slug: post.slug },
+  }));
+}
+
+interface Props {
+  locale: Locale;
+  slug: string;
+}
+
+const { locale, slug } = Astro.props;
+const isZh = locale === "zh";
+
+const posts = await getPosts(locale);
+const post = posts.find((item) => item.slug === slug)!;
+const { data } = post.entry;
+const { Content, headings } = await render(post.entry);
+
+const path = `/posts/${slug}/`;
+const hasAlternate = (await getAllPosts()).some((item) => item.slug === slug && item.locale !== locale);
+const postsLabel = localize(locale, sections.find((item) => item.key === "posts")!.label);
+const category = categories.find((item) => item.key === post.category)!;
+
+// 大纲：二级和三级标题
+const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+
+// 系列：当前是第几篇、上一篇、下一篇
+const series = seriesOf(post, posts);
+const seriesIndex = series.findIndex((item) => item.slug === slug);
+const previous: Post | undefined = series[seriesIndex - 1];
+const next: Post | undefined = series[seriesIndex + 1];
+
+// 关系图与反向链接
+const graph = localGraph(buildGraph(posts), post);
+const backlinks = backlinksOf(post, posts);
+
+const showUpdated = data.updated && data.updated.getTime() !== data.date.getTime();
+const tagLabel = (tag: string) => tag.split("/").at(-1)!;
+---
+
+<BaseLayout
+  locale={locale}
+  path={path}
+  title={data.title}
+  description={data.description}
+  ogType="article"
+  hasAlternate={hasAlternate}
+  noindex={post.draft}
+>
+  <div class="progress" aria-hidden="true" data-reading-progress></div>
+
+  <article class="post" data-pagefind-body>
+    <header class="post-header">
+      <a class="back" href={localePath(locale, "/posts/")} data-pagefind-ignore><span aria-hidden="true">←</span> {postsLabel}</a>
+      <p class="kicker" data-pagefind-ignore>
+        <span class="badge">{localize(locale, category.label)}</span>
+        {post.draft && <span class="badge draft">{isZh ? "草稿" : "Draft"}</span>}
+        {
+          series.length > 0 && (
+            <a href={`${localePath(locale, "/posts/")}#${seriesAnchor(data.series!)}`}>
+              {isZh ? `${data.series} · 第 ${seriesIndex + 1} 篇 / 共 ${series.length} 篇` : `${data.series} · Part ${seriesIndex + 1} of ${series.length}`}
+            </a>
+          )
+        }
+      </p>
+      <h1 data-preview-title>{data.title}</h1>
+      <p class="description">{data.description}</p>
+      <p class="meta" data-pagefind-ignore>
+        <span>
+          {isZh ? "发布于 " : "Published "}<time datetime={data.date.toISOString().slice(0, 10)}>{formatDate(locale, data.date)}</time>
+        </span>
+        {
+          showUpdated && (
+            <span>
+              {isZh ? "更新于 " : "Updated "}<time datetime={data.updated!.toISOString().slice(0, 10)}>{formatDate(locale, data.updated!)}</time>
+            </span>
+          )
+        }
+        <span>{isZh ? `约 ${post.readingMinutes} 分钟` : `${post.readingMinutes} min read`}</span>
+      </p>
+      {
+        data.tags.length > 0 && (
+          <ul class="tags" role="list" aria-label={isZh ? "标签" : "Tags"} data-pagefind-ignore>
+            {data.tags.map((tag) => (
+              <li title={tag}>{tagLabel(tag)}</li>
+            ))}
+          </ul>
+        )
+      }
+    </header>
+
+    <div class="layout">
+      {
+        toc.length > 0 && (
+          <>
+            <details class="toc-mobile" data-pagefind-ignore>
+              <summary>{isZh ? "目录" : "Contents"}</summary>
+              <ol role="list">
+                {toc.map((heading) => (
+                  <li data-depth={heading.depth}>
+                    <a href={`#${heading.slug}`}>{heading.text}</a>
+                  </li>
+                ))}
+              </ol>
+            </details>
+            <nav class="toc" aria-label={isZh ? "目录" : "Contents"} data-pagefind-ignore>
+              <p class="toc-title">{isZh ? "目录" : "Contents"}</p>
+              <ol role="list">
+                {toc.map((heading) => (
+                  <li data-depth={heading.depth}>
+                    <a href={`#${heading.slug}`} data-toc-link={heading.slug}>
+                      {heading.text}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          </>
+        )
+      }
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      <aside class="aside" data-pagefind-ignore>
+        <section aria-labelledby="graph-heading">
+          <h2 id="graph-heading">{isZh ? "关系图" : "Graph"}</h2>
+          <GraphView data={graph} variant="local" locale={locale} currentId={noteKey(post.noteName)} />
+          <a class="aside-link" href={localePath(locale, "/posts/graph/")}>{isZh ? "查看全站关系图" : "Open the full graph"} →</a>
+        </section>
+        <section aria-labelledby="backlinks-heading">
+          <h2 id="backlinks-heading">{isZh ? "反向链接" : "Backlinks"}</h2>
+          {
+            backlinks.length > 0 ? (
+              <ul role="list" class="backlinks">
+                {backlinks.map((item) => (
+                  <li>
+                    <a href={item.href}>{item.entry.data.title}</a>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p class="empty">{isZh ? "还没有其他文章链接到这里。" : "No other posts link here yet."}</p>
+            )
+          }
+        </section>
+      </aside>
+    </div>
+
+    {
+      (previous || next) && (
+        <nav class="series-nav" aria-label={isZh ? "系列导航" : "Series navigation"} data-pagefind-ignore>
+          {previous ? (
+            <a class="prev" href={previous.href}>
+              <span>{isZh ? "上一篇" : "Previous"}</span>
+              {previous.entry.data.title}
+            </a>
+          ) : (
+            <span />
+          )}
+          {next && (
+            <a class="next" href={next.href}>
+              <span>{isZh ? "下一篇" : "Next"}</span>
+              {next.entry.data.title}
+            </a>
+          )}
+        </nav>
+      )
+    }
+  </article>
+
+  <div class="preview" data-preview hidden></div>
+</BaseLayout>
+
+<script>
+  // —— 阅读进度条 ——
+  const progress = document.querySelector<HTMLElement>("[data-reading-progress]");
+  const article = document.querySelector<HTMLElement>(".prose");
+  if (progress && article) {
+    let ticking = false;
+    const update = () => {
+      const rect = article.getBoundingClientRect();
+      const total = rect.height - window.innerHeight;
+      const ratio = total > 0 ? Math.min(1, Math.max(0, -rect.top / total)) : 1;
+      progress.style.transform = `scaleX(${ratio})`;
+      ticking = false;
+    };
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          requestAnimationFrame(update);
+          ticking = true;
+        }
+      },
+      { passive: true },
+    );
+    update();
+  }
+
+  // —— 大纲：高亮当前阅读到的小节 ——
+  const tocLinks = new Map(
+    [...document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]")].map((link) => [link.dataset.tocLink!, link]),
+  );
+  if (tocLinks.size > 0) {
+    const headings = [...tocLinks.keys()].map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    const observer = new IntersectionObserver(
+      () => {
+        // 取页头下方最后一个已经滚过的标题作为当前小节
+        const offset = 120;
+        let current = headings[0];
+        for (const heading of headings) {
+          if (heading.getBoundingClientRect().top - offset <= 0) current = heading;
+        }
+        tocLinks.forEach((link, id) => link.toggleAttribute("aria-current", id === current?.id));
+      },
+      { rootMargin: "0px 0px -60% 0px", threshold: [0, 1] },
+    );
+    headings.forEach((heading) => observer.observe(heading));
+  }
+
+  // —— 悬停预览（只在有鼠标的设备上）——
+  const preview = document.querySelector<HTMLElement>("[data-preview]");
+  if (preview && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    const cache = new Map<string, Promise<{ title: string; text: string } | null>>();
+    let showTimer: number | undefined;
+    let hideTimer: number | undefined;
+
+    /** 取目标页面的标题和一段摘录：链接带锚点时取锚点处的内容，否则取正文第一段。 */
+    const load = (href: string) => {
+      const url = new URL(href, window.location.href);
+      const key = url.pathname + url.hash;
+      if (!cache.has(key)) {
+        cache.set(
+          key,
+          fetch(url.pathname)
+            .then((response) => (response.ok ? response.text() : Promise.reject()))
+            .then((html) => {
+              const doc = new DOMParser().parseFromString(html, "text/html");
+              const title = doc.querySelector("[data-preview-title]")?.textContent?.trim() ?? "";
+              const target = url.hash ? doc.getElementById(decodeURIComponent(url.hash.slice(1))) : null;
+              const source = target ?? doc.querySelector(".prose > p");
+              const text = (source?.textContent ?? "").replace(/\s+/g, " ").trim();
+              return { title, text: text.length > 220 ? `${text.slice(0, 219)}…` : text };
+            })
+            .catch(() => null),
+        );
+      }
+      return cache.get(key)!;
+    };
+
+    const show = async (link: HTMLAnchorElement) => {
+      const result = await load(link.href);
+      if (!result || !result.title) return;
+      preview.replaceChildren();
+      const title = document.createElement("p");
+      title.className = "preview-title";
+      title.textContent = result.title;
+      const text = document.createElement("p");
+      text.textContent = result.text;
+      preview.append(title, text);
+      const rect = link.getBoundingClientRect();
+      preview.hidden = false;
+      const below = rect.bottom + 8 + preview.offsetHeight < window.innerHeight;
+      preview.style.top = `${window.scrollY + (below ? rect.bottom + 8 : rect.top - preview.offsetHeight - 8)}px`;
+      preview.style.left = `${Math.min(window.scrollX + rect.left, window.scrollX + window.innerWidth - preview.offsetWidth - 16)}px`;
+    };
+
+    document.querySelectorAll<HTMLAnchorElement>(".prose a.wikilink[href]").forEach((link) => {
+      if (link.getAttribute("href")!.startsWith("#")) return; // 同页锚点不需要预览
+      link.addEventListener("mouseenter", () => {
+        window.clearTimeout(hideTimer);
+        showTimer = window.setTimeout(() => show(link), 300);
+      });
+      link.addEventListener("mouseleave", () => {
+        window.clearTimeout(showTimer);
+        hideTimer = window.setTimeout(() => (preview.hidden = true), 150);
+      });
+    });
+    preview.addEventListener("mouseenter", () => window.clearTimeout(hideTimer));
+    preview.addEventListener("mouseleave", () => (preview.hidden = true));
+  }
+
+  // —— Mermaid：页面里有流程图时才加载，跟随深浅主题 ——
+  const diagrams = [...document.querySelectorAll<HTMLElement>("pre.mermaid")];
+  if (diagrams.length > 0) {
+    diagrams.forEach((diagram) => (diagram.dataset.source = diagram.textContent ?? ""));
+    const isDark = () =>
+      document.documentElement.dataset.theme === "dark" ||
+      (document.documentElement.dataset.theme !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+    const renderDiagrams = async () => {
+      const { default: mermaid } = await import("mermaid");
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: isDark() ? "dark" : "neutral",
+        fontFamily: getComputedStyle(document.body).fontFamily,
+        securityLevel: "strict",
+      });
+      diagrams.forEach((diagram) => {
+        diagram.removeAttribute("data-processed");
+        diagram.textContent = diagram.dataset.source ?? "";
+      });
+      await mermaid.run({ nodes: diagrams });
+    };
+
+    renderDiagrams();
+    new MutationObserver(renderDiagrams).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", renderDiagrams);
+  }
+</script>
+
+<style>
+  /* —— 阅读进度条：贴在窗口最顶部 —— */
+  .progress {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: calc(var(--z-header) + 1);
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .post {
+    padding: var(--space-12) var(--gutter) 0;
+  }
+
+  /* —— 文章头部：和正文同宽、居中 —— */
+  .post-header {
+    max-width: var(--measure);
+    margin: 0 auto var(--space-12);
+  }
+
+  .back {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    text-decoration: none;
+  }
+
+  .back:hover {
+    color: var(--text-primary);
+  }
+
+  .kicker {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-8);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+  }
+
+  .kicker a {
+    color: inherit;
+  }
+
+  .badge {
+    padding: 0 var(--space-2);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-xs);
+    line-height: 1.6;
+  }
+
+  .badge.draft {
+    border-color: var(--focus);
+    color: var(--focus);
+  }
+
+  h1 {
+    margin-top: var(--space-3);
+    font-size: var(--text-3xl);
+  }
+
+  .description {
+    margin-top: var(--space-4);
+    color: var(--text-secondary);
+    font-size: var(--text-lg);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    margin-top: var(--space-4);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+  }
+
+  .tags li {
+    padding: 0 var(--space-2);
+    border-radius: var(--radius-pill);
+    background: var(--surface-subtle);
+    color: var(--text-secondary);
+    font-size: var(--text-xs);
+    line-height: 1.8;
+  }
+
+  /* —— 三栏版式 —— */
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, var(--measure));
+    justify-content: center;
+    gap: var(--space-12);
+  }
+
+  .toc {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .layout {
+      grid-template-columns: 13rem minmax(0, var(--measure));
+      column-gap: var(--space-12);
+    }
+
+    .toc-mobile {
+      display: none;
+    }
+
+    .toc {
+      display: block;
+      position: sticky;
+      top: calc(var(--header-height) + var(--space-6));
+      align-self: start;
+      max-height: calc(100vh - var(--header-height) - var(--space-12));
+      overflow-y: auto;
+      grid-row: 1 / span 2;
+    }
+
+    .aside {
+      grid-column: 2;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .layout {
+      grid-template-columns: 13rem minmax(0, var(--measure)) 16rem;
+    }
+
+    .aside {
+      grid-column: 3;
+      grid-row: 1;
+      position: sticky;
+      top: calc(var(--header-height) + var(--space-6));
+      align-self: start;
+    }
+  }
+
+  /* —— 大纲 —— */
+  .toc-title,
+  .toc-mobile summary {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+  }
+
+  .toc ol,
+  .toc-mobile ol {
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+  }
+
+  .toc li,
+  .toc-mobile li {
+    margin-top: var(--space-2);
+  }
+
+  .toc li[data-depth="3"],
+  .toc-mobile li[data-depth="3"] {
+    padding-left: var(--space-4);
+  }
+
+  .toc a,
+  .toc-mobile a {
+    display: block;
+    color: var(--text-secondary);
+    text-decoration: none;
+  }
+
+  .toc a:hover,
+  .toc a[aria-current],
+  .toc-mobile a:hover {
+    color: var(--text-primary);
+  }
+
+  .toc a[aria-current] {
+    font-weight: 600;
+  }
+
+  .toc-mobile {
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-surface);
+  }
+
+  .toc-mobile summary {
+    cursor: pointer;
+  }
+
+  /* —— 侧栏：局部关系图与反向链接 —— */
+  .aside {
+    display: grid;
+    gap: var(--space-8);
+    align-content: start;
+  }
+
+  .aside h2 {
+    margin-bottom: var(--space-3);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    font-weight: 400;
+  }
+
+  .aside-link {
+    display: inline-block;
+    margin-top: var(--space-2);
+    font-size: var(--text-sm);
+  }
+
+  .backlinks {
+    font-size: var(--text-sm);
+  }
+
+  .backlinks li + li {
+    margin-top: var(--space-2);
+  }
+
+  .empty {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+  }
+
+  /* —— 系列：上一篇 / 下一篇 —— */
+  .series-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    max-width: var(--measure);
+    margin: var(--space-16) auto 0;
+  }
+
+  .series-nav a {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-surface);
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+
+  .series-nav a:hover {
+    border-color: var(--border-strong);
+  }
+
+  .series-nav span {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+  }
+
+  .series-nav .next {
+    grid-column: 2;
+    text-align: right;
+  }
+
+  @media (max-width: 599.98px) {
+    .series-nav {
+      grid-template-columns: 1fr;
+    }
+
+    .series-nav .next {
+      grid-column: 1;
+    }
+  }
+
+  /* —— 悬停预览卡片 —— */
+  .preview {
+    position: absolute;
+    z-index: calc(var(--z-header) - 1);
+    width: min(22rem, calc(100vw - 2rem));
+    padding: var(--space-4);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-surface);
+    background: var(--surface);
+    box-shadow: var(--shadow-float);
+    font-size: var(--text-sm);
+  }
+
+  .preview :global(.preview-title) {
+    margin-bottom: var(--space-2);
+    font-weight: 600;
+  }
+</style>

@@ -8,7 +8,7 @@
 - 网站正在按 `docs/design/` 推倒重建。设计文档是实现的唯一依据：
   - [`docs/design/00-overall-design.md`](docs/design/00-overall-design.md)：总体设计
   - [`docs/design/01-implementation-plan.md`](docs/design/01-implementation-plan.md)：分阶段计划与验收标准
-- 当前进度：**Phase 2（About Me 与 Publications）已完成，待作者预览确认；下一步是 Phase 3（Posts 与 Obsidian 流程）。** 每完成一个阶段，更新这一行。
+- 当前进度：**Phase 3（Posts 与 Obsidian 流程）已完成，待作者预览确认；下一步是 Phase 4（首页 3D MRI）。** 每完成一个阶段，更新这一行。
 
 ## 规则
 
@@ -38,7 +38,35 @@
 
 ### 同步笔记
 
-Phase 3 补全。
+把 Obsidian 笔记发布成网站文章。单向同步：笔记库 → 仓库。数据格式见 `src/content.config.ts` 的 `posts` 注释，设计依据见设计文档 §7。
+
+**发布范围**：只同步 frontmatter 里写了 `publish: true` 的笔记。作者说“把某篇作为草稿预览”时，按同样的步骤放进草稿目录，不要求 `publish: true`。
+
+1. **只读打开笔记库**（路径见规则 6），找出要发布的笔记。记下它相对笔记库的路径，例如 `随笔/手撕 DINOv3/手撕 DINOv3 ：01 – 摘要与引言.md`。第一级文件夹必须是 `论文/`、`书籍/` 或 `随笔/`，它决定分类。
+2. **确定 slug**：读笔记 frontmatter 里的 `slug`。没有时，提议一个（小写字母、数字、连字符，如 `dinov3-01`；不能叫 `graph`），**征得作者同意后**写进笔记库里那篇笔记的 frontmatter。这是唯一需要写笔记库的情况。
+3. **复制原文**到 `src/content/posts/<slug>/zh.md`（草稿用 `src/content/posts-drafts/<slug>/zh.md`）：
+   - 正文和 frontmatter 原样保留，不改写任何 Obsidian 语法；
+   - 只在 frontmatter 末尾追加 `source: "<第 1 步记下的相对路径>"`；草稿目录里如果笔记没有 slug，也可以只在副本里补 `slug`；
+   - 删除 `%%…%%` 形式的 Obsidian 注释（作者的私人批注，Obsidian 阅读模式下本来就不显示）。
+4. **复制附件**：笔记里每个 `![[文件]]` 嵌入的文件，在笔记库的 `assets/<笔记名>/` 下找到（作者的附件插件按这个规则存放）：
+   - 图片（png、jpg、jpeg、gif、webp、avif、svg）→ 和 `zh.md` 放在同一文件夹，文件名不变；
+   - 视频等其他附件 → `public/media/posts/<slug>/`（草稿用 `public/drafts/<slug>/`），文件名不变。
+5. **检查并报告**（只报告，不修改笔记库）：
+   - 缺少 `title`、`description`、`date` 或 `slug`；`slug` 与已有文章重复；
+   - 同一系列里 `series_order` 重复，或标题里的序号与 `series_order` 不一致；
+   - 指向不存在的标题或块的链接（如 `[[笔记#^块ID]]` 但目标笔记里没有 `^块ID`）；附件找不到；
+   - 用了网站不支持的写法：Dataview 查询、Excalidraw 画板、整篇嵌入 `![[笔记]]`（网站上会退化为链接）；
+   - 双链写法可疑，例如目标名里混用了全角括号。
+6. **Admonition 配置**：比较笔记库 `.obsidian/plugins/obsidian-admonition/data.json` 里的自定义类型和 `src/data/admonitions.json`。新增或改了类型（标题、图标、颜色）时同步过来，并补上英文标题；图标名去掉 `lucide-` 前缀，必须在 `node_modules/lucide-static/icons/` 里存在。
+7. **翻译**：新增或改动的笔记，按上方“翻译规则”译成英文，存为同一文件夹下的 `en.md`。frontmatter 保持相同的字段和顺序：翻译 `title`、`description`、`series`，其余（`date`、`updated`、`series_order`、`tags`、`slug`、`publish`、`source`）照抄。同一系列的英文系列名要统一。
+8. **验证**：
+   - 正式文章：`npm run build`；草稿：`INCLUDE_DRAFTS=1 npm run build`（或直接 `npm run dev`，开发服务器始终显示草稿，但没有搜索）。构建会校验 frontmatter，并检查文件夹名与 slug 一致、正式文章写了 `publish: true`。
+   - 在本地预览里检查中英文两个版本：Admonition、图片和图注、视频、公式、Mermaid、双链（未发布的笔记应显示为灰色文字）、目录和关系图。
+   - 把第 5 步的报告和译文里拿不准的地方一起交给作者，等作者确认后再提交。
+
+**更新已发布的文章**：作者只在 Obsidian 里修改。重新执行第 3、4、7、8 步覆盖仓库里的副本；英文版只重译改动的部分。
+
+**撤下文章**：作者把 `publish` 改成 `false` 或删除该字段后，删除 `src/content/posts/<slug>/` 和 `public/media/posts/<slug>/`（这是删除已提交的文件，git 历史里仍可找回，但仍需先征得作者同意）。
 
 ### 添加论文
 
@@ -86,8 +114,17 @@ Phase 4 补全。
 | `src/layouts/BaseLayout.astro` | 页面骨架：head 元信息、字体、主题初始化、页头、页脚 |
 | `src/pages/[...locale]/about/` | About Me 页面。文案、头像路径和 CV 文件名都写在这个文件开头 |
 | `src/pages/[...locale]/publications/` | 论文列表 `index.astro` 和详情页 `[slug].astro` |
-| `src/components/` | 页头 `SiteHeader`、页脚 `SiteFooter`、主题与语言切换、搜索按钮（占位）、图标、栏目占位页；论文用的作者列表、链接和 Cite 块 |
+| `src/components/` | 页头 `SiteHeader`、页脚 `SiteFooter`、主题与语言切换、搜索按钮和搜索对话框（Pagefind）、图标、栏目占位页；论文用的作者列表、链接和 Cite 块；关系图 `GraphView` |
 | `src/lib/publications.ts` | 论文排序、分组、BibTeX 生成规则、citation meta 和 JSON-LD |
+| `src/pages/[...locale]/posts/` | 文章索引 `index.astro`、文章页 `[slug].astro`、全站关系图 `graph.astro` |
+| `src/lib/posts.ts` | 文章读取与校验、分类、系列、阅读时长、反向链接、关系图数据 |
+| `src/lib/obsidian/` | Obsidian 写法的构建插件 `remark-obsidian.mjs`、笔记索引与双链解析 `notes.mjs`、标题锚点规则 `slug.mjs` |
+| `src/lib/drafts.mjs` | 草稿开关：什么时候把草稿目录算进构建 |
+| `src/data/admonitions.json` | Admonition / callout 类型的标题、图标、颜色（与作者的 Obsidian 配置同步） |
+| `src/styles/prose.css` | 文章正文排版：代码、表格、图片、公式、Admonition、双链、Mermaid |
+| `src/content/posts/<slug>/` | 正式文章：`zh.md`、`en.md` 和图片附件 |
+| `src/content/posts-drafts/<slug>/`、`public/drafts/` | 草稿（gitignore，只在本机） |
+| `public/media/posts/<slug>/` | 文章里嵌入的视频等非图片附件 |
 | `src/styles/tokens.css` | 颜色、字体、字号、间距等设计变量；深色主题的变量要写两处，见文件开头的说明 |
 | `src/styles/base.css` | 全站基础样式、焦点、页面切换动画、减少动态效果 |
 | `src/lib/routes.ts` | 四个栏目的名称和路径（导航和 sitemap 都读这里） |

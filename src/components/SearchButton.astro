@@ -1,9 +1,7 @@
 ---
 /**
- * 搜索按钮（占位）。
- *
- * Phase 3 会接入 Pagefind：点击或按 ⌘K / Ctrl+K 打开搜索面板（设计文档 §7.7）。
- * 在那之前按钮保持禁用，只占住页头里的位置，方便检查布局。
+ * 页头里的搜索按钮。点击（或按 ⌘K / Ctrl+K）打开搜索对话框，对话框见 SearchDialog.astro。
+ * 页头和手机菜单里各有一个本按钮，都通过 data-search-open 触发同一个对话框。
  */
 import Icon from "./Icon.astro";
 import type { Locale } from "../lib/site";
@@ -13,13 +11,12 @@ interface Props {
 }
 
 const isZh = Astro.props.locale === "zh";
-const label = isZh ? "搜索" : "Search";
 ---
 
-<button class="search-button" type="button" disabled title={isZh ? "搜索功能即将上线" : "Search is coming soon"}>
+<button class="search-button" type="button" data-search-open aria-haspopup="dialog">
   <Icon name="search" size={16} />
-  <span class="search-button__label">{label}</span>
-  <kbd>⌘K</kbd>
+  <span>{isZh ? "搜索" : "Search"}</span>
+  <kbd aria-hidden="true">⌘K</kbd>
 </button>
 
 <style>
@@ -34,7 +31,15 @@ const label = isZh ? "搜索" : "Search";
     background: transparent;
     color: var(--switch-text, var(--text-secondary));
     font-size: var(--text-sm);
-    cursor: not-allowed;
+    cursor: pointer;
+    transition:
+      color var(--duration-fast) var(--ease),
+      border-color var(--duration-fast) var(--ease);
+  }
+
+  .search-button:hover {
+    border-color: var(--border-strong);
+    color: var(--text-primary);
   }
 
   kbd {

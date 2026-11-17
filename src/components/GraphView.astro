@@ -1,0 +1,407 @@
+---
+/**
+ * 笔记关系图（设计文档 §7.5），2D，与 Obsidian 的关系图一致：
+ * - 实心圆点：已发布的文章，按分类着色；点击跳转。
+ * - 灰色空心圆点：被双链指向、但还没写或没发布的笔记；不可点击，悬停显示名称。
+ * - 连线：笔记之间的双链。
+ *
+ * 两种用法（variant）：
+ * - "local"：文章侧栏里的局部图，只含当前文章和直接相连的笔记。
+ * - "full"：/posts/graph/ 的全站图，可拖动画布、滚轮缩放。
+ * 名称显示：文章节点始终显示；灰色节点悬停时或放大到 3 倍以上才显示。
+ *
+ * 实现：构建时把节点和连线写进页面里的 JSON；浏览器端用 d3-force 计算布局，Canvas 绘制。
+ * 打开页面时布局一次算完并自动缩放到占满画布；拖动节点时才播放动画重新排布
+ * （开启“减少动态效果”时拖动也不播放动画）。
+ * Canvas 对屏幕阅读器不可见，所以同时输出一份隐藏的链接列表作为替代。
+ */
+import type { GraphData } from "../lib/posts";
+import type { Locale } from "../lib/site";
+
+interface Props {
+  data: GraphData;
+  variant: "local" | "full";
+  locale: Locale;
+  /** 当前文章的节点 id（局部图里高亮）。 */
+  currentId?: string;
+}
+
+const { data, variant, locale, currentId } = Astro.props;
+const isZh = locale === "zh";
+const linkedNodes = data.nodes.filter((node) => node.href && node.id !== currentId);
+---
+
+<figure class="graph" data-graph data-variant={variant} data-current={currentId ?? ""}>
+  <canvas></canvas>
+  <script type="application/json" data-graph-data set:html={JSON.stringify(data)} />
+  <figcaption class="visually-hidden">
+    {isZh ? "笔记关系图。相连的笔记：" : "Note graph. Connected notes:"}
+    <ul>
+      {
+        linkedNodes.map((node) => (
+          <li>
+            <a href={node.href}>{node.label}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </figcaption>
+</figure>
+
+<script>
+  import {
+    forceCenter,
+    forceCollide,
+    forceLink,
+    forceManyBody,
+    forceSimulation,
+    forceX,
+    forceY,
+    type SimulationLinkDatum,
+    type SimulationNodeDatum,
+  } from "d3-force";
+
+  type NodeDatum = SimulationNodeDatum & {
+    id: string;
+    label: string;
+    href?: string;
+    category?: "papers" | "books" | "notes";
+    ghost: boolean;
+    degree: number;
+  };
+  type LinkDatum = SimulationLinkDatum<NodeDatum>;
+
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  document.querySelectorAll<HTMLElement>("[data-graph]").forEach(setupGraph);
+
+  function setupGraph(root: HTMLElement) {
+    const canvas = root.querySelector("canvas")!;
+    const context = canvas.getContext("2d")!;
+    const variant = root.dataset.variant as "local" | "full";
+    const currentId = root.dataset.current;
+    const raw = JSON.parse(root.querySelector("[data-graph-data]")!.textContent ?? "{}");
+
+    const nodes: NodeDatum[] = raw.nodes.map((node: NodeDatum) => ({ ...node, degree: 0 }));
+    const byId = new Map(nodes.map((node) => [node.id, node]));
+    const links: LinkDatum[] = raw.links.map((link: { source: string; target: string }) => ({ ...link }));
+    for (const link of raw.links) {
+      byId.get(link.source)!.degree++;
+      byId.get(link.target)!.degree++;
+    }
+    /** 每个节点的邻居，用于悬停时高亮相连的节点和连线。 */
+    const neighbours = new Map<string, Set<string>>(nodes.map((node) => [node.id, new Set()]));
+    for (const link of raw.links) {
+      neighbours.get(link.source)!.add(link.target);
+      neighbours.get(link.target)!.add(link.source);
+    }
+
+    // —— 尺寸与坐标变换 ——
+    let width = 0;
+    let height = 0;
+    /** 画布的平移和缩放（只有全站图允许用户改变）。 */
+    const view = { x: 0, y: 0, k: 1 };
+
+    function resize() {
+      const rect = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      width = rect.width;
+      height = rect.height;
+      canvas.width = Math.round(width * ratio);
+      canvas.height = Math.round(height * ratio);
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      draw();
+    }
+
+    /** 屏幕坐标 → 图坐标（图坐标原点在画布中心）。 */
+    function toGraph(clientX: number, clientY: number) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: (clientX - rect.left - width / 2 - view.x) / view.k,
+        y: (clientY - rect.top - height / 2 - view.y) / view.k,
+      };
+    }
+
+    function radius(node: NodeDatum) {
+      if (node.id === currentId) return 8;
+      if (node.ghost) return 3.5;
+      return Math.min(4.5 + node.degree * 0.6, 10);
+    }
+
+    // —— 颜色：从 CSS 变量读取，切换深浅主题后重新读取 ——
+    let colors: Record<string, string> = {};
+    function readColors() {
+      const style = getComputedStyle(root);
+      const read = (name: string) => style.getPropertyValue(name).trim();
+      colors = {
+        papers: read("--graph-papers"),
+        books: read("--graph-books"),
+        notes: read("--graph-notes"),
+        ghost: read("--graph-ghost"),
+        link: read("--graph-link"),
+        linkActive: read("--graph-link-active"),
+        label: read("--graph-label"),
+        canvas: read("--graph-bg"),
+        current: read("--graph-current"),
+        font: read("--font-text"),
+      };
+    }
+
+    // —— 绘制 ——
+    let hovered: NodeDatum | null = null;
+
+    function draw() {
+      if (!width) return;
+      context.save();
+      context.clearRect(0, 0, width, height);
+      context.translate(width / 2 + view.x, height / 2 + view.y);
+      context.scale(view.k, view.k);
+
+      const focus = hovered ? neighbours.get(hovered.id)! : null;
+      const isActive = (id: string) => !hovered || id === hovered.id || focus!.has(id);
+
+      // 连线
+      for (const link of links) {
+        const source = link.source as NodeDatum;
+        const target = link.target as NodeDatum;
+        const active = hovered && (source.id === hovered.id || target.id === hovered.id);
+        context.strokeStyle = active ? colors.linkActive : colors.link;
+        context.globalAlpha = hovered && !active ? 0.35 : 1;
+        context.lineWidth = (active ? 1.6 : 1) / view.k;
+        context.beginPath();
+        context.moveTo(source.x!, source.y!);
+        context.lineTo(target.x!, target.y!);
+        context.stroke();
+      }
+
+      // 节点
+      for (const node of nodes) {
+        const r = radius(node);
+        context.globalAlpha = isActive(node.id) ? 1 : 0.3;
+        context.beginPath();
+        context.arc(node.x!, node.y!, r, 0, Math.PI * 2);
+        if (node.ghost) {
+          context.fillStyle = colors.canvas;
+          context.fill();
+          context.strokeStyle = colors.ghost;
+          context.lineWidth = 1.2 / view.k;
+          context.stroke();
+        } else {
+          context.fillStyle = colors[node.category ?? "notes"];
+          context.fill();
+          if (node.id === currentId) {
+            context.strokeStyle = colors.current;
+            context.lineWidth = 2 / view.k;
+            context.beginPath();
+            context.arc(node.x!, node.y!, r + 3, 0, Math.PI * 2);
+            context.stroke();
+          }
+        }
+      }
+
+      // 名称：已发布的文章始终显示；灰色节点（多为待写的论文笔记，名字很长）只在悬停相关节点
+      // 或放大到 3 倍以上时显示，避免挤成一片。
+      context.globalAlpha = 1;
+      context.font = `${12 / view.k}px ${colors.font}`;
+      context.textAlign = "center";
+      context.textBaseline = "top";
+      for (const node of nodes) {
+        const show = !node.ghost || view.k > 3 || (hovered !== null && isActive(node.id));
+        if (!show) continue;
+        const label = node.label.length > 22 ? `${node.label.slice(0, 21)}…` : node.label;
+        context.fillStyle = node.ghost ? colors.ghost : colors.label;
+        context.fillText(label, node.x!, node.y! + radius(node) + 4 / view.k);
+      }
+      context.restore();
+    }
+
+    // —— 力导向布局 ——
+    const simulation = forceSimulation<NodeDatum>(nodes)
+      .force(
+        "link",
+        forceLink<NodeDatum, LinkDatum>(links)
+          .id((node) => node.id)
+          .distance(variant === "local" ? 70 : 45),
+      )
+      .force("charge", forceManyBody().strength(variant === "local" ? -220 : -90))
+      .force("center", forceCenter(0, 0))
+      .force("x", forceX(0).strength(0.04))
+      .force("y", forceY(0).strength(0.04))
+      .force("collide", forceCollide<NodeDatum>().radius((node) => radius(node) + 6))
+      .on("tick", draw);
+
+    /**
+     * 自动缩放和平移，让所有节点刚好占满画布的约 85%（最多放大到 2.5 倍）。
+     * 只在用户还没手动拖动或缩放过画布时执行，避免打断用户的操作。
+     */
+    let userMovedView = false;
+    function fitToView() {
+      if (userMovedView || !width || nodes.length === 0) return;
+      const xs = nodes.map((node) => node.x!);
+      const ys = nodes.map((node) => node.y!);
+      const [minX, maxX, minY, maxY] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+      const boxWidth = Math.max(maxX - minX, 1) + 40;
+      const boxHeight = Math.max(maxY - minY, 1) + 40;
+      view.k = Math.min(2.5, 0.85 * Math.min(width / boxWidth, height / boxHeight));
+      view.x = -((minX + maxX) / 2) * view.k;
+      view.y = -((minY + maxY) / 2) * view.k;
+      draw();
+    }
+    // 页面加载时先把布局一次算完（几百个节点也只需几十毫秒），这样一打开就是排好、适配好的图，
+    // 不依赖动画播放完毕（后台标签页里动画会被浏览器降速）。之后只有拖动节点时才重新播放动画。
+    simulation.stop();
+    simulation.tick(300);
+
+    // —— 交互：悬停、点击跳转、拖动节点、拖动画布与缩放（全站图）——
+    function nodeAt(clientX: number, clientY: number) {
+      const point = toGraph(clientX, clientY);
+      let found: NodeDatum | null = null;
+      for (const node of nodes) {
+        const r = radius(node) + 4 / view.k;
+        if ((node.x! - point.x) ** 2 + (node.y! - point.y) ** 2 <= r * r) found = node;
+      }
+      return found;
+    }
+
+    let dragging: { node: NodeDatum | null; startX: number; startY: number; moved: boolean } | null = null;
+
+    canvas.addEventListener("pointerdown", (event) => {
+      const node = nodeAt(event.clientX, event.clientY);
+      if (!node && variant === "local") return;
+      dragging = { node, startX: event.clientX, startY: event.clientY, moved: false };
+      canvas.setPointerCapture(event.pointerId);
+      if (node && !reducedMotion.matches) simulation.alphaTarget(0.25).restart();
+    });
+
+    canvas.addEventListener("pointermove", (event) => {
+      if (dragging) {
+        const dx = event.clientX - dragging.startX;
+        const dy = event.clientY - dragging.startY;
+        if (Math.abs(dx) + Math.abs(dy) > 3) dragging.moved = true;
+        if (dragging.node) {
+          const point = toGraph(event.clientX, event.clientY);
+          dragging.node.fx = point.x;
+          dragging.node.fy = point.y;
+          if (reducedMotion.matches) {
+            dragging.node.x = point.x;
+            dragging.node.y = point.y;
+          }
+        } else {
+          userMovedView = true;
+          view.x += dx;
+          view.y += dy;
+          dragging.startX = event.clientX;
+          dragging.startY = event.clientY;
+        }
+        draw();
+        return;
+      }
+      const node = nodeAt(event.clientX, event.clientY);
+      if (node !== hovered) {
+        hovered = node;
+        canvas.style.cursor = node?.href ? "pointer" : node ? "help" : variant === "full" ? "grab" : "default";
+        canvas.title = node ? node.label : "";
+        draw();
+      }
+    });
+
+    canvas.addEventListener("pointerup", (event) => {
+      if (!dragging) return;
+      const { node, moved } = dragging;
+      dragging = null;
+      simulation.alphaTarget(0);
+      if (node) {
+        node.fx = null;
+        node.fy = null;
+      }
+      if (node?.href && !moved) window.location.href = node.href;
+      canvas.releasePointerCapture(event.pointerId);
+    });
+
+    canvas.addEventListener("pointerleave", () => {
+      if (hovered && !dragging) {
+        hovered = null;
+        draw();
+      }
+    });
+
+    if (variant === "full") {
+      canvas.addEventListener(
+        "wheel",
+        (event) => {
+          event.preventDefault();
+          userMovedView = true;
+          const rect = canvas.getBoundingClientRect();
+          const mx = event.clientX - rect.left - width / 2;
+          const my = event.clientY - rect.top - height / 2;
+          const k = Math.min(4, Math.max(0.3, view.k * Math.exp(-event.deltaY * 0.0015)));
+          // 以鼠标位置为中心缩放
+          view.x = mx - ((mx - view.x) * k) / view.k;
+          view.y = my - ((my - view.y) * k) / view.k;
+          view.k = k;
+          draw();
+        },
+        { passive: false },
+      );
+    }
+
+    // —— 主题切换后重绘 ——
+    const redraw = () => {
+      readColors();
+      draw();
+    };
+    new MutationObserver(redraw).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", redraw);
+
+    readColors();
+    // 画布尺寸确定（以及窗口大小变化）后，重新适配一次
+    new ResizeObserver(() => {
+      resize();
+      fitToView();
+    }).observe(canvas);
+  }
+</script>
+
+<style>
+  /* 颜色变量：分类颜色 + 灰色节点 + 连线。随主题变化（引用 tokens.css 的语义变量）。 */
+  .graph {
+    --graph-papers: var(--category-papers);
+    --graph-books: var(--category-books);
+    --graph-notes: var(--category-notes);
+    --graph-ghost: var(--border-strong);
+    --graph-link: var(--border-subtle);
+    --graph-link-active: var(--text-secondary);
+    --graph-label: var(--text-primary);
+    --graph-bg: var(--canvas);
+    --graph-current: var(--text-primary);
+    position: relative;
+    margin: 0;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+
+  .graph[data-variant="local"] {
+    height: 15rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-surface);
+    background: var(--surface);
+    --graph-bg: var(--surface);
+  }
+
+  .graph[data-variant="full"] {
+    height: min(72vh, 46rem);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-surface);
+    background: var(--surface);
+    --graph-bg: var(--surface);
+  }
+
+  .graph[data-variant="full"] canvas {
+    cursor: grab;
+  }
+</style>
