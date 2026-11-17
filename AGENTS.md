@@ -8,7 +8,7 @@
 - 网站正在按 `docs/design/` 推倒重建。设计文档是实现的唯一依据：
   - [`docs/design/00-overall-design.md`](docs/design/00-overall-design.md)：总体设计
   - [`docs/design/01-implementation-plan.md`](docs/design/01-implementation-plan.md)：分阶段计划与验收标准
-- 当前进度：**Phase 0 已完成（清理旧站），下一步是 Phase 1（基础框架）。** 每完成一个阶段，更新这一行。
+- 当前进度：**Phase 1（基础框架）已完成，待作者预览确认；下一步是 Phase 2（About Me 与 Publications）。** 每完成一个阶段，更新这一行。
 
 ## 规则
 
@@ -52,6 +52,15 @@ Phase 5 补全。
 
 Phase 4 补全。
 
+### 重新生成网页字体
+
+只有更换字体或升级字体版本时才需要。
+
+1. 确认作者本机 `~/Library/Fonts` 里有 `LXGWBrightGB-Regular.ttf`、`-Medium.ttf`、`-Italic.ttf`。也可以从 LXGW Bright 的 GitHub 发布页下载，但下载前先征得作者同意。
+2. 在仓库根目录运行 `node scripts/fonts/split-lxgw-bright.mjs`。字体在别的目录时，把目录作为参数传入。
+3. 如果字体版本变了，按字体 name 表里的版权信息更新 `public/fonts/lxgw-bright-gb/OFL.txt` 开头几行。
+4. `npm run build`，然后在本地预览里检查中英文页面的字体，并核对中文页的字体下载量。设计文档 §3.1 有预算和上次的实测数据。
+
 ## 目录速览
 
 随阶段更新。
@@ -59,10 +68,18 @@ Phase 4 补全。
 | 路径 | 内容 |
 | --- | --- |
 | `docs/design/` | 设计文档 |
-| `src/pages/index.astro` | 占位首页，Phase 1 替换 |
+| `src/pages/[...locale]/` | 所有双语页面。一个文件同时生成英文版（根路径）和中文版（`/zh` 前缀），见 `src/lib/routes.ts` 的 `localeStaticPaths` |
+| `src/pages/404.astro`、`src/pages/sitemap.xml.ts` | 404 页（中英文合在一页）和站点地图（新增详情页时要在这里登记） |
+| `src/layouts/BaseLayout.astro` | 页面骨架：head 元信息、字体、主题初始化、页头、页脚 |
+| `src/components/` | 页头 `SiteHeader`、页脚 `SiteFooter`、主题与语言切换、搜索按钮（占位）、图标、栏目占位页 |
+| `src/styles/tokens.css` | 颜色、字体、字号、间距等设计变量；深色主题的变量要写两处，见文件开头的说明 |
+| `src/styles/base.css` | 全站基础样式、焦点、页面切换动画、减少动态效果 |
+| `src/lib/routes.ts` | 四个栏目的名称和路径（导航和 sitemap 都读这里） |
+| `src/lib/site.ts` | 站点信息与语言工具函数 |
 | `src/content.config.ts` | 内容集合定义，目前只有论文，Phase 2 换成新结构 |
 | `src/content/publications/` | 论文数据：旧 JSON 格式，作为 Phase 2 的测试数据 |
-| `src/lib/site.ts` | 站点信息与语言工具函数 |
+| `scripts/fonts/split-lxgw-bright.mjs` | 把霞鹜文楷 Bright GB 切分成网页字体，见上方“重新生成网页字体” |
+| `public/fonts/lxgw-bright-gb/` | 切分后的网页字体、`fonts.css` 和许可证；由脚本生成，不要手改 |
 | `public/cv/` | 作者提供的中英文 CV PDF；覆盖同名文件即可更新 |
 | `public/images/profile.jpg` | 头像，目前是占位图 |
 | `public/publications/` | 论文方法图，Phase 2 迁移到各论文的文件夹 |

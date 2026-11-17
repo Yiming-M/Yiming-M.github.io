@@ -1,0 +1,14 @@
+---
+/**
+ * 关于我（About Me）栏目首页：英文 /about/，中文 /zh/about/。
+ * 目前是占位页，Phase 2 替换为正式页面（见 docs/design/01-implementation-plan.md）。
+ */
+import SectionPlaceholder from "../../../components/SectionPlaceholder.astro";
+import { localeStaticPaths } from "../../../lib/routes";
+
+export const getStaticPaths = localeStaticPaths;
+
+const { locale } = Astro.props;
+---
+
+<SectionPlaceholder locale={locale} section="about" phase={2} />

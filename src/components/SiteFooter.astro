@@ -1,0 +1,71 @@
+---
+/**
+ * 全站页脚：版权年份和外部链接。只在阅读页显示，首页不显示（设计文档 §4）。
+ * 链接地址来自 src/lib/site.ts。
+ */
+import { site, type Locale } from "../lib/site";
+
+interface Props {
+  locale: Locale;
+}
+
+const isZh = Astro.props.locale === "zh";
+/** 构建时的年份。网站每次构建都会更新，不需要手改。 */
+const year = new Date().getFullYear();
+
+const links = [
+  { label: "Email", href: `mailto:${site.email}` },
+  { label: "Google Scholar", href: site.scholar },
+  { label: "GitHub", href: site.github },
+  { label: "LinkedIn", href: site.linkedin },
+];
+---
+
+<footer class="site-footer">
+  <div class="inner">
+    <p>© {year} {isZh ? site.nameZh : site.name}</p>
+    <ul role="list" aria-label={isZh ? "外部链接" : "Elsewhere"}>
+      {
+        links.map((link) => (
+          <li>
+            <a href={link.href}>{link.label}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--space-24);
+    border-top: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+  }
+
+  .inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: var(--space-8) var(--gutter);
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+  }
+
+  a {
+    color: inherit;
+  }
+
+  a:hover {
+    color: var(--text-primary);
+  }
+</style>

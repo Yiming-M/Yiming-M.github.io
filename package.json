@@ -13,5 +13,8 @@
     "katex": "0.16.47",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0"
+  },
+  "devDependencies": {
+    "cn-font-split": "7.4.3"
   }
 }

@@ -1,0 +1,118 @@
+---
+/**
+ * 主题切换：Auto / Light / Dark 三个按钮（设计文档 §3.2）。
+ *
+ * 工作方式：
+ * - 用户的选择存在 localStorage 的 "theme" 键里（"auto" | "light" | "dark"）。
+ * - 选 Light/Dark 时给 <html> 设置 data-theme；选 Auto 时去掉 data-theme，跟随系统。
+ *   对应的配色变量见 src/styles/tokens.css。
+ * - 页面首次绘制前，BaseLayout 的内联脚本会先读取 localStorage 并设置 data-theme，避免闪烁；
+ *   本组件的脚本只负责点击切换和同步按钮的按下状态。
+ * - 页头和手机菜单里各有一个本组件实例，脚本会同时更新所有实例。
+ */
+import Icon from "./Icon.astro";
+import type { Locale } from "../lib/site";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const isZh = locale === "zh";
+
+const options = [
+  { value: "auto", icon: "auto", label: isZh ? "跟随系统" : "Auto" },
+  { value: "light", icon: "sun", label: isZh ? "浅色" : "Light" },
+  { value: "dark", icon: "moon", label: isZh ? "深色" : "Dark" },
+] as const;
+---
+
+<div class="theme-switch" role="group" aria-label={isZh ? "主题" : "Theme"} data-theme-switch>
+  {
+    options.map((option) => (
+      <button type="button" data-theme-choice={option.value} aria-pressed="false" aria-label={option.label} title={option.label}>
+        <Icon name={option.icon} size={16} />
+      </button>
+    ))
+  }
+</div>
+
+<script>
+  type ThemeChoice = "auto" | "light" | "dark";
+
+  const STORAGE_KEY = "theme";
+
+  /** 读取保存的主题；隐私模式等情况下 localStorage 可能不可用，此时按 Auto 处理。 */
+  function readChoice(): ThemeChoice {
+    try {
+      const value = localStorage.getItem(STORAGE_KEY);
+      return value === "light" || value === "dark" ? value : "auto";
+    } catch {
+      return "auto";
+    }
+  }
+
+  /** 应用主题并保存，同时刷新页面上所有主题按钮的按下状态。 */
+  function applyChoice(choice: ThemeChoice) {
+    const root = document.documentElement;
+    if (choice === "auto") {
+      delete root.dataset.theme;
+    } else {
+      root.dataset.theme = choice;
+    }
+    try {
+      localStorage.setItem(STORAGE_KEY, choice);
+    } catch {
+      // 无法保存时只影响下次访问，本次切换照常生效。
+    }
+    syncButtons(choice);
+  }
+
+  function syncButtons(choice: ThemeChoice) {
+    document.querySelectorAll<HTMLButtonElement>("[data-theme-choice]").forEach((button) => {
+      button.setAttribute("aria-pressed", String(button.dataset.themeChoice === choice));
+    });
+  }
+
+  document.querySelectorAll<HTMLButtonElement>("[data-theme-choice]").forEach((button) => {
+    button.addEventListener("click", () => applyChoice(button.dataset.themeChoice as ThemeChoice));
+  });
+
+  syncButtons(readChoice());
+</script>
+
+<style>
+  /* 三个图标按钮组成的分段控件；按下的那个用底色标出。 */
+  .theme-switch {
+    display: inline-flex;
+    gap: 2px;
+    padding: 2px;
+    border: 1px solid var(--switch-border, var(--border-subtle));
+    border-radius: var(--radius-pill);
+  }
+
+  button {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--switch-text, var(--text-secondary));
+    cursor: pointer;
+    transition:
+      background-color var(--duration-fast) var(--ease),
+      color var(--duration-fast) var(--ease);
+  }
+
+  button:hover {
+    color: var(--switch-text-active, var(--text-primary));
+  }
+
+  button[aria-pressed="true"] {
+    background: var(--switch-active-bg, var(--surface-subtle));
+    color: var(--switch-text-active, var(--text-primary));
+  }
+</style>

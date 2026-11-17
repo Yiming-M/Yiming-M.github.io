@@ -1,0 +1,126 @@
+---
+/**
+ * 全站页面骨架：<head>（元信息、字体、主题初始化）+ 页头 + 正文插槽 + 页脚。
+ * 每个页面都包在这个布局里。
+ *
+ * 两种版式（variant）：
+ * - "page"：阅读页（About Me、Publications、Posts、Albums 等）。吸顶页头 + 页脚。
+ * - "home"：首页。页头浮在全屏展示区上，没有页脚（设计文档 §4）。
+ *
+ * 双语：
+ * - `path` 是与语言无关的路径（如 "/about/"）。布局据此生成 canonical 链接、
+ *   hreflang 互链（告诉搜索引擎中英文页面互为翻译）和语言切换链接。
+ * - 没有另一种语言版本的页面（如 404）传 hasAlternate={false}。
+ */
+import "../styles/tokens.css";
+import "../styles/base.css";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import { localePath, localize, site, type Locale } from "../lib/site";
+
+interface Props {
+  locale: Locale;
+  /** 与语言无关的路径，以 / 开头和结尾，如 "/about/"。首页是 "/"。 */
+  path: string;
+  /** 页面标题；最终显示为 “标题 · 站名”。首页不传，显示为 “站名 · 作者姓名”。 */
+  title?: string;
+  /** 页面摘要，用于搜索结果和社交平台的分享卡片。 */
+  description: string;
+  variant?: "page" | "home";
+  hasAlternate?: boolean;
+  /** 不希望被搜索引擎收录的页面（如 404）设为 true。 */
+  noindex?: boolean;
+}
+
+const { locale, path, title, description, variant = "page", hasAlternate = true, noindex = false } = Astro.props;
+
+const isZh = locale === "zh";
+const htmlLang = isZh ? "zh-CN" : "en";
+const siteName = localize(locale, site.title);
+// 首页标题带上作者真名，方便搜索；其他页面是 “页面标题 · 站名”。
+const fullTitle = title ? `${title} · ${siteName}` : `${siteName} · ${isZh ? site.nameZh : site.name}`;
+
+const canonical = new URL(localePath(locale, path), Astro.site);
+const englishUrl = new URL(localePath("en", path), Astro.site);
+const chineseUrl = new URL(localePath("zh", path), Astro.site);
+---
+
+<!doctype html>
+<html lang={htmlLang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+
+    <link rel="canonical" href={canonical} />
+    {
+      hasAlternate && (
+        <>
+          <link rel="alternate" hreflang="en" href={englishUrl} />
+          <link rel="alternate" hreflang="zh-CN" href={chineseUrl} />
+          <link rel="alternate" hreflang="x-default" href={englishUrl} />
+        </>
+      )
+    }
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={isZh ? "zh_CN" : "en_GB"} />
+
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap.xml" />
+
+    <!-- 浏览器地址栏等界面的配色，跟随系统深浅色。 -->
+    <meta name="theme-color" content="#f6f4ee" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#111318" media="(prefers-color-scheme: dark)" />
+
+    <!-- 霞鹜文楷 Bright GB 网页字体：只声明 @font-face，浏览器按页面上出现的字按需下载对应的小文件。
+         生成方式见 scripts/fonts/split-lxgw-bright.mjs。 -->
+    <link rel="stylesheet" href="/fonts/lxgw-bright-gb/fonts.css" />
+
+    <!-- 在页面首次绘制前应用用户保存的主题，避免先显示浅色再跳成深色。
+         必须内联、同步执行；切换逻辑见 src/components/ThemeSwitch.astro。 -->
+    <script is:inline>
+      (() => {
+        try {
+          const theme = localStorage.getItem("theme");
+          if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+        } catch {
+          // localStorage 不可用（如部分隐私模式）时跟随系统。
+        }
+      })();
+    </script>
+  </head>
+  <body data-variant={variant}>
+    <a class="skip-link" href="#main">{isZh ? "跳到正文" : "Skip to content"}</a>
+    <SiteHeader locale={locale} path={path} variant={variant} hasAlternate={hasAlternate} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    {variant === "page" && <SiteFooter locale={locale} />}
+  </body>
+</html>
+
+<style>
+  /* 阅读页：页脚始终贴在窗口底部（内容很少时也一样）。 */
+  body[data-variant="page"] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  body[data-variant="page"] main {
+    flex: 1;
+  }
+
+  /* main 可以被“跳到正文”链接聚焦，但不需要显示焦点环。 */
+  main:focus {
+    outline: none;
+  }
+</style>

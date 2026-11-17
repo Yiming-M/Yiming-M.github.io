@@ -1,0 +1,62 @@
+---
+/**
+ * 栏目占位页：Phase 1 只搭好框架，四个栏目的真实页面在后续阶段完成。
+ * 占位页让导航链接都能打开，同时用来检查阅读页的版式（标题、正文宽度、页头页脚）。
+ * 每个栏目完成后，对应页面不再使用本组件；四个栏目都完成后删除本文件。
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { sections, type SectionKey } from "../lib/routes";
+import { localize, type Locale } from "../lib/site";
+
+interface Props {
+  locale: Locale;
+  section: SectionKey;
+  /** 该栏目计划在哪个阶段完成，见 docs/design/01-implementation-plan.md。 */
+  phase: number;
+}
+
+const { locale, section: key, phase } = Astro.props;
+const section = sections.find((item) => item.key === key)!;
+const isZh = locale === "zh";
+const title = localize(locale, section.label);
+---
+
+<BaseLayout
+  locale={locale}
+  path={section.path}
+  title={title}
+  description={isZh ? `${title}（建设中）` : `${title} (under construction)`}
+  noindex
+>
+  <article class="placeholder">
+    <p class="eyebrow">{isZh ? `第 ${phase} 阶段` : `Phase ${phase}`}</p>
+    <h1>{title}</h1>
+    <p class="lead">
+      {isZh ? "这个栏目正在建设中，网站重建完成后会在这里上线。" : "This section is under construction and will open here once the rebuild is complete."}
+    </p>
+  </article>
+</BaseLayout>
+
+<style>
+  .placeholder {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: var(--space-16) var(--gutter) 0;
+  }
+
+  .eyebrow {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+  }
+
+  h1 {
+    margin-top: var(--space-2);
+    font-size: var(--text-3xl);
+  }
+
+  .lead {
+    margin-top: var(--space-6);
+    color: var(--text-secondary);
+    font-size: var(--text-lg);
+  }
+</style>

@@ -17,8 +17,14 @@ export type LocalizedText = {
   zh: string;
 };
 
-/** 作者信息与外部链接。 */
+/** 站名、作者信息与外部链接。 */
 export const site = {
+  /**
+   * 站名：显示在页头左上角和浏览器标题里。
+   * 中文站名带日文的“の”和“勾配”（坡度、梯度），呼应机器学习里的梯度。
+   * 浏览器标题里仍保留作者真名，方便别人搜名字时找到网站。
+   */
+  title: { en: "Gradient of Thought", zh: "思索の勾配" } as LocalizedText,
   name: "Yiming Ma",
   nameZh: "马一铭",
   email: "yiming.m@proton.me",

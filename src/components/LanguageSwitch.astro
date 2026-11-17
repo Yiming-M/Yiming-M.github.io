@@ -1,0 +1,60 @@
+---
+/**
+ * 语言切换：EN / 中文 两个链接。
+ *
+ * 切换语言时停留在同一个页面的另一种语言版本（如 /about/ ↔ /zh/about/），而不是跳回首页。
+ * 如果当前页面没有另一种语言的版本（hasAlternate 为 false，例如 404 页），就链接到另一种语言的首页。
+ */
+import { localePath, type Locale } from "../lib/site";
+
+interface Props {
+  locale: Locale;
+  /** 与语言无关的当前路径，如 "/about/"。 */
+  path: string;
+  hasAlternate?: boolean;
+}
+
+const { locale, path, hasAlternate = true } = Astro.props;
+const target = hasAlternate ? path : "/";
+const isZh = locale === "zh";
+---
+
+<div class="language-switch" role="group" aria-label={isZh ? "语言" : "Language"}>
+  <a href={localePath("en", target)} lang="en" hreflang="en" aria-current={!isZh ? "true" : undefined}>EN</a>
+  <a href={localePath("zh", target)} lang="zh-CN" hreflang="zh-CN" aria-current={isZh ? "true" : undefined}>中文</a>
+</div>
+
+<style>
+  .language-switch {
+    display: inline-flex;
+    gap: 2px;
+    padding: 2px;
+    border: 1px solid var(--switch-border, var(--border-subtle));
+    border-radius: var(--radius-pill);
+  }
+
+  a {
+    display: grid;
+    place-items: center;
+    min-width: 2.75rem;
+    height: 2rem;
+    padding: 0 var(--space-2);
+    border-radius: var(--radius-pill);
+    color: var(--switch-text, var(--text-secondary));
+    font-size: var(--text-xs);
+    line-height: 1;
+    text-decoration: none;
+    transition:
+      background-color var(--duration-fast) var(--ease),
+      color var(--duration-fast) var(--ease);
+  }
+
+  a:hover {
+    color: var(--switch-text-active, var(--text-primary));
+  }
+
+  a[aria-current="true"] {
+    background: var(--switch-active-bg, var(--surface-subtle));
+    color: var(--switch-text-active, var(--text-primary));
+  }
+</style>

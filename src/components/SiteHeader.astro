@@ -1,0 +1,319 @@
+---
+/**
+ * 全站页头：站名（回首页）、四个栏目标签、搜索、语言切换、主题切换（设计文档 §2）。
+ *
+ * 两种样式（variant）：
+ * - "page"：阅读页使用。吸顶，向下滚动时自动隐藏、向上滚动时重新出现（设计文档 §7.4）。
+ * - "home"：首页使用。透明地浮在 3D 展示区上，文字用展示区的浅色；不放搜索（设计文档 §4）。
+ *
+ * 响应式：
+ * - 宽度 ≥ 900px：标签和工具直接排在页头一行。
+ * - 宽度 < 900px：只显示姓名和菜单按钮；标签和工具收进弹出菜单。
+ *   菜单用浏览器原生的 popover 实现：点击按钮打开，点菜单外或按 Esc 关闭，不需要额外脚本。
+ */
+import Icon from "./Icon.astro";
+import LanguageSwitch from "./LanguageSwitch.astro";
+import SearchButton from "./SearchButton.astro";
+import ThemeSwitch from "./ThemeSwitch.astro";
+import { sections } from "../lib/routes";
+import { localePath, localize, site, type Locale } from "../lib/site";
+
+interface Props {
+  locale: Locale;
+  /** 与语言无关的当前路径，用来高亮当前栏目和生成语言切换链接。 */
+  path: string;
+  variant: "page" | "home";
+  hasAlternate?: boolean;
+}
+
+const { locale, path, variant, hasAlternate = true } = Astro.props;
+const isZh = locale === "zh";
+
+/** 当前路径属于哪个栏目（例如 /publications/zip/ 属于 Publications），用于 aria-current 高亮。 */
+const currentSection = sections.find((section) => path.startsWith(section.path))?.key;
+---
+
+<header class="site-header" data-variant={variant} data-site-header>
+  <div class="bar">
+    <!-- 站名：英文页显示英文站名，中文页显示中文站名（见 src/lib/site.ts）。 -->
+    <a class="wordmark" href={localePath(locale, "/")}>{localize(locale, site.title)}</a>
+
+    <nav class="tabs" aria-label={isZh ? "主导航" : "Main"}>
+      <ul role="list">
+        {
+          sections.map((section) => (
+            <li>
+              <a href={localePath(locale, section.path)} aria-current={currentSection === section.key ? "page" : undefined}>
+                {localize(locale, section.label)}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="tools">
+      {variant === "page" && <SearchButton locale={locale} />}
+      <LanguageSwitch locale={locale} path={path} hasAlternate={hasAlternate} />
+      <ThemeSwitch locale={locale} />
+    </div>
+
+    <button class="menu-button" type="button" popovertarget="site-menu" aria-label={isZh ? "打开菜单" : "Open menu"}>
+      <Icon name="menu" size={20} />
+    </button>
+  </div>
+
+  <!-- 窄屏菜单：与上面的标签和工具内容相同；宽屏下不会被打开。 -->
+  <div id="site-menu" class="menu" popover>
+    <nav aria-label={isZh ? "主导航" : "Main"}>
+      <ul role="list" class="menu-tabs">
+        {
+          sections.map((section) => (
+            <li>
+              <a href={localePath(locale, section.path)} aria-current={currentSection === section.key ? "page" : undefined}>
+                {localize(locale, section.label)}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <div class="menu-tools">
+      {variant === "page" && <SearchButton locale={locale} />}
+      <LanguageSwitch locale={locale} path={path} hasAlternate={hasAlternate} />
+      <ThemeSwitch locale={locale} />
+    </div>
+  </div>
+</header>
+
+<script>
+  /**
+   * 阅读页的页头自动隐藏：向下滚动超过一个页头高度后隐藏，向上滚动立即出现。
+   * 以下情况始终显示：页面顶部、菜单打开时、页头内有键盘焦点时。
+   * 首页（data-variant="home"）不滚动，不启用。
+   */
+  const header = document.querySelector<HTMLElement>('[data-site-header][data-variant="page"]');
+  const menu = document.getElementById("site-menu");
+
+  if (header) {
+    /** 滚动方向判定的最小位移（px），过滤触控板的细微抖动。 */
+    const THRESHOLD = 6;
+    let lastY = window.scrollY;
+    let menuOpen = false;
+    let ticking = false;
+
+    menu?.addEventListener("toggle", (event) => {
+      menuOpen = (event as ToggleEvent).newState === "open";
+      if (menuOpen) header.classList.remove("is-hidden");
+    });
+
+    const update = () => {
+      const y = window.scrollY;
+      const delta = y - lastY;
+      const keepVisible = y < header.offsetHeight || menuOpen || header.contains(document.activeElement);
+      if (keepVisible || delta < -THRESHOLD) {
+        header.classList.remove("is-hidden");
+      } else if (delta > THRESHOLD) {
+        header.classList.add("is-hidden");
+      }
+      if (Math.abs(delta) > THRESHOLD) lastY = y;
+      ticking = false;
+    };
+
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          requestAnimationFrame(update);
+          ticking = true;
+        }
+      },
+      { passive: true },
+    );
+
+    // 键盘 Tab 进入页头时，确保它是可见的。
+    header.addEventListener("focusin", () => header.classList.remove("is-hidden"));
+  }
+</script>
+
+<style>
+  /* —— 页头外壳 —— */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
+    /* 页面切换时页头保持不动，只有内容区淡变（见 base.css 的 View Transitions）。 */
+    view-transition-name: site-header;
+    border-bottom: 1px solid var(--border-subtle);
+    background: var(--header-bg);
+    backdrop-filter: saturate(1.4) blur(12px);
+    -webkit-backdrop-filter: saturate(1.4) blur(12px);
+    transition: transform var(--duration) var(--ease);
+  }
+
+  .site-header.is-hidden {
+    transform: translateY(-100%);
+  }
+
+  /* 首页：浮在展示区上，透明，文字用展示区的浅色；开关控件也换成浅色描边。 */
+  .site-header[data-variant="home"] {
+    position: absolute;
+    inset: 0 0 auto;
+    border-bottom: 0;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    color: var(--showcase-text);
+    --switch-border: var(--showcase-line);
+    --switch-text: var(--showcase-text-muted);
+    --switch-text-active: var(--showcase-text);
+    --switch-active-bg: rgb(243 241 234 / 14%);
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    max-width: var(--page-max);
+    height: var(--header-height);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  /* —— 姓名 —— */
+  .wordmark {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    margin-right: auto;
+    color: inherit;
+    font-size: var(--text-lg);
+    font-weight: 600;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .site-header[data-variant="page"] .wordmark {
+    color: var(--text-primary);
+  }
+
+  /* —— 栏目标签 —— */
+  .tabs ul {
+    display: flex;
+    gap: var(--space-1);
+  }
+
+  .tabs a,
+  .menu-tabs a {
+    color: var(--text-secondary);
+    text-decoration: none;
+  }
+
+  .tabs a {
+    display: block;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-sm);
+    line-height: 1.2;
+    transition:
+      color var(--duration-fast) var(--ease),
+      background-color var(--duration-fast) var(--ease);
+  }
+
+  .tabs a:hover {
+    color: var(--text-primary);
+    background: var(--surface-subtle);
+  }
+
+  .tabs a[aria-current="page"] {
+    color: var(--text-primary);
+    background: var(--surface-subtle);
+  }
+
+  .site-header[data-variant="home"] .tabs a {
+    color: var(--showcase-text-muted);
+  }
+
+  .site-header[data-variant="home"] .tabs a:hover {
+    color: var(--showcase-text);
+    background: rgb(243 241 234 / 10%);
+  }
+
+  .tools {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  /* —— 菜单按钮（窄屏）—— */
+  .menu-button {
+    display: none;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 1px solid var(--switch-border, var(--border-subtle));
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .site-header[data-variant="page"] .menu-button {
+    color: var(--text-primary);
+  }
+
+  /* —— 弹出菜单（窄屏）——
+   * popover 默认显示在屏幕正中，这里改成贴在页头下方、铺满宽度的面板。
+   * 菜单始终使用当前主题的颜色（即使在首页），所以要把开关控件的颜色变量重置回主题色。 */
+  .menu {
+    inset: var(--header-height) var(--gutter) auto;
+    width: auto;
+    max-height: calc(100svh - var(--header-height) - var(--space-4));
+    margin: 0;
+    padding: var(--space-4);
+    overflow: auto;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-surface);
+    background: var(--surface);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-float);
+    --switch-border: var(--border-subtle);
+    --switch-text: var(--text-secondary);
+    --switch-text-active: var(--text-primary);
+    --switch-active-bg: var(--surface-subtle);
+  }
+
+  .menu-tabs a {
+    display: block;
+    padding: var(--space-3) var(--space-2);
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: var(--text-lg);
+  }
+
+  .menu-tabs a[aria-current="page"] {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .menu-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+  }
+
+  /* —— 断点：窄屏收起标签和工具，改用菜单 —— */
+  @media (max-width: 899.98px) {
+    .tabs,
+    .tools {
+      display: none;
+    }
+
+    .menu-button {
+      display: grid;
+    }
+  }
+</style>

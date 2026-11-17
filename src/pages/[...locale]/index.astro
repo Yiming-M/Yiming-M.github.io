@@ -1,0 +1,53 @@
+---
+/**
+ * 首页：英文 /，中文 /zh/。
+ *
+ * 设计（设计文档 §4）：全屏 3D 前列腺 MRI + 左上角姓名 + 四个栏目标签 + 语言和主题控件，
+ * 不放简介、论文、搜索。
+ *
+ * 目前（Phase 1）只有展示区的骨架：一块不随主题变化的深色全屏区域。
+ * Phase 4 会在这里放入 3D 场景、数据来源署名，以及手机和“减少动态效果”下的静态图。
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { localeStaticPaths } from "../../lib/routes";
+
+export const getStaticPaths = localeStaticPaths;
+
+const { locale } = Astro.props;
+const isZh = locale === "zh";
+---
+
+<BaseLayout
+  locale={locale}
+  path="/"
+  variant="home"
+  description={isZh
+    ? "马一铭，伦敦国王学院博士后，研究前列腺癌主动监测中的医学影像 AI。"
+    : "Yiming Ma, postdoctoral researcher at King's College London working on medical imaging AI for prostate cancer active surveillance."}
+>
+  <section class="showcase" aria-label={isZh ? "研究展示" : "Research showcase"}>
+    <!-- Phase 4：3D MRI 画布放在这里。 -->
+    <p class="showcase-note">{isZh ? "3D 前列腺 MRI · 第 4 阶段" : "3D prostate MRI · Phase 4"}</p>
+  </section>
+</BaseLayout>
+
+<style>
+  /* 全屏展示区：颜色来自 --showcase-*，不随深浅主题变化。 */
+  .showcase {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    min-height: 100svh;
+    background:
+      radial-gradient(60% 50% at 50% 55%, rgb(141 168 255 / 10%), transparent 70%),
+      var(--showcase-bg);
+    color: var(--showcase-text-muted);
+  }
+
+  .showcase-note {
+    padding: var(--space-2) var(--space-4);
+    border: 1px dashed var(--showcase-line);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-sm);
+  }
+</style>
