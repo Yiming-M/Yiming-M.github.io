@@ -8,7 +8,7 @@
 - 网站正在按 `docs/design/` 推倒重建。设计文档是实现的唯一依据：
   - [`docs/design/00-overall-design.md`](docs/design/00-overall-design.md)：总体设计
   - [`docs/design/01-implementation-plan.md`](docs/design/01-implementation-plan.md)：分阶段计划与验收标准
-- 当前进度：**Phase 3（Posts 与 Obsidian 流程）已完成，待作者预览确认；下一步是 Phase 4（首页 3D MRI）。** 每完成一个阶段，更新这一行。
+- 当前进度：**Phase 4（首页 3D MRI）已完成，待作者预览确认；下一步是 Phase 5（Albums）。** 每完成一个阶段，更新这一行。
 
 ## 规则
 
@@ -91,7 +91,25 @@ Phase 5 补全。
 
 ### 更换首页 3D 数据
 
-Phase 4 补全。
+首页展示的是一例前列腺 MRI 的三维解剖模型加切面：外周带、移行带、病灶三个平滑曲面，以及一张可以上下扫动的原始分辨率横断面（设计文档 §4）。研究方向变化、想换病例或换成别的影像时，按以下步骤操作。
+
+**数据流程**：原始数据（放仓库外）→ `scripts/mri/build_scene.py` → `public/home/mri/`（进仓库）→ 浏览器端 `src/components/home/mri-scene.js` 渲染。
+
+1. **先征得作者同意再下载数据**（规则 7），并说明来源、许可、文件和大小。公开展示必须用允许再分发和衍生展示的数据，并按许可要求署名。
+2. **取得原始数据**，放在仓库外的新目录：
+   - PI-CAI 换病例：`python3 -I scripts/mri/fetch_picai_case.py <目录> [--case 病例号]`。脚本只按字节范围读取约 20 MB，不下载 5 GB 的整包。
+   - 其他数据集：需要一份 3D 影像，以及与它体素一一对应的分割标注。
+3. **生成网页数据**：`python3 -I scripts/mri/build_scene.py <目录> <病例号>`，输出 `slices.bin.gz`（切片）、`labels.bin.gz`（切片上的标签和轮廓）、`meshes.bin.gz`（三个曲面）、`meta.json`、`static.png`（手机等情况下显示的静态横断面）。
+   - 换数据集时，修改脚本里的读取函数和三个结构的掩码。输出格式保持不变，格式说明写在脚本开头和 `meta.json` 里。
+   - 改颜色时，三处要一起改：`tokens.css` 的 `--mri-pz` / `--mri-tz` / `--mri-lesion`（3D 场景从这里读取）、`build_scene.py` 的 `COLORS`（静态图）、`--showcase-bg` 和脚本里的 `BACKGROUND`（背景）。改完要重新生成静态图。
+   - 切片的着色规则在两处：`build_scene.py` 的 `render_static()` 和 `mri-scene.js` 的切片着色器，改动时两边一起改。
+   - 曲面太粗糙或文件太大时，调 `MESH_VOXEL_MM`（越小越细）、`SMOOTH_SIGMA` 和 `TAUBIN_ITERATIONS`（越大越光滑）。
+4. **更新文字**：`src/components/home/MriShowcase.astro` 里的标注文字（每个结构的名称和一句说明）、图片 alt 和署名；`meta.json` 由脚本生成，其中 `source` 字段要写对来源和许可（在 `build_scene.py` 里改）。
+5. **验证**：`npm run build` 后在本地预览中检查：
+   - 宽屏、有鼠标时显示 3D：开场时模型转正、切面扫到病灶层面；鼠标左右移动旋转 ±35°，上下移动扫过切面；左侧的引线连到模型上正确的位置；
+   - 中等宽度（宽高比 ≤ 1.35）时没有引线，标注变成左下角的图例；
+   - 窄屏（宽度 < 768px）时显示静态横断面；
+   - `public/home/mri/` 的总大小不超过 3 MB（设计文档 §4 的预算）。
 
 ### 重新生成网页字体
 
@@ -116,6 +134,9 @@ Phase 4 补全。
 | `src/pages/[...locale]/publications/` | 论文列表 `index.astro` 和详情页 `[slug].astro` |
 | `src/components/` | 页头 `SiteHeader`、页脚 `SiteFooter`、主题与语言切换、搜索按钮和搜索对话框（Pagefind）、图标、栏目占位页；论文用的作者列表、链接和 Cite 块；关系图 `GraphView` |
 | `src/lib/publications.ts` | 论文排序、分组、BibTeX 生成规则、citation meta 和 JSON-LD |
+| `src/components/home/` | 首页展示区 `MriShowcase.astro`（3D / 静态图切换、标注与引线、署名）和 3D 场景 `mri-scene.js`（three.js：曲面 + 切面） |
+| `scripts/mri/` | 首页 MRI 数据：下载 PI-CAI 单个病例 `fetch_picai_case.py`、生成网页数据 `build_scene.py` |
+| `public/home/mri/` | 首页 MRI 的体数据、标签、元信息和静态图；由脚本生成，不要手改 |
 | `src/pages/[...locale]/posts/` | 文章索引 `index.astro`、文章页 `[slug].astro`、全站关系图 `graph.astro` |
 | `src/lib/posts.ts` | 文章读取与校验、分类、系列、阅读时长、反向链接、关系图数据 |
 | `src/lib/obsidian/` | Obsidian 写法的构建插件 `remark-obsidian.mjs`、笔记索引与双链解析 `notes.mjs`、标题锚点规则 `slug.mjs` |

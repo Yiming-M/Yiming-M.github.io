@@ -349,9 +349,16 @@ const tagLabel = (tag: string) => tag.split("/").at(-1)!;
       await mermaid.run({ nodes: diagrams });
     };
 
-    renderDiagrams();
-    new MutationObserver(renderDiagrams).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", renderDiagrams);
+    // 主题切换可能同时触发两个监听（data-theme 和系统深浅色）。Mermaid 不能同时渲染同一组节点，
+    // 否则会在内部报错，所以把每次渲染排队，前一次完成后再开始下一次。
+    let queue: Promise<void> = Promise.resolve();
+    const scheduleRender = () => {
+      queue = queue.then(renderDiagrams).catch(() => {});
+    };
+
+    scheduleRender();
+    new MutationObserver(scheduleRender).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", scheduleRender);
   }
 </script>
 

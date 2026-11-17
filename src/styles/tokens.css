@@ -12,8 +12,8 @@
  * 因此深色变量要写两遍：一遍在“系统深色且没有强制浅色”的媒体查询里，一遍在 data-theme="dark" 里。
  * 修改深色配色时，两处必须保持一致。
  *
- * 颜色是过渡方案：沿用旧网站的暖纸色（浅色）和深墨色（深色）。
- * Phase 4 定下首页 MRI 的背景色后，会回来更新强调色（--accent 系列）。
+ * 底色沿用暖纸色（浅色）和深墨色（深色）。强调色在 Phase 4 定稿：取自首页 3D MRI 里腺体的青绿色，
+ * 让首页和内页呼应（浅色主题用加深的青绿，保证与底色的对比度 ≥ 4.5:1）。
  */
 
 :root {
@@ -27,26 +27,30 @@
   --text-secondary: #5e626b; /* 说明文字、元信息 */
   --border-subtle: #d8d4ca; /* 分隔线 */
   --border-strong: #8b8982; /* 需要看清的边界，如控件描边 */
-  --accent: #2455d6; /* 链接、当前状态 */
-  --accent-hover: #173da8;
-  --accent-soft: #e4eafc; /* 选中背景、文字选区 */
+  --accent: #0f766e; /* 链接、当前状态。与底色对比度约 5.0:1 */
+  --accent-hover: #0b5f58;
+  --accent-soft: #dcefeb; /* 选中背景、文字选区 */
   --focus: #a86f00; /* 键盘焦点环；只用于焦点，不作装饰。与底色对比度约 3.8:1（WCAG 要求 ≥3:1） */
   --header-bg: rgb(252 251 248 / 86%); /* 页头半透明底，配合背景模糊 */
   --shadow-float: 0 8px 24px rgb(17 19 24 / 10%); /* 仅用于页头和弹出菜单 */
 
   /* —— 颜色：文章分类（关系图节点、图例）——
-   * 论文笔记用强调色，读书笔记绿色，随笔琥珀色；深浅主题下都能和背景区分开。 */
+   * 论文笔记用强调色（青绿），读书笔记蓝色，随笔琥珀色；三者在深浅主题下与背景的对比度都 ≥ 3:1。 */
   --category-papers: var(--accent);
-  --category-books: #2f9e6e;
+  --category-books: #4f7be0;
   --category-notes: #c47f17;
 
   /* —— 颜色：首页展示区 ——
    * 首页 3D 区域不随主题变化（设计文档 §3.2），所以单独一组变量，深浅主题下取值相同。
    * Phase 4 渲染出 MRI 后再定最终的背景色。 */
-  --showcase-bg: #0b0d12;
+  --showcase-bg: #070a12; /* 与 public/home/mri/static.png 的背景一致，改动时要重新生成静态图 */
   --showcase-text: #f3f1ea;
   --showcase-text-muted: rgb(243 241 234 / 62%);
   --showcase-line: rgb(243 241 234 / 18%);
+  /* 首页 MRI 三种结构的颜色。静态图里的同样颜色写在 scripts/mri/build_scene.py 的 COLORS，改动时两处一起改。 */
+  --mri-pz: #5ce6d2; /* 外周带：青绿（也是全站强调色的来源） */
+  --mri-tz: #a5a8ff; /* 移行带：淡紫 */
+  --mri-lesion: #ffa04a; /* 病灶：橙 */
 
   /* —— 字体 ——
    * 全站使用霞鹜文楷 Bright GB 的网页版（由 scripts/fonts/split-lxgw-bright.mjs 生成，
@@ -117,9 +121,9 @@
     --text-secondary: #b4b7c0;
     --border-subtle: #353a43;
     --border-strong: #767b86;
-    --accent: #8da8ff;
-    --accent-hover: #b0c1ff;
-    --accent-soft: #26304e;
+    --accent: #5ce6d2;
+    --accent-hover: #8ff0e2;
+    --accent-soft: #16332f;
     --focus: #ffd84d;
     --header-bg: rgb(25 28 34 / 84%);
     --shadow-float: 0 8px 24px rgb(0 0 0 / 40%);
@@ -136,9 +140,9 @@
   --text-secondary: #b4b7c0;
   --border-subtle: #353a43;
   --border-strong: #767b86;
-  --accent: #8da8ff;
-  --accent-hover: #b0c1ff;
-  --accent-soft: #26304e;
+  --accent: #5ce6d2;
+  --accent-hover: #8ff0e2;
+  --accent-soft: #16332f;
   --focus: #ffd84d;
   --header-bg: rgb(25 28 34 / 84%);
   --shadow-float: 0 8px 24px rgb(0 0 0 / 40%);

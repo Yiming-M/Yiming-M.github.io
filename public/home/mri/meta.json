@@ -1,0 +1,73 @@
+{
+  "_comment": "由 scripts/mri/build_scene.py 生成，不要手改。",
+  "case": "10807_1000823",
+  "slices": {
+    "dims": [
+      344,
+      344,
+      15
+    ],
+    "spacing_mm": [
+      0.3423,
+      0.3423,
+      3.0
+    ],
+    "layout": "uint8，x 变化最快（向患者左侧），其次 y（前→后），最后 z（足→头）",
+    "lesionSlice": 8
+  },
+  "labels": {
+    "class_bits": "低 2 位：0 背景，1 外周带，2 移行带，3 病灶",
+    "edge_pz": 4,
+    "edge_tz": 8,
+    "edge_lesion": 16
+  },
+  "plane": {
+    "width": 117.738,
+    "height": 117.738,
+    "centerX": 0.0,
+    "centerZ": 0.171,
+    "firstY": -21.0,
+    "sliceThickness": 3.0
+  },
+  "meshes": {
+    "pz": {
+      "offset": 0,
+      "vertexCount": 12364,
+      "indexCount": 74184,
+      "anchor": [
+        -29.32,
+        -0.47,
+        -6.48
+      ]
+    },
+    "tz": {
+      "offset": 222552,
+      "vertexCount": 10156,
+      "indexCount": 60924,
+      "anchor": [
+        -23.18,
+        4.98,
+        4.25
+      ]
+    },
+    "lesion": {
+      "offset": 405336,
+      "vertexCount": 1491,
+      "indexCount": 8940,
+      "anchor": [
+        -27.47,
+        5.82,
+        -17.26
+      ]
+    }
+  },
+  "meshFormat": "每个结构：int16 顶点坐标 xyz（0.01 mm）×vertexCount，接着 uint16 三角形索引 ×indexCount；offset 为字节偏移（4 字节对齐）",
+  "coordinates": "场景坐标 mm，原点在腺体中心；X 向患者左侧，Y 向头侧，Z 向腹侧",
+  "source": {
+    "name": "PI-CAI Public Training and Development Dataset",
+    "images": "https://zenodo.org/records/6624726",
+    "labels": "https://github.com/DIAGNijmegen/picai_labels（human_expert 病灶；Yuan23 分区）",
+    "license": "CC BY-NC 4.0",
+    "citation": "Saha A, et al. Artificial intelligence and radiologists in prostate cancer detection on MRI (PI-CAI): an international, paired, non-inferiority, confirmatory study. Lancet Oncology, 2024."
+  }
+}
