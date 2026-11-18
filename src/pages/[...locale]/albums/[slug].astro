@@ -1,0 +1,46 @@
+---
+/**
+ * 相册页：英文 /albums/<slug>/，中文 /zh/albums/<slug>/（设计文档 §8）。<slug> 是 src/content/albums/ 下的文件夹名。
+ * 版式是“叙事排版”（AlbumStory）：全屏封面开场，照片按横竖交替排版，点击进入灯箱。
+ */
+import { getImage } from "astro:assets";
+import AlbumStory from "../../../components/albums/AlbumStory.astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { formatAlbumDate, getAlbums, type Album } from "../../../lib/albums";
+import { localeStaticPaths } from "../../../lib/routes";
+import { localize, type Locale } from "../../../lib/site";
+
+/** 每个相册 × 两种语言，各生成一个页面。前后相册用于页面结尾的导航（列表按时间从新到旧）。 */
+export async function getStaticPaths() {
+  const albums = await getAlbums();
+  return localeStaticPaths().flatMap(({ params, props }) =>
+    albums.map((album, index) => ({
+      params: { locale: params.locale, slug: album.slug },
+      props: { locale: props.locale, album, newer: albums[index - 1], older: albums[index + 1] },
+    })),
+  );
+}
+
+interface Props {
+  locale: Locale;
+  album: Album;
+  newer?: Album;
+  older?: Album;
+}
+
+const { locale, album, newer, older } = Astro.props;
+const isZh = locale === "zh";
+const title = localize(locale, album.title);
+const path = `/albums/${album.slug}/`;
+const description = album.intro
+  ? localize(locale, album.intro)
+  : `${localize(locale, album.place)} · ${formatAlbumDate(locale, album.date)} · ${isZh ? `${album.photos.length} 张照片` : `${album.photos.length} photos`}`;
+// 分享卡片用封面：1200px 宽的 JPEG（社交平台对 AVIF/WebP 支持不一）。链接图片直接用原链接。
+const ogImage = album.cover.image
+  ? new URL((await getImage({ src: album.cover.image, width: Math.min(1200, album.cover.width), format: "jpg" })).src, Astro.site).href
+  : album.cover.src;
+---
+
+<BaseLayout locale={locale} path={path} title={title} description={description} ogType="article" ogImage={ogImage}>
+  <AlbumStory album={album} locale={locale} base="/albums/" newer={newer} older={older} />
+</BaseLayout>

@@ -1,0 +1,206 @@
+---
+/**
+ * 相册索引页：“全屏封面”（设计文档 §8.2；2026-11-18 作者从两版样稿中选定）。
+ *
+ * - 每个相册占一整屏（页头以下），封面铺满；上下滚动时一屏一屏吸附（scroll-snap），最后一屏之后是页脚。
+ *   页头在这一页不自动隐藏（页面传 headerAutoHide={false}），否则页头一藏，顶部会露出上一屏的边。
+ * - 滚到某个相册时，封面在 COVER_PUSH_SECONDS 秒内缓慢推近到 1.06 倍。
+ * - 左下角：序号、相册名、地点 · 时间 · 张数。序号和底部渐变的颜色取自封面（cover-accent.ts，在浏览器里提取）。
+ * - 桌面端鼠标悬停：封面像液面一样流动，鼠标周围泛起涟漪（liquid.ts，WebGL）。
+ * - 开启“减少动态效果”：不推近、不扭曲（base.css 关掉所有过渡；liquid.ts 自己检查）。
+ * - 占位相册在右上角标“占位图”。
+ */
+import { Picture } from "astro:assets";
+import { formatAlbumDate, responsiveWidths, type Album } from "../../lib/albums";
+import { localePath, localize, type Locale } from "../../lib/site";
+
+interface Props {
+  albums: Album[];
+  locale: Locale;
+  /** 相册页的路径前缀（与语言无关），如 "/albums/"。 */
+  base: string;
+}
+
+const { albums, locale, base } = Astro.props;
+const isZh = locale === "zh";
+const total = String(albums.length).padStart(2, "0");
+---
+
+<div class="covers" data-covers>
+  {
+    albums.map((album, index) => (
+      <section class="cover" aria-labelledby={`album-${album.slug}`}>
+        <a class="cover-link" href={localePath(locale, `${base}${album.slug}/`)}>
+          <div class="media" data-liquid>
+            {album.cover.image ? (
+              <Picture
+                src={album.cover.image}
+                formats={["avif", "webp"]}
+                widths={responsiveWidths(album.cover.width)}
+                sizes="100vw"
+                alt=""
+                loading={index === 0 ? "eager" : "lazy"}
+                decoding="async"
+              />
+            ) : (
+              <img src={album.cover.src} width={album.cover.width} height={album.cover.height} alt="" loading={index === 0 ? "eager" : "lazy"} />
+            )}
+          </div>
+          <div class="scrim" aria-hidden="true" />
+          <div class="text">
+            <p class="index">
+              {String(index + 1).padStart(2, "0")} / {total}
+            </p>
+            <h2 id={`album-${album.slug}`}>{localize(locale, album.title)}</h2>
+            <p class="meta">
+              {localize(locale, album.place)} · {formatAlbumDate(locale, album.date)} ·{" "}
+              {isZh ? `${album.photos.length} 张` : `${album.photos.length} photos`}
+            </p>
+          </div>
+          {album.placeholder && <span class="badge">{isZh ? "占位图" : "Placeholder"}</span>}
+        </a>
+      </section>
+    ))
+  }
+</div>
+
+<script>
+  import { accentFrom } from "./cover-accent";
+  import { setupLiquid } from "./liquid";
+
+  const root = document.querySelector<HTMLElement>("[data-covers]");
+  if (root) {
+    // 滚到哪个相册，哪个相册的封面开始推近
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach((entry) => entry.target.toggleAttribute("data-inview", entry.isIntersecting)),
+      { threshold: 0.5 },
+    );
+    root.querySelectorAll(".cover").forEach((cover) => observer.observe(cover));
+
+    // 强调色：封面下载完后提取
+    root.querySelectorAll<HTMLElement>(".cover").forEach((cover) => {
+      const img = cover.querySelector("img");
+      if (!img) return;
+      const apply = () => {
+        const accent = accentFrom(img);
+        if (accent) cover.style.setProperty("--cover-accent", accent);
+      };
+      if (img.complete && img.naturalWidth > 0) apply();
+      else img.addEventListener("load", apply, { once: true });
+    });
+
+    setupLiquid(root);
+  }
+</script>
+
+<style>
+  /* 整页按屏吸附：每个相册一屏，最后吸附到页脚。只在这个页面生效（:has 判断页面上有没有 .covers）。
+   * 吸附位置要减去 scroll-padding-top：全站设的值（base.css）比页头多留了一点给锚点跳转，
+   * 这里改成正好一个页头高，封面的上边才紧贴页头。 */
+  :global(html:has([data-covers])) {
+    scroll-snap-type: y mandatory;
+    scroll-padding-top: var(--header-height);
+  }
+
+  :global(html:has([data-covers]) body > footer) {
+    scroll-snap-align: end;
+  }
+
+  .cover {
+    --cover-accent: #f3f1ea;
+    position: relative;
+    height: calc(100vh - var(--header-height));
+    height: calc(100svh - var(--header-height));
+    overflow: hidden;
+    background: #07080b;
+    scroll-snap-align: start;
+  }
+
+  .cover-link {
+    position: absolute;
+    inset: 0;
+    display: block;
+    color: #f3f1ea;
+    text-decoration: none;
+  }
+
+  /* 封面铺满；进入视野后缓慢推近（离开时 1.2 秒内复原）。 */
+  .media {
+    position: absolute;
+    inset: 0;
+    transform: scale(1);
+    transition: transform 1.2s var(--ease);
+  }
+
+  .cover[data-inview] .media {
+    transform: scale(1.06);
+    transition: transform 12s cubic-bezier(0.25, 0, 0.3, 1);
+  }
+
+  .media :global(img),
+  .media :global(.liquid-canvas) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* 底部渐暗，保证文字可读；再叠一层封面强调色的微光 */
+  .scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to top, rgb(0 0 0 / 70%), rgb(0 0 0 / 0%) 55%),
+      radial-gradient(ellipse at 10% 100%, color-mix(in srgb, var(--cover-accent) 28%, transparent), transparent 60%);
+    pointer-events: none;
+  }
+
+  .text {
+    position: absolute;
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: clamp(var(--space-8), 8vh, var(--space-24));
+    max-width: var(--page-max);
+    margin: 0 auto;
+  }
+
+  .index {
+    color: var(--cover-accent);
+    font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.08em;
+    transition: color 600ms var(--ease);
+  }
+
+  h2 {
+    margin-top: var(--space-2);
+    font-size: clamp(2.25rem, 1.2rem + 4.5vw, 5rem);
+    font-weight: 500;
+    line-height: 1.1;
+  }
+
+  .meta {
+    margin-top: var(--space-3);
+    color: rgb(243 241 234 / 78%);
+    font-size: var(--text-sm);
+  }
+
+  .cover-link:hover h2,
+  .cover-link:focus-visible h2 {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.15em;
+  }
+
+  .badge {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--gutter);
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid rgb(243 241 234 / 50%);
+    border-radius: var(--radius-pill);
+    background: rgb(0 0 0 / 35%);
+    font-size: var(--text-xs);
+  }
+</style>

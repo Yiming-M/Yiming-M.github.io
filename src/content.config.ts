@@ -5,7 +5,7 @@
  * 当前集合：
  * - publications：论文（设计文档 §6）。
  * - posts：文章（设计文档 §7），来自 Obsidian 笔记库的同步副本。
- * Phase 5 加入 albums（设计文档 §8）。
+ * - albums：相册（设计文档 §8）。
  */
 import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
@@ -141,4 +141,73 @@ const posts = defineCollection({
   }),
 });
 
-export const collections = { publications, posts };
+/**
+ * 相册。每个相册一个文件夹，文件夹名就是网址里的 slug；照片放在同一个文件夹里：
+ *
+ *   src/content/albums/2025-scotland/
+ *     album.yaml
+ *     IMG_0001.jpg
+ *     IMG_0002.jpg
+ *
+ * album.yaml 示例：
+ *
+ *   title: { zh: 苏格兰高地, en: Scottish Highlands }
+ *   date: 2025-08                       # 年-月，用于排序（新的在前）
+ *   place: { zh: 苏格兰, en: Scotland }
+ *   cover: IMG_0001.jpg                 # 可选：封面，写 photos 里的某个 src；不写时用第一张
+ *   intro: { zh: "…", en: "…" }         # 可选：相册开头的一段话
+ *   placeholder: true                   # 可选：模板阶段的占位相册，页面上标注“占位图”
+ *   photos:
+ *     - src: IMG_0001.jpg               # 同文件夹里的文件名（jpg、jpeg、png、webp、avif）
+ *       caption: { zh: "…", en: "…" }   # 可选：图注，同时作为图片的替代文字
+ *     - src: https://example.com/a.jpg  # 或完整链接：直接引用，不做处理
+ *       width: 4000                     # 链接图片的尺寸：构建时自动探测，探测失败时必须手写
+ *       height: 3000
+ *       exif: { camera: Canon EOS R8, lens: "RF 24-105mm F4", focal: 35mm, aperture: f/8, shutter: 1/250, iso: 100, taken: "2025-08-12 09:30" }
+ *       # exif 可选：链接图片读不到 EXIF 时手写；本地照片写了哪项就覆盖自动读取的哪项
+ *
+ * 本地照片的 EXIF、多尺寸图片和原图链接由 src/lib/albums.ts 在构建时处理。
+ */
+const albums = defineCollection({
+  loader: glob({
+    pattern: "*/album.yaml",
+    base: "./src/content/albums",
+    generateId: ({ entry }) => entry.split("/")[0],
+  }),
+  schema: z.object({
+    title: localizedText,
+    /** YAML 会把 2025-08-12 这样的完整日期读成日期对象，这里统一转成“年-月”。 */
+    date: z.preprocess(
+      (value) => (value instanceof Date ? value.toISOString().slice(0, 7) : value),
+      z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, "date 写成 年-月，如 2025-08"),
+    ),
+    place: localizedText,
+    cover: z.string().optional(),
+    intro: localizedText.optional(),
+    placeholder: z.boolean().default(false),
+    photos: z
+      .array(
+        z.object({
+          src: z.string(),
+          caption: localizedText.optional(),
+          width: z.number().int().positive().optional(),
+          height: z.number().int().positive().optional(),
+          exif: z
+            .object({
+              camera: z.string(),
+              lens: z.string(),
+              focal: z.string(),
+              aperture: z.string(),
+              shutter: z.string(),
+              iso: z.coerce.string(),
+              taken: z.string(),
+            })
+            .partial()
+            .optional(),
+        }),
+      )
+      .min(1),
+  }),
+});
+
+export const collections = { publications, posts, albums };

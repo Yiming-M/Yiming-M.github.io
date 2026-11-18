@@ -8,7 +8,7 @@
 - 网站正在按 `docs/design/` 推倒重建。设计文档是实现的唯一依据：
   - [`docs/design/00-overall-design.md`](docs/design/00-overall-design.md)：总体设计
   - [`docs/design/01-implementation-plan.md`](docs/design/01-implementation-plan.md)：分阶段计划与验收标准
-- 当前进度：**Phase 4（首页 3D MRI）已完成，待作者预览确认；下一步是 Phase 5（Albums）。** 每完成一个阶段，更新这一行。
+- 当前进度：**Phase 5（Albums）已完成，待作者预览确认；下一步是 Phase 6（全站验收）。现在的三个相册是占位图，等作者提供照片后替换。`src/content/albums/test-*/` 是网上下载的本地测试相册，已在 .gitignore 里排除，不要提交。** 每完成一个阶段，更新这一行。
 
 ## 规则
 
@@ -87,7 +87,19 @@
 
 ### 添加相册
 
-Phase 5 补全。
+数据格式见 `src/content.config.ts` 的 `albums` 注释，读取逻辑在 `src/lib/albums.ts`，设计依据见设计文档 §8。
+
+1. **确定 slug**：小写字母、数字、连字符，建议“年份-地点”，如 `2025-scotland`。它会出现在网址里，发布后不要再改。
+   - 只想在本机试版式、不发布的相册（如网上下载的测试照片），文件夹名用 `test-` 开头：`.gitignore` 已排除，不会被提交。
+2. **建文件夹** `src/content/albums/<slug>/`，把照片放进去（jpg、jpeg、png、webp、avif），文件名不变。
+   - 原图会原样发布（灯箱里的“原图”按钮），不压缩、不限分辨率，EXIF 里的 GPS 也在。作者不想公开拍摄地点时，由作者自己先处理照片；agent 不改照片，除非作者明确要求。
+3. **写 `album.yaml`**：
+   - `title`、`place`、`intro`、`caption` 的中文由作者写（哪怕只写地名），英文按上方“翻译规则”翻译。不编造经历、地点和时间。
+   - `date` 写“年-月”；`cover` 选一张横幅照片（索引页和相册页开场会把封面裁成全屏）；`photos` 的顺序就是页面上的顺序。
+   - 相册页按照片的横竖安排版式（`AlbumStory.astro` 的 `layoutRows`）：横幅轮流用宽幅和满幅，相邻两张竖幅并排，落单的竖幅左右错开。排顺序时可以利用这一点，比如把想并排的两张竖幅放在一起。
+   - 链接图片写完整网址，尺寸会在构建时联网探测；探测失败时构建报错，按提示写 `width`、`height`。链接图片读不到 EXIF，需要时在 `exif` 里手写。
+4. **验证**：`npm run build`。构建会检查数据格式、照片文件是否存在、封面是否在 `photos` 里，结束时打印 `dist/` 的总大小（超过 800 MB 警告，GitHub Pages 上限 1 GB）。然后在本地预览里检查索引页和相册页的中英文版本：EXIF 是否正确、灯箱能否用键盘（← → 切换、Esc 关闭）和“原图”按钮。
+5. **占位相册**：现在的 `placeholder-highlands`、`placeholder-coast`、`placeholder-night` 是模板阶段的占位图（程序生成）。作者提供第一批照片后删除这三个文件夹（已提交的文件，删除前先征得同意）。
 
 ### 首页的项目页
 
@@ -160,7 +172,7 @@ Phase 5 补全。
 | `src/layouts/BaseLayout.astro` | 页面骨架：head 元信息、字体、主题初始化、页头、页脚 |
 | `src/pages/[...locale]/about/` | About Me 页面。文案、头像路径和 CV 文件名都写在这个文件开头 |
 | `src/pages/[...locale]/publications/` | 论文列表 `index.astro` 和详情页 `[slug].astro` |
-| `src/components/` | 页头 `SiteHeader`、页脚 `SiteFooter`、主题与语言切换、搜索按钮和搜索对话框（Pagefind）、图标、栏目占位页；论文用的作者列表、链接和 Cite 块；关系图 `GraphView` |
+| `src/components/` | 页头 `SiteHeader`、页脚 `SiteFooter`、主题与语言切换、搜索按钮和搜索对话框（Pagefind）、图标；论文用的作者列表、链接和 Cite 块；关系图 `GraphView`；相册的组件在 `albums/` |
 | `src/lib/publications.ts` | 论文排序、分组、BibTeX 生成规则、citation meta 和 JSON-LD |
 | `src/components/home/` | 首页展示区：`HomeShowcase.astro`（多页切换、共用版式）、各项目页 `MriSlide.astro` / `CrowdSlide.astro` / `DmsSlide.astro`，以及对应的 3D 场景 `mri-scene.js` / `crowd-scene.js` / `dms-scene.js` |
 | `scripts/mri/` | 首页 MRI 数据：下载 PI-CAI 单个病例 `fetch_picai_case.py`、生成网页数据 `build_scene.py` |
@@ -181,6 +193,10 @@ Phase 5 补全。
 | `src/lib/routes.ts` | 四个栏目的名称和路径（导航和 sitemap 都读这里） |
 | `src/lib/site.ts` | 站点信息与语言工具函数 |
 | `src/content.config.ts` | 内容集合定义（数据格式和字段说明） |
+| `src/content/albums/<slug>/` | 每个相册一个文件夹：`album.yaml` 和照片。`placeholder-*` 是模板阶段的占位相册 |
+| `src/lib/albums.ts` | 相册读取：本地照片的图片对象、EXIF、链接图片的尺寸探测、排序和格式化 |
+| `src/components/albums/` | 相册组件：索引页的全屏封面 `AlbumsCovers`、相册页的叙事排版 `AlbumStory`、单张照片 `AlbumPhoto`、灯箱 `AlbumLightbox`（PhotoSwipe）、封面强调色 `cover-accent.ts`、封面悬停扭曲 `liquid.ts` |
+| `scripts/check-dist-size.mjs` | 构建结束时打印 `dist/` 总大小，超过 800 MB 警告 |
 | `src/content/publications/<slug>/` | 每篇论文一个文件夹：`index.yaml` 和可选的 `overview.png`。目前的 6 篇是从旧网站转换的模板测试数据 |
 | `scripts/fonts/split-lxgw-bright.mjs` | 把霞鹜文楷 Bright GB 切分成网页字体，见上方“重新生成网页字体” |
 | `public/fonts/lxgw-bright-gb/` | 切分后的网页字体、`fonts.css` 和许可证；由脚本生成，不要手改 |

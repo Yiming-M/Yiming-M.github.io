@@ -4,6 +4,8 @@
  *
  * 两种样式（variant）：
  * - "page"：阅读页使用。吸顶，向下滚动时自动隐藏、向上滚动时重新出现（设计文档 §7.4）。
+ *   autoHide={false} 时始终显示：用于一屏一屏吸附的页面（相册索引的全屏封面），页头一藏，
+ *   顶部就会露出上一屏的边。
  * - "home"：首页使用。透明地浮在 3D 展示区上，文字用展示区的浅色；不放搜索（设计文档 §4）。
  *
  * 响应式：
@@ -24,16 +26,18 @@ interface Props {
   path: string;
   variant: "page" | "home";
   hasAlternate?: boolean;
+  /** 阅读页向下滚动时是否自动隐藏，默认是。 */
+  autoHide?: boolean;
 }
 
-const { locale, path, variant, hasAlternate = true } = Astro.props;
+const { locale, path, variant, hasAlternate = true, autoHide = true } = Astro.props;
 const isZh = locale === "zh";
 
 /** 当前路径属于哪个栏目（例如 /publications/zip/ 属于 Publications），用于 aria-current 高亮。 */
 const currentSection = sections.find((section) => path.startsWith(section.path))?.key;
 ---
 
-<header class="site-header" data-variant={variant} data-site-header>
+<header class="site-header" data-variant={variant} data-site-header data-auto-hide={variant === "page" && autoHide ? "" : undefined}>
   <div class="bar">
     <!-- 站名：英文页显示英文站名，中文页显示中文站名（见 src/lib/site.ts）。 -->
     <a class="wordmark" href={localePath(locale, "/")}>{localize(locale, site.title)}</a>
@@ -90,9 +94,9 @@ const currentSection = sections.find((section) => path.startsWith(section.path))
   /**
    * 阅读页的页头自动隐藏：向下滚动超过一个页头高度后隐藏，向上滚动立即出现。
    * 以下情况始终显示：页面顶部、菜单打开时、页头内有键盘焦点时。
-   * 首页（data-variant="home"）不滚动，不启用。
+   * 首页（data-variant="home"）不滚动，不启用；autoHide={false} 的页面也不启用（见文件开头）。
    */
-  const header = document.querySelector<HTMLElement>('[data-site-header][data-variant="page"]');
+  const header = document.querySelector<HTMLElement>("[data-site-header][data-auto-hide]");
   const menu = document.getElementById("site-menu");
 
   if (header) {

@@ -1,0 +1,133 @@
+---
+/**
+ * 相册的灯箱（设计文档 §8.2，PhotoSwipe）：点击页面上 [data-gallery] 里的照片链接（AlbumPhoto.astro）打开。
+ *
+ * - 缩放、拖动、双指手势、左右滑动切换都是 PhotoSwipe 自带的；键盘：← → 切换，Esc 关闭，Z 缩放。
+ * - 在 PhotoSwipe 自带的界面上加了两样：
+ *   - “原图”按钮：在新标签页打开未经处理的原文件（链接图片就是原链接）；
+ *   - 底部的图注和 EXIF（取自照片链接的 data-caption、data-exif）。
+ * - 开启“减少动态效果”时，打开和关闭不做缩放动画。
+ * - PhotoSwipe 的主体代码在第一次打开灯箱时才下载。
+ *
+ * 每个相册页放一个本组件即可；界面文字跟随 <html lang>。
+ */
+---
+
+<script>
+  import PhotoSwipeLightbox from "photoswipe/lightbox";
+  import "photoswipe/style.css";
+
+  const zh = document.documentElement.lang.startsWith("zh");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const lightbox = new PhotoSwipeLightbox({
+    gallery: "[data-gallery]",
+    children: "a[data-pswp-width]",
+    pswpModule: () => import("photoswipe"),
+    showHideAnimationType: reduceMotion ? "none" : "zoom",
+    bgOpacity: 0.94,
+    closeTitle: zh ? "关闭（Esc）" : "Close (Esc)",
+    zoomTitle: zh ? "缩放（Z）" : "Zoom (Z)",
+    arrowPrevTitle: zh ? "上一张（←）" : "Previous (←)",
+    arrowNextTitle: zh ? "下一张（→）" : "Next (→)",
+    errorMsg: zh ? "照片加载失败" : "The photo could not be loaded",
+  });
+
+  /** 当前照片在页面上的链接元素（带着 data-original、data-caption、data-exif）。 */
+  const currentLink = (pswp: NonNullable<typeof lightbox.pswp>) => pswp.currSlide?.data.element as HTMLElement | undefined;
+
+  lightbox.on("uiRegister", () => {
+    const pswp = lightbox.pswp!;
+    pswp.ui!.registerElement({
+      name: "original",
+      order: 8,
+      isButton: true,
+      tagName: "a",
+      title: zh ? "在新标签页打开原图" : "Open the original in a new tab",
+      html: zh ? "原图" : "Original",
+      onInit: (element) => {
+        element.setAttribute("target", "_blank");
+        element.setAttribute("rel", "noopener");
+        pswp.on("change", () => element.setAttribute("href", currentLink(pswp)?.dataset.original ?? ""));
+      },
+    });
+    pswp.ui!.registerElement({
+      name: "details",
+      order: 9,
+      isButton: false,
+      appendTo: "root",
+      onInit: (element) => {
+        pswp.on("change", () => {
+          const link = currentLink(pswp);
+          const lines = [link?.dataset.caption, link?.dataset.exif].filter(Boolean) as string[];
+          element.replaceChildren(
+            ...lines.map((text, index) => {
+              const line = document.createElement("span");
+              line.className = index === 0 && link?.dataset.caption ? "pswp-caption" : "pswp-exif";
+              line.textContent = text;
+              return line;
+            }),
+          );
+          element.hidden = lines.length === 0;
+        });
+      },
+    });
+  });
+
+  lightbox.init();
+</script>
+
+<style is:global>
+  /* 灯箱界面：沿用全站字体；底部的图注和 EXIF。 */
+  .pswp {
+    --pswp-bg: #07080b;
+    font-family: var(--font-text);
+  }
+
+  .pswp__button--original {
+    display: flex;
+    align-items: center;
+    width: auto;
+    padding: 0 var(--space-3);
+    color: #f3f1ea;
+    font-size: var(--text-sm);
+    text-decoration: none;
+    opacity: 0.85;
+  }
+
+  .pswp__button--original:hover {
+    opacity: 1;
+  }
+
+  .pswp__details {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-8) var(--gutter) var(--space-4);
+    background: linear-gradient(transparent, rgb(0 0 0 / 60%));
+    color: #f3f1ea;
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    text-align: center;
+    pointer-events: none;
+    transition: opacity var(--duration) var(--ease);
+  }
+
+  .pswp__details .pswp-exif {
+    color: rgb(243 241 234 / 70%);
+    font-size: var(--text-xs);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* 点一下照片隐藏界面时，图注一起隐藏 */
+  .pswp--ui-visible .pswp__details {
+    opacity: 1;
+  }
+
+  .pswp:not(.pswp--ui-visible) .pswp__details {
+    opacity: 0;
+  }
+</style>

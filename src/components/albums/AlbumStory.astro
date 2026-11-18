@@ -1,0 +1,322 @@
+---
+/**
+ * 相册页：“叙事排版”（设计文档 §8.2；2026-11-18 作者从三版样稿中选定）。
+ *
+ * - 开场：封面铺满一屏（页头以下），左下角是相册名、地点 · 时间 · 张数，底部提示向下滚动。
+ * - 之后照片按节奏排版，规则（layoutRows）：
+ *   - 横幅照片轮流用“宽幅”（居中，最宽 --page-max）和“满幅”（左右顶到窗口边缘）；
+ *   - 相邻的两张竖幅或方形照片并排，按宽高比分配宽度，两张一样高；
+ *   - 落单的竖幅照片窄一些，轮流靠左、靠右，另一侧留白。
+ * - 每张照片下方小字显示图注和 EXIF；点击进入灯箱（全部照片，包括封面）。
+ * - 照片滚动进入视野时渐显（向上浮起一点）；开启“减少动态效果”或没有 JavaScript 时直接显示。
+ * - 结尾：返回相册列表、上一个 / 下一个相册。
+ */
+import AlbumLightbox from "./AlbumLightbox.astro";
+import AlbumPhoto from "./AlbumPhoto.astro";
+import { formatAlbumDate, orientation, type Album, type AlbumPhoto as Photo } from "../../lib/albums";
+import { localePath, localize, type Locale } from "../../lib/site";
+
+interface Props {
+  album: Album;
+  locale: Locale;
+  /** 相册页的路径前缀（与语言无关），如 "/albums/"；返回列表、上下相册的链接用它。 */
+  base: string;
+  /** 时间上更新、更旧的相册（列表里的前一个和后一个）。 */
+  newer?: Album;
+  older?: Album;
+}
+
+const { album, locale, base, newer, older } = Astro.props;
+const isZh = locale === "zh";
+const title = localize(locale, album.title);
+
+type Row = { kind: "wide" | "full" | "pair" | "narrow-left" | "narrow-right"; photos: Photo[] };
+
+/** 封面以外的照片，按上面注释里的规则排成一行一行。 */
+function layoutRows(photos: Photo[]): Row[] {
+  const rows: Row[] = [];
+  let landscapes = 0;
+  let singles = 0;
+  for (let i = 0; i < photos.length; i++) {
+    const photo = photos[i];
+    if (orientation(photo) === "landscape") {
+      rows.push({ kind: landscapes++ % 2 === 0 ? "wide" : "full", photos: [photo] });
+      continue;
+    }
+    const next = photos[i + 1];
+    if (next && orientation(next) !== "landscape") {
+      rows.push({ kind: "pair", photos: [photo, next] });
+      i++;
+      continue;
+    }
+    rows.push({ kind: singles++ % 2 === 0 ? "narrow-left" : "narrow-right", photos: [photo] });
+  }
+  return rows;
+}
+
+const rows = layoutRows(album.photos.filter((photo) => photo !== album.cover));
+/** 照片在相册里的序号（从 1 开始），用于没有图注时的替代文字。 */
+const numberOf = (photo: Photo) => album.photos.indexOf(photo) + 1;
+const altFor = (photo: Photo) =>
+  photo.caption ? localize(locale, photo.caption) : isZh ? `${title}，第 ${numberOf(photo)} 张` : `${title}, photo ${numberOf(photo)}`;
+/** 各种版式下照片大约占的宽度，供浏览器挑选合适的图片尺寸。 */
+const sizesFor: Record<Row["kind"], string> = {
+  wide: "(min-width: 75rem) 75rem, 100vw",
+  full: "100vw",
+  pair: "(min-width: 768px) 50vw, 100vw",
+  "narrow-left": "(min-width: 768px) 40rem, 100vw",
+  "narrow-right": "(min-width: 768px) 40rem, 100vw",
+};
+---
+
+<article class="story" data-gallery data-story>
+  <header class="hero">
+    <AlbumPhoto photo={album.cover} locale={locale} alt={altFor(album.cover)} sizes="100vw" eager class="hero-photo" />
+    <div class="scrim" aria-hidden="true"></div>
+    <div class="hero-text">
+      <p class="crumb"><a href={localePath(locale, base)}>{isZh ? "相册" : "Albums"}</a></p>
+      <h1>{title}</h1>
+      <p class="meta">
+        {localize(locale, album.place)} · {formatAlbumDate(locale, album.date)} · {isZh ? `${album.photos.length} 张` : `${album.photos.length} photos`}
+        {album.placeholder && <span class="badge">{isZh ? "占位图" : "Placeholder"}</span>}
+      </p>
+    </div>
+    <p class="cue" aria-hidden="true">{isZh ? "向下滚动" : "Scroll"} ↓</p>
+  </header>
+
+  {album.intro && <p class="intro" data-reveal>{localize(locale, album.intro)}</p>}
+
+  <div class="sequence">
+    {
+      rows.map((row) => (
+        <div class:list={["row", row.kind]} data-reveal>
+          {row.photos.map((photo) => (
+            <AlbumPhoto
+              photo={photo}
+              locale={locale}
+              alt={altFor(photo)}
+              sizes={sizesFor[row.kind]}
+              showDetails
+              class="item"
+              style={row.kind === "pair" ? `--ratio: ${photo.width / photo.height}` : undefined}
+            />
+          ))}
+        </div>
+      ))
+    }
+  </div>
+
+  <nav class="album-nav" aria-label={isZh ? "其他相册" : "Other albums"}>
+    <a href={localePath(locale, base)}>← {isZh ? "所有相册" : "All albums"}</a>
+    <span class="neighbours">
+      {newer && <a href={localePath(locale, `${base}${newer.slug}/`)}>{isZh ? "较新：" : "Newer: "}{localize(locale, newer.title)}</a>}
+      {older && <a href={localePath(locale, `${base}${older.slug}/`)}>{isZh ? "较早：" : "Older: "}{localize(locale, older.title)}</a>}
+    </span>
+  </nav>
+</article>
+
+<AlbumLightbox />
+
+<script>
+  // 照片滚动进入视野时渐显。先给文章加 data-reveal-ready，CSS 才把未显示的照片藏起来：
+  // 这样没有 JavaScript 时照片照常显示；“减少动态效果”时不启用。
+  const story = document.querySelector<HTMLElement>("[data-story]");
+  if (story && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    story.setAttribute("data-reveal-ready", "");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.setAttribute("data-shown", "");
+          observer.unobserve(entry.target);
+        }
+      },
+      { rootMargin: "0px 0px -12% 0px" },
+    );
+    story.querySelectorAll("[data-reveal]").forEach((element) => observer.observe(element));
+  }
+</script>
+
+<style>
+  /* —— 开场：封面铺满一屏 —— */
+  .hero {
+    position: relative;
+    height: calc(100vh - var(--header-height));
+    height: calc(100svh - var(--header-height));
+    overflow: hidden;
+    background: #07080b;
+    color: #f3f1ea;
+  }
+
+  .hero :global(.hero-photo),
+  .hero :global(.hero-photo .photo-link) {
+    position: absolute;
+    inset: 0;
+  }
+
+  .hero :global(.hero-photo img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgb(0 0 0 / 65%), rgb(0 0 0 / 0%) 50%);
+    pointer-events: none;
+  }
+
+  .hero-text {
+    position: absolute;
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: clamp(var(--space-12), 12vh, var(--space-24));
+    max-width: var(--page-max);
+    margin: 0 auto;
+    pointer-events: none;
+  }
+
+  .crumb a {
+    color: rgb(243 241 234 / 78%);
+    font-size: var(--text-sm);
+    pointer-events: auto;
+  }
+
+  h1 {
+    margin-top: var(--space-2);
+    font-size: clamp(2.25rem, 1.2rem + 4.5vw, 5rem);
+    font-weight: 500;
+    line-height: 1.1;
+  }
+
+  .meta {
+    margin-top: var(--space-3);
+    color: rgb(243 241 234 / 78%);
+    font-size: var(--text-sm);
+  }
+
+  .badge {
+    margin-left: var(--space-3);
+    padding: 0 var(--space-2);
+    border: 1px solid rgb(243 241 234 / 50%);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-xs);
+  }
+
+  .cue {
+    position: absolute;
+    left: 50%;
+    bottom: var(--space-4);
+    color: rgb(243 241 234 / 65%);
+    font-size: var(--text-xs);
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  /* —— 导语 —— */
+  .intro {
+    max-width: var(--measure);
+    margin: var(--space-24) auto 0;
+    padding: 0 var(--gutter);
+    color: var(--text-secondary);
+    font-size: var(--text-lg);
+  }
+
+  /* —— 照片序列 —— */
+  .sequence {
+    display: grid;
+    gap: clamp(var(--space-12), 10vh, var(--space-24));
+    margin-top: clamp(var(--space-12), 10vh, var(--space-24));
+  }
+
+  .row {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  .row.wide {
+    max-width: calc(var(--page-max) + 2 * var(--gutter));
+  }
+
+  /* 满幅：照片顶到窗口边缘，图注仍按页面留白缩进 */
+  .row.full {
+    padding: 0;
+  }
+
+  .row.full :global(figcaption) {
+    padding: 0 var(--gutter);
+  }
+
+  .row.pair {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    max-width: calc(var(--page-max) + 2 * var(--gutter));
+  }
+
+  @media (min-width: 768px) {
+    .row.pair {
+      flex-direction: row;
+      gap: var(--space-6);
+    }
+
+    /* 按宽高比分配宽度：两张照片一样高 */
+    .row.pair :global(.item) {
+      flex: var(--ratio) 1 0;
+    }
+
+    .row.narrow-left,
+    .row.narrow-right {
+      max-width: calc(var(--page-max) + 2 * var(--gutter));
+    }
+
+    .row.narrow-left :global(.item),
+    .row.narrow-right :global(.item) {
+      width: min(40rem, 55%);
+    }
+
+    .row.narrow-left :global(.item) {
+      margin-left: 8%;
+    }
+
+    .row.narrow-right :global(.item) {
+      margin-left: auto;
+      margin-right: 8%;
+    }
+  }
+
+  /* —— 渐显 —— */
+  .story[data-reveal-ready] [data-reveal] {
+    opacity: 0;
+    transform: translateY(1.5rem);
+    transition:
+      opacity 900ms var(--ease),
+      transform 900ms var(--ease);
+  }
+
+  .story[data-reveal-ready] [data-reveal][data-shown] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* —— 结尾 —— */
+  .album-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-4);
+    max-width: var(--page-max);
+    margin: var(--space-24) auto 0;
+    padding: var(--space-6) var(--gutter) var(--space-16);
+    border-top: 1px solid var(--border-subtle);
+    font-size: var(--text-sm);
+  }
+
+  .neighbours {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+  }
+</style>

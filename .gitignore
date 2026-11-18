@@ -6,3 +6,6 @@ dist/
 # 草稿：只在本地开发和带 INCLUDE_DRAFTS=1 的构建中出现，不进仓库（设计文档 §7.1）
 src/content/posts-drafts/
 public/drafts/
+
+# 本地测试相册：从网上下载的照片，只用于在本机检查版式，不进仓库
+src/content/albums/test-*/

@@ -1,14 +1,30 @@
 ---
 /**
- * 相册（Albums）栏目首页：英文 /albums/，中文 /zh/albums/。
- * 目前是占位页，Phase 5 替换为正式页面（见 docs/design/01-implementation-plan.md）。
+ * 相册索引页：英文 /albums/，中文 /zh/albums/（设计文档 §8）。
+ * 版式是“全屏封面”（AlbumsCovers）：每个相册一屏，滚动时逐屏吸附，所以页头不自动隐藏。
  */
-import SectionPlaceholder from "../../../components/SectionPlaceholder.astro";
-import { localeStaticPaths } from "../../../lib/routes";
+import AlbumsCovers from "../../../components/albums/AlbumsCovers.astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getAlbums } from "../../../lib/albums";
+import { localeStaticPaths, sections } from "../../../lib/routes";
+import { localize, site } from "../../../lib/site";
 
 export const getStaticPaths = localeStaticPaths;
 
 const { locale } = Astro.props;
+const isZh = locale === "zh";
+const section = sections.find((item) => item.key === "albums")!;
+const title = localize(locale, section.label);
+const albums = await getAlbums();
 ---
 
-<SectionPlaceholder locale={locale} section="albums" phase={5} />
+<BaseLayout
+  locale={locale}
+  path={section.path}
+  title={title}
+  description={isZh ? `${site.nameZh}的相册，按时间从新到旧排列。` : `Photo albums by ${site.name}, newest first.`}
+  headerAutoHide={false}
+>
+  <h1 class="visually-hidden">{title}</h1>
+  <AlbumsCovers albums={albums} locale={locale} base="/albums/" />
+</BaseLayout>

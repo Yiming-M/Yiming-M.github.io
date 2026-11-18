@@ -1,0 +1,117 @@
+---
+/**
+ * 相册里的一张照片（设计文档 §8）：照片本身 + 可选的图注和 EXIF，点击进入灯箱（AlbumLightbox.astro）。
+ *
+ * - 本地照片：构建时生成多个宽度的 AVIF 和 WebP（<picture>），浏览器按 sizes 挑最合适的一张；
+ *   灯箱里显示一张 LIGHTBOX_WIDTH 宽的 WebP，“原图”按钮指向未经处理的原文件。
+ * - 链接图片：直接用原链接，不做处理。
+ *
+ * 灯箱需要的信息都写在链接的 data-* 属性上：大图尺寸（data-pswp-width/height，PhotoSwipe 要求）、
+ * 原图地址（data-original）、图注（data-caption）、EXIF（data-exif）。
+ */
+import { Picture, getImage } from "astro:assets";
+import { exifItems, responsiveWidths, type AlbumPhoto } from "../../lib/albums";
+import { localize, type Locale } from "../../lib/site";
+
+interface Props {
+  photo: AlbumPhoto;
+  locale: Locale;
+  /** 替代文字：有图注时用图注，没有时由页面传入（如“相册名，第 3 张”）。 */
+  alt: string;
+  /** <img sizes>：照片在版面里大约占多宽，浏览器据此挑选尺寸，如 "100vw" 或 "(min-width: 768px) 50vw, 100vw"。 */
+  sizes: string;
+  /** 首屏的照片立即加载；其余滚动到附近才加载。 */
+  eager?: boolean;
+  /** 照片下方显示图注和 EXIF。 */
+  showDetails?: boolean;
+  class?: string;
+  /** 加在 <figure> 上的行内样式，如版式需要的 CSS 变量。 */
+  style?: string;
+}
+
+/** 灯箱里大图的最大宽度（像素）。 */
+const LIGHTBOX_WIDTH = 2560;
+
+const { photo, locale, alt, sizes, eager = false, showDetails = false, class: className, style } = Astro.props;
+const isZh = locale === "zh";
+
+const caption = photo.caption ? localize(locale, photo.caption) : undefined;
+const exif = exifItems(photo.exif);
+
+// 灯箱的大图：本地照片缩到 LIGHTBOX_WIDTH 宽；链接图片就是原图，用原图尺寸
+const lightboxWidth = photo.image ? Math.min(LIGHTBOX_WIDTH, photo.width) : photo.width;
+const lightboxHeight = Math.round((photo.height * lightboxWidth) / photo.width);
+const lightboxSrc = photo.image ? (await getImage({ src: photo.image, width: lightboxWidth, format: "webp" })).src : photo.original;
+---
+
+<figure class:list={["album-photo", className]} style={style}>
+  <a
+    class="photo-link"
+    href={lightboxSrc}
+    data-pswp-width={lightboxWidth}
+    data-pswp-height={lightboxHeight}
+    data-original={photo.original}
+    data-caption={caption}
+    data-exif={exif.join(" · ")}
+  >
+    {
+      photo.image ? (
+        <Picture
+          src={photo.image}
+          formats={["avif", "webp"]}
+          widths={responsiveWidths(photo.width)}
+          sizes={sizes}
+          alt={alt}
+          loading={eager ? "eager" : "lazy"}
+          decoding="async"
+        />
+      ) : (
+        <img src={photo.src} width={photo.width} height={photo.height} alt={alt} loading={eager ? "eager" : "lazy"} decoding="async" />
+      )
+    }
+    <span class="visually-hidden">{isZh ? "（查看大图）" : " (view larger)"}</span>
+  </a>
+  {
+    showDetails && (caption || exif.length > 0) && (
+      <figcaption>
+        {caption && <span class="caption">{caption}</span>}
+        {exif.length > 0 && <span class="exif">{exif.join(" · ")}</span>}
+      </figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .album-photo {
+    margin: 0;
+  }
+
+  .photo-link {
+    display: block;
+    cursor: zoom-in;
+  }
+
+  /* <picture> 里的 <img>：铺满容器宽度，保持比例。 */
+  .photo-link :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  figcaption {
+    display: grid;
+    gap: var(--space-1);
+    margin-top: var(--space-2);
+    font-size: var(--text-xs);
+    line-height: 1.5;
+  }
+
+  .caption {
+    color: var(--text-primary);
+  }
+
+  .exif {
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+</style>

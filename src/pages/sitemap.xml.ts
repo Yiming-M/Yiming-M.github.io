@@ -1,11 +1,11 @@
 /**
  * 站点地图 /sitemap.xml：列出所有应被搜索引擎收录的页面，以及每个页面的中英文互链。
  *
- * 目前包括：首页、四个栏目首页、论文详情页、文章页（不含草稿）和关系图页。
- * Phase 5 新增相册详情页时，在 GET 里的 `paths` 追加 /albums/<slug>/。
+ * 目前包括：首页、四个栏目首页、论文详情页、文章页（不含草稿）、关系图页和相册页。
  * 不要列入 404、草稿等 noindex 页面。
  */
 import type { APIRoute } from "astro";
+import { getAlbums } from "../lib/albums";
 import { getAllPosts } from "../lib/posts";
 import { getPublications } from "../lib/publications";
 import { sections } from "../lib/routes";
@@ -20,6 +20,7 @@ export const GET: APIRoute = async ({ site }) => {
     "/posts/graph/",
     // 文章：只列正式文章；中英文两种语言都有时才会生成页面，这里按中文原文去重
     ...(await getAllPosts()).filter((post) => !post.draft && post.locale === "zh").map((post) => `/posts/${post.slug}/`),
+    ...(await getAlbums()).map((album) => `/albums/${album.slug}/`),
   ];
   const url = (locale: "en" | "zh", path: string) => new URL(localePath(locale, path), site).href;
 

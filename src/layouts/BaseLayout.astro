@@ -35,6 +35,8 @@ interface Props {
   ogType?: "website" | "article";
   /** 分享卡片的图片，绝对地址。 */
   ogImage?: string;
+  /** 阅读页的页头向下滚动时是否自动隐藏（见 SiteHeader），默认是。 */
+  headerAutoHide?: boolean;
 }
 
 const {
@@ -47,6 +49,7 @@ const {
   noindex = false,
   ogType = "website",
   ogImage,
+  headerAutoHide = true,
 } = Astro.props;
 
 const isZh = locale === "zh";
@@ -119,7 +122,7 @@ const chineseUrl = new URL(localePath("zh", path), Astro.site);
   </head>
   <body data-variant={variant}>
     <a class="skip-link" href="#main">{isZh ? "跳到正文" : "Skip to content"}</a>
-    <SiteHeader locale={locale} path={path} variant={variant} hasAlternate={hasAlternate} />
+    <SiteHeader locale={locale} path={path} variant={variant} hasAlternate={hasAlternate} autoHide={headerAutoHide} />
     <main id="main" tabindex="-1">
       <slot />
     </main>
