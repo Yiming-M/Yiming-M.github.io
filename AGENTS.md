@@ -201,4 +201,4 @@
 | `scripts/fonts/split-lxgw-bright.mjs` | 把霞鹜文楷 Bright GB 切分成网页字体，见上方“重新生成网页字体” |
 | `public/fonts/lxgw-bright-gb/` | 切分后的网页字体、`fonts.css` 和许可证；由脚本生成，不要手改 |
 | `public/cv/` | 作者提供的中英文 CV PDF；覆盖同名文件即可更新 |
-| `public/images/profile.jpg` | 头像，目前是占位图 |
+| `public/images/profile.jpg` | 头像：作者提供的照片，裁成 800×800 的正方形；换照片时同样裁成正方形再覆盖 |

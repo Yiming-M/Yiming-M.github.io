@@ -104,8 +104,13 @@
 
 ## 5. About Me
 
-- **头像**：`public/images/profile.jpg`，先占位，之后由你替换。
-- **内容**：姓名；职位和单位；研究简介（现在做前列腺癌主动监测，博士期间做人群计数和驾驶员监控）；外部链接（Email、Google Scholar、GitHub、LinkedIn）。
+- **头像**：`public/images/profile.jpg`，作者提供的照片（2026-11-18），裁成 800×800 的正方形。
+- **内容**（2026-11-18 按作者的出版记录和 CV 改写）：
+  - 姓名（不加 Dr 头衔，博士学位写在“经历与教育”里）；职位和单位：Research Associate，伦敦国王学院生物医学工程与影像科学学院（与 CV、Google Scholar 一致，中文页也用 Research Associate）。
+  - 研究简介两段：现在的工作（前列腺癌主动监测，点名 TACIT）；博士期间的工作（人群计数、驾驶员监控，点名论文并链接到论文页）。不重复自我介绍（标题已经是姓名）。所有数字和经历都要能在论文或 CV 里找到。
+  - 研究兴趣：一个话题一项，不把两个话题并在一项里。
+  - 经历与教育：按开始时间倒序的时间线；下面一行审稿经历。
+  - 外部链接（Email、Google Scholar、GitHub、LinkedIn）。不放精选论文（见 §11）。
 - **CV 下载**：按页面语言给出对应的 PDF。英文页链接 `/cv/Yiming-Ma-CV-en.pdf`，中文页链接 `/cv/Yiming-Ma-CV-zh.pdf`。PDF 由你提供，更新时直接覆盖同名文件。
 
 ## 6. Publications

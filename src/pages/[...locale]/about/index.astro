@@ -2,12 +2,15 @@
 /**
  * About Me：英文 /about/，中文 /zh/about/（设计文档 §5）。
  *
- * 内容：头像、姓名、职位与单位、研究简介、研究兴趣、联系方式与外部链接、CV 下载。
+ * 内容：头像、姓名、职位与单位、研究简介（两段）、研究兴趣、经历与教育、联系方式与外部链接、CV 下载。
  *
- * 文案来源（模板阶段）：简介和研究兴趣沿用旧网站 About 页（main 分支 src/components/AboutPage.astro），
- * 职位沿用旧网站 CV 数据（main 分支 src/data/cv.json 的 headline）。填写真实内容时整体替换下面的 copy。
+ * 文案来源（2026-11-18）：经历、学位、导师、审稿来自作者的 CV（public/cv/）；论文的 venue 和数字来自
+ * src/content/publications/ 里核对过的论文数据（TACIT 的 PI-CAI 数字见论文第 4 节的 PI-CAI 实验）。
+ * 改文案时，所有事实都要能在这两处找到出处（AGENTS.md 规则 5）。
  *
- * 头像：public/images/profile.jpg，目前是占位图；作者提供照片后直接覆盖同名文件即可。
+ * 简介里的论文名写成 [[论文 slug|显示文字]]，渲染时换成指向该论文详情页的链接（当前语言）。
+ *
+ * 头像：public/images/profile.jpg（作者提供的照片，裁成 800×800 的正方形）。
  * CV：public/cv/Yiming-Ma-CV-en.pdf 和 -zh.pdf，由作者提供，覆盖同名文件即可更新。
  *     页面按当前语言链接对应的 PDF，并在构建时读取文件大小；文件缺失时构建会报错，避免出现失效链接。
  */
@@ -15,7 +18,7 @@ import fs from "node:fs";
 import path from "node:path";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { localeStaticPaths, sections } from "../../../lib/routes";
-import { localize, site, type LocalizedText } from "../../../lib/site";
+import { localePath, localize, site, type LocalizedText } from "../../../lib/site";
 
 export const getStaticPaths = localeStaticPaths;
 
@@ -26,26 +29,61 @@ const section = sections.find((item) => item.key === "about")!;
 /** 页面文案（中英文）。 */
 const copy = {
   position: {
-    en: "Postdoctoral Research Associate at King's College London",
-    zh: "伦敦国王学院博士后研究员",
+    en: "Research Associate, School of Biomedical Engineering & Imaging Sciences, King's College London",
+    zh: "Research Associate · 伦敦国王学院生物医学工程与影像科学学院",
   },
   intro: [
     {
-      en: "I am Yiming Ma. My current focus is multimodal learning for medical imaging AI: how models can combine different imaging modalities and complementary sources of information. My broader research background spans computer vision, crowd counting, vision–language models, multimodal driver monitoring, and human-centred visual systems.",
-      zh: "我是马一铭，目前专注于医学影像 AI 中的多模态学习，研究模型如何融合不同影像模态与互补信息。我的既有研究还涉及计算机视觉、人群计数、视觉–语言模型、多模态驾驶员监控，以及以人为中心的视觉系统。",
+      en: "I work on AI for prostate cancer active surveillance at King's College London. I build patient-level multimodal representations that combine longitudinal prostate MRI with clinicopathological variables, demographic information and radiology reports, and use them to predict disease progression despite incomplete follow-up, missing modalities and differences between sites. My recent work, [[tacit|TACIT]] (ECCVW 2026), adds synthetic training images only when frozen validators confirm that they keep the task label and reach the target domain; it raises the accuracy of clinically significant prostate cancer detection on PI-CAI prostate MRI from 69.71% to 75.14%.",
+      zh: "我目前在伦敦国王学院研究前列腺癌主动监测中的 AI。我把纵向的前列腺 MRI 与临床病理指标、人口学信息和影像报告结合起来，建立患者层面的多模态表征，用来预测疾病进展；难点在于随访不完整、模态缺失，以及不同中心之间的数据差异。我最近的工作 [[tacit|TACIT]]（ECCVW 2026）只在冻结的验证器确认“标签没变、确实到了目标域”时才加入合成的训练图像，把 PI-CAI 前列腺 MRI 上临床显著性前列腺癌检测的准确率从 69.71% 提高到 75.14%。",
     },
     {
-      en: "I am especially interested in whether multimodal models remain reliable under real constraints: whether they still work when a modality is missing, learn effectively from sparse labels, operate under limited compute, and state the conditions under which an empirical claim holds.",
-      zh: "我尤其关心多模态模型在现实约束下是否仍然可靠：某个模态缺失时能否继续工作，标注稀疏时能否有效学习，计算预算有限时能否部署，以及实验结论在什么条件下才成立。",
+      en: "I completed my PhD in Mathematics of Systems at the University of Warwick (2021–2025), supervised by Prof. Victor Sanchez and Prof. Tanaya Guha. My doctoral research focused on crowd counting — [[fusioncount|FusionCount]] (ICIP 2022), [[clip-ebc|CLIP-EBC]] (ICME 2025) and [[zip|ZIP]] (IEEE TIP 2026) — and on multiview, multimodal [[dms2|driver monitoring]] (CVPRW 2023).",
+      zh: "我在华威大学获得系统数学博士学位（2021–2025），导师是 Victor Sanchez 教授和 Tanaya Guha 教授。博士期间主要研究人群计数（[[fusioncount|FusionCount]]，ICIP 2022；[[clip-ebc|CLIP-EBC]]，ICME 2025；[[zip|ZIP]]，IEEE TIP 2026）和多视角多模态的[[dms2|驾驶员监控]]（CVPRW 2023）。",
     },
   ],
   interests: [
-    { en: "Multimodal medical imaging", zh: "多模态医学影像" },
-    { en: "Multimodal representation learning", zh: "多模态表征学习" },
-    { en: "Vision–language learning", zh: "视觉–语言学习" },
-    { en: "Reliable AI under missing modalities", zh: "模态缺失条件下的可靠 AI" },
+    { en: "Multimodal learning", zh: "多模态学习" },
+    { en: "Medical imaging AI", zh: "医学影像 AI" },
+    { en: "Longitudinal prediction", zh: "纵向预测" },
+    { en: "Robustness to missing data", zh: "缺失数据下的鲁棒性" },
+    { en: "Domain generalisation", zh: "域泛化" },
+    { en: "Generative models", zh: "生成式模型" },
+    { en: "Computer vision", zh: "计算机视觉" },
   ],
-} satisfies { position: LocalizedText; intro: LocalizedText[]; interests: LocalizedText[] };
+  /** 经历与教育：按开始时间倒序。 */
+  timeline: [
+    { years: "2026–", en: "Research Associate, King's College London", zh: "Research Associate，伦敦国王学院" },
+    { years: "2022–2023", en: "Research Assistant, University of Warwick", zh: "研究助理，华威大学" },
+    { years: "2021–2025", en: "PhD in Mathematics of Systems, University of Warwick", zh: "系统数学博士，华威大学" },
+    { years: "2020–2021", en: "MSc in Mathematics of Systems (Distinction), University of Warwick", zh: "系统数学硕士（优等），华威大学" },
+    {
+      years: "2016–2020",
+      en: "BSc in Mathematics and Applied Mathematics, Southern University of Science and Technology",
+      zh: "数学与应用数学学士，南方科技大学",
+    },
+  ],
+  reviewing: {
+    en: "Reviewer for TNNLS, TMM, SPL, ECCV, ACM MM, CVPRW, ICME, WACV, BMVC and ICIP.",
+    zh: "审稿：TNNLS、TMM、SPL、ECCV、ACM MM、CVPRW、ICME、WACV、BMVC、ICIP。",
+  },
+} satisfies {
+  position: LocalizedText;
+  intro: LocalizedText[];
+  interests: LocalizedText[];
+  timeline: ({ years: string } & LocalizedText)[];
+  reviewing: LocalizedText;
+};
+
+/** 简介里的 [[slug|文字]] 换成论文详情页链接；其余文字转义后原样输出。 */
+const escapeHtml = (text: string) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const withPaperLinks = (text: string) =>
+  escapeHtml(text).replace(/\[\[([a-z0-9-]+)\|([^\]]+)\]\]/g, (_, slug: string, label: string) => {
+    const href = localePath(locale, "/publications/" + slug + "/");
+    return '<a href="' + href + '">' + label + "<" + "/a>";
+  });
+/** 简介第一段的纯文本版本（去掉链接标记），用作页面描述。 */
+const plainIntro = localize(locale, copy.intro[0]).replace(/\[\[[a-z0-9-]+\|([^\]]+)\]\]/g, "$1");
 
 // CV：按页面语言选择文件，构建时读取大小（单位 KB）。process.cwd() 是仓库根目录。
 const cvHref = `/cv/Yiming-Ma-CV-${locale}.pdf`;
@@ -64,8 +102,12 @@ const personJsonLd = {
   "@type": "Person",
   name: site.name,
   alternateName: site.nameZh,
-  jobTitle: "Postdoctoral Research Associate",
+  jobTitle: "Research Associate",
   worksFor: { "@type": "Organization", name: "King's College London" },
+  alumniOf: [
+    { "@type": "CollegeOrUniversity", name: "University of Warwick" },
+    { "@type": "CollegeOrUniversity", name: "Southern University of Science and Technology" },
+  ],
   email: `mailto:${site.email}`,
   url: new URL("/", Astro.site).href,
   image: new URL("/images/profile.jpg", Astro.site).href,
@@ -77,7 +119,7 @@ const personJsonLd = {
   locale={locale}
   path={section.path}
   title={localize(locale, section.label)}
-  description={localize(locale, copy.intro[0])}
+  description={plainIntro}
 >
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(personJsonLd)} />
 
@@ -100,7 +142,7 @@ const personJsonLd = {
       </header>
 
       <div class="intro">
-        {copy.intro.map((paragraph) => <p>{localize(locale, paragraph)}</p>)}
+        {copy.intro.map((paragraph) => <p set:html={withPaperLinks(localize(locale, paragraph))} />)}
       </div>
 
       <section aria-labelledby="interests-heading">
@@ -108,6 +150,21 @@ const personJsonLd = {
         <ul class="interests">
           {copy.interests.map((item) => <li>{localize(locale, item)}</li>)}
         </ul>
+      </section>
+
+      <section aria-labelledby="timeline-heading">
+        <h2 id="timeline-heading">{isZh ? "经历与教育" : "Experience & education"}</h2>
+        <ol class="timeline" role="list">
+          {
+            copy.timeline.map((item) => (
+              <li>
+                <span class="years">{item.years}</span>
+                <span>{localize(locale, item)}</span>
+              </li>
+            ))
+          }
+        </ol>
+        <p class="reviewing">{localize(locale, copy.reviewing)}</p>
       </section>
 
       <section aria-labelledby="contact-heading">
@@ -201,6 +258,37 @@ const personJsonLd = {
 
   .interests li + li {
     margin-top: var(--space-1);
+  }
+
+  /* 经历与教育：左边是年份，右边是职位或学位；窄屏换成上下排列。 */
+  .timeline {
+    margin-top: var(--space-3);
+  }
+
+  .timeline li {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: var(--space-4);
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .years {
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .reviewing {
+    margin-top: var(--space-4);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+  }
+
+  @media (max-width: 479.98px) {
+    .timeline li {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
   }
 
   /* 联系方式：左边是名称，右边是可点击的地址；窄屏换成上下排列。 */
