@@ -57,7 +57,7 @@ const categoryLabel = (key: Category) => localize(locale, categories.find((item)
     <header class="page-header">
       <h1>{title}</h1>
       <p class="lead">
-        {isZh ? `共 ${posts.length} 篇。` : `${posts.length} ${posts.length === 1 ? "post" : "posts"}.`}
+        {isZh ? `共 ${posts.length} 篇。` : `${posts.length} ${posts.length === 1 ? "post" : "posts"}. `}
         <a href={localePath(locale, "/posts/graph/")}>{isZh ? "查看关系图" : "Open the graph view"} →</a>
       </p>
     </header>
