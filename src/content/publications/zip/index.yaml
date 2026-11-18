@@ -1,19 +1,31 @@
 # 论文数据。字段含义见 src/content.config.ts；添加论文的步骤见 AGENTS.md「添加论文」。
-# 从旧网站转换而来（2026-11-17），只转了格式；摘要、venue 全称和官方 BibTeX 待填写真实内容时补充。
+# 来源：IEEE Xplore 11797788（TIP，Early Access）：摘要、BibTeX；arXiv 2506.19955：首次公开日期（v1，2025-06-24）
 title: "ZIP: Scalable Crowd Counting via Zero-Inflated Poisson Modeling"
-date: 2025-07-31
-type: preprint
+date: 2025-06-24
+type: journal
 venue:
-  short: "Preprint"
+  short: "TIP 2026"
+  full: "IEEE Transactions on Image Processing"
 authors:
   - name: "Yiming Ma"
   - name: "Victor Sanchez"
   - name: "Tanaya Guha"
 links:
-  paper: "https://arxiv.org/abs/2506.19955"
-  code: "https://github.com/Yiming-M/EBC-ZIP"
+  paper: "https://doi.org/10.1109/TIP.2026.3752245"
+  arxiv: "https://arxiv.org/abs/2506.19955"
+  code: "https://github.com/Yiming-M/ZIP"
   demo: "https://huggingface.co/spaces/Yiming-M/ZIP"
 image: ./overview.png
 tldr:
-  en: "Use a zero-inflated Poisson likelihood to separate structurally empty regions from discrete counts, without requiring segmentation masks or Gaussian-smoothed targets."
-  zh: "用零膨胀泊松似然分开结构性空区域与离散计数，不再依赖分割掩码或高斯平滑标签。"
+  en: "Over 95% of 8×8 blocks in crowd-counting benchmarks are empty, and MSE ignores that counts are discrete and non-negative; ZIP models blockwise counts with a zero-inflated Poisson likelihood instead, achieving state-of-the-art or highly competitive results across backbones spanning more than 100× in size."
+  zh: "人群计数数据集里超过 95% 的 8×8 小块没有人，均方误差又不符合计数离散、非负的特点；ZIP 改用零膨胀泊松似然建模每块的人数，在参数量和计算量相差 100 倍以上的各种骨干网络上都达到最优或极具竞争力的性能。"
+abstract:
+  en: "The majority of crowd counting methods directly regress blockwise density maps using losses based on Mean Squared Error (MSE). This practice has two critical limitations: 1) it fails to account for the extreme spatial sparsity of annotations (i.e., over 95% of standard 8×8 blocks are empty across most benchmarks), which makes supervision signals in informative regions diluted by the predominant zeros. 2) MSE corresponds to a Gaussian error model that poorly matches discrete, non-negative count data. We introduce a novel crowd counting framework that is scalable and directly addresses the above limitations. This framework, named ZIP, models blockwise counts with a Zero-Inflated Poisson likelihood: A zero-inflation term models excess zeros in sparse annotations, while the Poisson component captures expected counts while respecting their discrete, non-negative nature. We provide a generalization analysis showing that the ZIP negative log-likelihood (NLL) has the same order of uniform generalization gap as Poisson NLL while offering a richer zero-inflated likelihood family, and that its bound scales more favorably with the number of spatial blocks than optimal-transport-based supervision. To assess the scalability and broad applicability of ZIP, we apply the same formulation across diverse backbones, from lightweight models to high-capacity architectures, spanning more than 100× in both parameter count and inference FLOPs. Experiments on four standard crowd-counting benchmarks show that ZIP achieves state-of-the-art or highly competitive performance across a wide range of backbone capacities. Although ZIP is designed for sparse blockwise count maps, it also remains effective in dense crowd scenes, reducing MAE and RMSE by 3.9% and 8.5%, respectively, over mPrompt on UCF-QNRF. Code and trained weights are available at https://github.com/Yiming-M/ZIP."
+  zh: "大多数人群计数方法使用基于均方误差（MSE）的损失，直接回归分块密度图。这种做法有两个关键缺陷：1）没有考虑标注在空间上的极度稀疏（在大多数基准上，超过 95% 的标准 8×8 块是空的），信息丰富区域的监督信号因此被占绝大多数的零值稀释；2）MSE 对应高斯误差模型，与离散、非负的计数数据不相符。我们提出一个可扩展、并直接解决上述缺陷的人群计数新框架，称为 ZIP。它用零膨胀泊松（Zero-Inflated Poisson）似然建模分块计数：零膨胀项建模稀疏标注中过多的零，泊松分量则在尊重计数离散、非负性质的同时刻画期望计数。我们给出了泛化分析：ZIP 负对数似然（NLL）的一致泛化间隙与泊松 NLL 同阶，同时提供更丰富的零膨胀似然族；而且它的界随空间块数增长的情况比基于最优传输的监督更有利。为评估 ZIP 的可扩展性和广泛适用性，我们把同一形式应用到从轻量模型到高容量架构的多种骨干网络上，参数量和推理 FLOPs 都跨越 100 倍以上。在四个标准人群计数基准上的实验表明，ZIP 在各种骨干容量下都达到最优或极具竞争力的性能。尽管 ZIP 是为稀疏的分块计数图设计的，它在密集人群场景中同样有效：在 UCF-QNRF 上，MAE 和 RMSE 分别比 mPrompt 降低 3.9% 和 8.5%。代码和训练好的权重见 https://github.com/Yiming-M/ZIP。"
+bibtex: |
+  @ARTICLE{11797788,
+    author={Ma, Yiming and Sanchez, Victor and Guha, Tanaya},
+    journal={IEEE Transactions on Image Processing},
+    title={ZIP: Scalable Crowd Counting via Zero-Inflated Poisson Modeling},
+    year={2026},
+    doi={10.1109/TIP.2026.3752245}}

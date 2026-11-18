@@ -1,10 +1,11 @@
 # 论文数据。字段含义见 src/content.config.ts；添加论文的步骤见 AGENTS.md「添加论文」。
-# 从旧网站转换而来（2026-11-17），只转了格式；摘要、venue 全称和官方 BibTeX 待填写真实内容时补充。
+# 来源：IEEE Xplore 11210231（ICME 2025）：摘要、BibTeX、venue 全称；arXiv 2412.16698：首次公开日期
 title: "Interact with me: Joint Egocentric Forecasting of Intent to Interact, Attitude and Social Actions"
 date: 2024-12-21
 type: conference
 venue:
   short: "ICME 2025"
+  full: "2025 IEEE International Conference on Multimedia and Expo (ICME)"
 authors:
   - name: "Tongfei Bian"
   - name: "Yiming Ma"
@@ -12,9 +13,21 @@ authors:
   - name: "Victor Sanchez"
   - name: "Tanaya Guha"
 links:
-  paper: "https://arxiv.org/abs/2412.16698"
+  paper: "https://doi.org/10.1109/ICME59968.2025.11210231"
+  arxiv: "https://arxiv.org/abs/2412.16698"
   code: "https://github.com/biantongfei/SocialEgoNet"
 image: ./overview.png
 tldr:
-  en: "Represent face, body, and hand keypoints as graphs, model their temporal evolution, and forecast intent, attitude, and action through a chained task hierarchy."
-  zh: "把面部、身体和手部关键点建成图，建模它们的时序变化，再通过链式任务层级联合预判意图、态度和动作。"
+  en: "To interact efficiently, an agent should recognise its target user and prepare before the interaction starts; from one second of egocentric video, SocialEgoNet uses whole-body keypoints and hierarchical multitask learning to jointly forecast intent to interact, attitude and action in real time, reaching 83.15% average accuracy on the newly annotated JPL-Social dataset."
+  zh: "要高效地与人交互，智能体应当在交互开始前就认出目标用户并做好准备；SocialEgoNet 只看第一人称视频里 1 秒的全身关键点，用分层多任务学习同时预判交互意图、态度和动作，能实时推理，在新标注的 JPL-Social 数据集上平均准确率 83.15%。"
+abstract:
+  en: "For efficient human-agent interaction, an agent should proactively recognize their target user and prepare for upcoming interactions. We formulate this challenging problem as a novel task of jointly forecasting a person’s intent to interact with the agent, their attitude towards the agent and the action they will perform, from the agent’s (egocentric) perspective. We propose SocialEgoNet - a graph-based spatiotemporal framework that exploits task dependencies through a hierarchical multitask learning approach. SocialEgoNet uses whole-body skeletons (keypoints from face, hands and body) extracted from only 1 second of video input for high inference speed. For evaluation, we augment an existing egocentric human-agent interaction dataset with new class labels and bounding box annotations. Extensive experiments on this augmented dataset, named JPL-Social, demonstrate real-time inference and superior performance (average accuracy across all tasks: 83.15%) of our model outperforming several competitive baselines. The additional annotations and code are available at github.com/biantongfei/SocialEgoNet."
+  zh: "为了高效的人机交互，智能体应当主动识别目标用户，并为即将发生的交互做好准备。我们把这一具有挑战性的问题表述为一个新任务：从智能体的（第一人称）视角，联合预测一个人与智能体交互的意图、对智能体的态度以及将要做出的动作。我们提出 SocialEgoNet——一个基于图的时空框架，通过分层多任务学习利用任务之间的依赖关系。SocialEgoNet 使用仅从 1 秒视频中提取的全身骨架（面部、手部和身体的关键点），以获得较高的推理速度。为了评估，我们为一个现有的第一人称人机交互数据集补充了新的类别标签和边界框标注。在这个名为 JPL-Social 的扩充数据集上的大量实验表明，我们的模型能实时推理，性能优于多个有竞争力的基线（所有任务的平均准确率：83.15%）。新增的标注和代码见 github.com/biantongfei/SocialEgoNet。"
+bibtex: |
+  @INPROCEEDINGS{11210231,
+    author={Bian, Tongfei and Ma, Yiming and Chollet, Mathieu and Sanchez, Victor and Guha, Tanaya},
+    booktitle={2025 IEEE International Conference on Multimedia and Expo (ICME)},
+    title={Interact with me: Joint Egocentric Forecasting of Intent to Interact, Attitude and Social Actions},
+    year={2025},
+    pages={1-6},
+    doi={10.1109/ICME59968.2025.11210231}}

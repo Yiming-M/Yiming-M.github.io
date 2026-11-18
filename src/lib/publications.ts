@@ -44,9 +44,10 @@ export function venueText(pub: Publication, variant: "short" | "full" = "short")
 /** 页面上显示的外部链接，按固定顺序；没有填的链接自动跳过。 */
 export function publicationLinks(pub: Publication, locale: Locale) {
   const isZh = locale === "zh";
-  const { paper, code, demo, project } = pub.data.links;
+  const { paper, arxiv, code, demo, project } = pub.data.links;
   return [
     { label: isZh ? "论文" : "Paper", href: paper },
+    { label: "arXiv", href: arxiv },
     { label: isZh ? "代码" : "Code", href: code },
     { label: isZh ? "演示" : "Demo", href: demo },
     { label: isZh ? "项目主页" : "Project", href: project },
@@ -67,14 +68,14 @@ export function arxivId(url: string): string | undefined {
  * 详情页 Cite 块显示的 BibTeX。
  *
  * - YAML 里填了 bibtex（官方版本，优先）：原样使用。
- * - 没填但论文链接是 arXiv：用已有数据拼一条 arXiv 引用（@misc）。字段全部来自 YAML，
+ * - 没填但有 arXiv 版（links.arxiv，或论文链接本身是 arXiv）：用已有数据拼一条 arXiv 引用（@misc）。字段全部来自 YAML，
  *   不额外推测任何信息。
  * - 都没有：返回 undefined，详情页不显示 Cite 块。
  */
 export function bibtexFor(pub: Publication): string | undefined {
   if (pub.data.bibtex) return pub.data.bibtex.trim();
 
-  const eprint = arxivId(pub.data.links.paper);
+  const eprint = arxivId(pub.data.links.arxiv ?? pub.data.links.paper);
   if (!eprint) return undefined;
 
   const year = pub.data.date.getUTCFullYear();
@@ -125,7 +126,7 @@ export function scholarlyArticleJsonLd(pub: Publication, pageUrl: URL, imageUrl?
     description: pub.data.tldr.en,
     ...(pub.data.abstract ? { abstract: pub.data.abstract.en } : {}),
     url: pageUrl.href,
-    sameAs: [pub.data.links.paper, pub.data.links.code].filter(Boolean),
+    sameAs: [pub.data.links.paper, pub.data.links.arxiv, pub.data.links.code].filter(Boolean),
     ...(imageUrl ? { image: imageUrl.href } : {}),
   };
 }

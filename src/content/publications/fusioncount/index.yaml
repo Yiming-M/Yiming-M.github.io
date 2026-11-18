@@ -1,17 +1,32 @@
 # 论文数据。字段含义见 src/content.config.ts；添加论文的步骤见 AGENTS.md「添加论文」。
-# 从旧网站转换而来（2026-11-17），只转了格式；摘要、venue 全称和官方 BibTeX 待填写真实内容时补充。
+# 来源：IEEE Xplore 9897322（ICIP 2022）：摘要、BibTeX（标题按论文原文改正大小写）、venue 全称；arXiv 2202.13660：首次公开日期
+# 方法图是论文的 Fig. 1（编码器与多尺度特征收集），取自作者提供的 WRAP 版 PDF。
 title: "FusionCount: Efficient Crowd Counting via Multiscale Feature Fusion"
 date: 2022-02-28
 type: conference
 venue:
   short: "ICIP 2022"
+  full: "2022 IEEE International Conference on Image Processing (ICIP)"
 authors:
   - name: "Yiming Ma"
   - name: "Victor Sanchez"
   - name: "Tanaya Guha"
 links:
-  paper: "https://arxiv.org/abs/2202.13660"
+  paper: "https://doi.org/10.1109/ICIP46576.2022.9897322"
+  arxiv: "https://arxiv.org/abs/2202.13660"
   code: "https://github.com/Yiming-M/FusionCount"
+image: ./overview.png
 tldr:
-  en: "Reuse 15 intermediate VGG-16 feature maps, learn spatially varying fusion weights from their contrasts, and decode them with a lightweight saliency-preserving reduction block."
-  zh: "复用 VGG-16 的 15 层中间特征，从特征差异中学习随空间变化的融合权重，再用保留显著性的轻量通道压缩模块完成解码。"
+  en: "Encoder–decoder crowd counters underuse features from earlier encoding stages and rely on costly multiscale modules that capture only a limited range of receptive fields; FusionCount adaptively fuses most encoded features and adds a saliency-extracting channel reduction block, achieving state-of-the-art results on two benchmarks with reduced computational complexity."
+  zh: "编码器—解码器式的人群计数模型没有充分利用编码早期的特征，依赖的多尺度模块计算开销大、感受野范围却有限；FusionCount 自适应地融合大部分编码特征，并加入能提取显著性信息的通道压缩模块，在两个基准上以更低的计算复杂度达到最先进水平。"
+abstract:
+  en: "State-of-the-art crowd counting models follow an encoder-decoder approach. Images are first processed by the encoder to extract features. Then, to account for perspective distortion, the highest-level feature map is fed to extra components to extract multiscale features, which are the input to the decoder to generate crowd densities. However, in these methods, features extracted at earlier stages during encoding are underutilised, and the multiscale modules can only capture a limited range of receptive fields, albeit with considerable computational cost. This paper proposes a novel crowd counting architecture (FusionCount), which exploits the adaptive fusion of a large majority of encoded features instead of relying on additional extraction components to obtain multiscale features. Thus, it can cover a more extensive scope of receptive field sizes and lower the computational cost. We also introduce a new channel reduction block, which can extract saliency information during decoding and further enhance the model’s performance. Experiments on two benchmark databases demonstrate that our model achieves state-of-the-art results with reduced computational complexity. PyTorch implementation of the model and weights trained on these two datasets are available at https://github.com/YimingMa/FusionCount."
+  zh: "最先进的人群计数模型采用编码器—解码器结构。图像先由编码器提取特征；然后，为了应对透视畸变，最高层的特征图会被送入额外的组件以提取多尺度特征，这些特征再作为解码器的输入，生成人群密度。然而，在这些方法中，编码早期阶段提取的特征没有得到充分利用，而多尺度模块虽然计算开销可观，能覆盖的感受野范围却有限。本文提出一种新的人群计数架构（FusionCount），它利用对大部分编码特征的自适应融合来获得多尺度特征，而不依赖额外的提取组件，因此能覆盖更大范围的感受野尺寸，并降低计算开销。我们还引入了一个新的通道压缩模块，它能在解码过程中提取显著性信息，进一步提升模型的性能。在两个基准数据库上的实验表明，我们的模型以更低的计算复杂度取得了最先进的结果。模型的 PyTorch 实现以及在这两个数据集上训练好的权重见 https://github.com/YimingMa/FusionCount。"
+bibtex: |
+  @INPROCEEDINGS{9897322,
+    author={Ma, Yiming and Sanchez, Victor and Guha, Tanaya},
+    booktitle={2022 IEEE International Conference on Image Processing (ICIP)},
+    title={{FusionCount}: Efficient Crowd Counting via Multiscale Feature Fusion},
+    year={2022},
+    pages={3256-3260},
+    doi={10.1109/ICIP46576.2022.9897322}}

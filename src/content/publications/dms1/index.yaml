@@ -1,5 +1,6 @@
 # 论文数据。字段含义见 src/content.config.ts；添加论文的步骤见 AGENTS.md「添加论文」。
-# 从旧网站转换而来（2026-11-17），只转了格式；摘要、venue 全称和官方 BibTeX 待填写真实内容时补充。
+# 来源：arXiv 2210.09441（预印本，只有这一个版本）：摘要、首次公开日期；BibTeX 由网站自动生成
+# 方法图是论文的 Figure 4（多模态特征层融合的整体结构），取自 arXiv v1 PDF。
 title: "Real-Time Driver Monitoring Systems through Modality and View Analysis"
 date: 2022-10-17
 type: preprint
@@ -14,6 +15,10 @@ authors:
   - name: "Tanaya Guha"
 links:
   paper: "https://arxiv.org/abs/2210.09441"
+image: ./overview.png
 tldr:
-  en: "Use only the last frame of each 16-frame clip, then measure how top/front views and depth/infrared modalities trade accuracy for latency."
-  zh: "每个 16 帧片段只使用最后一帧，再系统测量顶视/前视与深度/红外在准确率和延迟之间的权衡。"
+  en: "State-of-the-art driver monitoring favours accuracy over latency by processing multiview, multimodal video whose consecutive frames are highly similar; dropping the temporal relation between frames gives real-time models with similar performance (97.5% AUC-PR) at significantly reduced computation, and shows that the top-view infrared channel is the most informative single modality."
+  zh: "最先进的驾驶员监控方法重准确率、轻延迟，处理的是相邻帧高度相似的多视角、多模态视频；舍弃帧与帧之间的时间关系后，模型能实时运行，计算量大幅减少，性能相近（AUC-PR 97.5%），并且发现顶视角的红外通道是信息量最大的单一模态。"
+abstract:
+  en: "Driver distractions are known to be the dominant cause of road accidents. While monitoring systems can detect non-driving-related activities and facilitate reducing the risks, they must be accurate and efficient to be applicable. Unfortunately, state-of-the-art methods prioritize accuracy while ignoring latency because they leverage cross-view and multimodal videos in which consecutive frames are highly similar. Thus, in this paper, we pursue time-effective detection models by neglecting the temporal relation between video frames and investigate the importance of each sensing modality in detecting drives' activities. Experiments demonstrate that 1) our proposed algorithms are real-time and can achieve similar performances (97.5% AUC-PR) with significantly reduced computation compared with video-based models; 2) the top view with the infrared channel is more informative than any other single modality. Furthermore, we enhance the DAD dataset by manually annotating its test set to enable multiclassification. We also thoroughly analyze the influence of visual sensor types and their placements on the prediction of each class. The code and the new labels will be released."
+  zh: "众所周知，驾驶员分心是交通事故的主要原因。监控系统可以检测与驾驶无关的活动、帮助降低风险，但要能实际应用，它们必须既准确又高效。遗憾的是，最先进的方法重视准确率而忽视延迟，因为它们使用的是跨视角、多模态的视频，而视频中相邻帧高度相似。因此，本文舍弃视频帧之间的时间关系，追求省时的检测模型，并研究每种传感模态在检测驾驶员活动中的重要性。实验表明：1）我们提出的算法能实时运行，与基于视频的模型相比，在计算量大幅减少的情况下取得相近的性能（AUC-PR 97.5%）；2）顶视角的红外通道比其他任何单一模态的信息量都更大。此外，我们人工标注了 DAD 数据集的测试集，使其能用于多类别分类。我们还深入分析了视觉传感器的类型和安装位置对各类别预测的影响。代码和新标注将会公开。"

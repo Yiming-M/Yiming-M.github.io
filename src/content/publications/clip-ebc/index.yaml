@@ -1,19 +1,32 @@
 # 论文数据。字段含义见 src/content.config.ts；添加论文的步骤见 AGENTS.md「添加论文」。
-# 从旧网站转换而来（2026-11-17），只转了格式；摘要、venue 全称和官方 BibTeX 待填写真实内容时补充。
+# 来源：IEEE Xplore 11209839（ICME 2025）：摘要、BibTeX、venue 全称；arXiv 2403.09281：首次公开日期
 title: "CLIP-EBC: CLIP Can Count Accurately through Enhanced Blockwise Classification"
 date: 2024-03-14
 type: conference
 venue:
   short: "ICME 2025"
+  full: "2025 IEEE International Conference on Multimedia and Expo (ICME)"
 authors:
   - name: "Yiming Ma"
   - name: "Victor Sanchez"
   - name: "Tanaya Guha"
 links:
-  paper: "https://arxiv.org/abs/2403.09281"
+  paper: "https://doi.org/10.1109/ICME59968.2025.11209839"
+  arxiv: "https://arxiv.org/abs/2403.09281"
   code: "https://github.com/Yiming-M/CLIP-EBC"
   demo: "https://huggingface.co/spaces/Yiming-M/CLIP-EBC"
 image: ./overview.png
 tldr:
-  en: "Turn each local count into an unambiguous integer class, match local CLIP image features to natural-language count prompts, and recover a density map from the class probabilities."
-  zh: "把局部人数变成无歧义的整数类别，让 CLIP 的局部图像特征匹配自然语言计数提示，再从类别概率恢复密度图。"
+  en: "Classification-based crowd counters quantise counts into real-valued bins that clash with CLIP's pretraining corpus and blur labels near bin borders; EBC uses integer-valued bins plus a density-map loss, improving such methods by up to 44.5% in MAE on UCF-QNRF, and CLIP-EBC sets the state of the art on the NWPU-Crowd test set (MAE 58.2)."
+  zh: "基于分类的人群计数方法把人数量化到实数区间，既与 CLIP 的预训练语料不一致，又在区间边界附近造成标签歧义；EBC 改用整数区间并加入基于密度图的损失，让这类方法在 UCF-QNRF 上的 MAE 最多改善 44.5%，基于 CLIP 的 CLIP-EBC 在 NWPU-Crowd 测试集上达到最优（MAE 58.2）。"
+abstract:
+  en: "We propose CLIP-EBC, the first fully CLIP-based model designed for accurate crowd density estimation. Existing classification-based crowd counting frameworks face challenges when directly applied with CLIP. For instance, these methods quantize count values into bordering real-valued bins, which are inconsistent with CLIP’s pretraining corpus. Besides, this quantization strategy also introduces label ambiguity near shared bin borders. To address these issues, we propose the Enhanced Blockwise Classification (EBC) framework, which utilizes integer-valued bins and additionally incorporates a density-map-based loss to further improve count accuracy. Building on this backbone-agnostic framework, CLIP-EBC fully leverages CLIP’s recognition capabilities for crowd counting. Experiments show that EBC improves classification-based methods by up to 44.5% in mean absolute error (MAE) on the UCF-QNRF dataset. Furthermore, CLIP-EBC achieves state-of-the-art performance on the NWPU-Crowd test set, with an MAE of 58.2, surpassing the previous best method by 8.6%. Our code is available at https://github.com/Yiming-M/CLIP-EBC."
+  zh: "我们提出 CLIP-EBC，这是第一个完全基于 CLIP、面向精确人群密度估计的模型。现有的基于分类的人群计数框架直接与 CLIP 结合时会遇到困难。例如，这些方法把计数值量化到相邻的实数区间里，与 CLIP 的预训练语料不一致；此外，这种量化方式还会在相邻区间的共享边界附近引入标签歧义。为解决这些问题，我们提出增强分块分类（Enhanced Blockwise Classification，EBC）框架，它使用整数区间，并额外加入基于密度图的损失，以进一步提高计数准确度。在这个与骨干网络无关的框架基础上，CLIP-EBC 充分利用 CLIP 的识别能力来做人群计数。实验表明，EBC 能将基于分类的方法在 UCF-QNRF 数据集上的平均绝对误差（MAE）最多改善 44.5%。此外，CLIP-EBC 在 NWPU-Crowd 测试集上达到最优性能，MAE 为 58.2，比之前的最佳方法好 8.6%。代码见 https://github.com/Yiming-M/CLIP-EBC。"
+bibtex: |
+  @INPROCEEDINGS{11209839,
+    author={Ma, Yiming and Sanchez, Victor and Guha, Tanaya},
+    booktitle={2025 IEEE International Conference on Multimedia and Expo (ICME)},
+    title={CLIP-EBC: CLIP Can Count Accurately through Enhanced Blockwise Classification},
+    year={2025},
+    pages={1-6},
+    doi={10.1109/ICME59968.2025.11209839}}

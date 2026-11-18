@@ -5,6 +5,7 @@
  * 这里只放这一页的标记和样式；切页、3D 场景的加载由 HomeShowcase.astro 统一负责，
  * 3D 场景本身在 crowd-scene.js。两种显示方式：
  * - 3D（桌面）：“密度地形”，人群密度图从平放的照片上升起成发光的地形，左侧人数随之从 0 数到总数；
+ *   鼠标停在照片或地形上时，旁边的标签显示该处的密度（由 crowd-scene.js 填写和移动）；
  * - 静态（手机、减少动态效果、不支持 WebGL2）：照片叠加平面的热力图和等高线（public/home/crowd/static.jpg）。
  *
  * 数据由 scripts/crowd/build_crowd.py 生成。照片来自 NWPU-Crowd 验证集（第 251 张，从舞台后方拍的演唱会观众）。
@@ -39,6 +40,13 @@ const count = meta.count.toLocaleString(isZh ? "zh-CN" : "en-GB");
     decoding="async"
   />
   <canvas class="scene" aria-hidden="true"></canvas>
+
+  <!-- 鼠标处的人群密度：只在 3D 时出现，位置和数值由 crowd-scene.js 设置。单位见设计文档 §4。 -->
+  <p class="density-tip" data-density-tip aria-hidden="true" hidden>
+    <span class="label">{isZh ? "密度" : "Density"}</span>
+    <span class="value" data-value></span>
+    <span class="unit">{isZh ? "人 / 100×100 像素" : "people per 100×100 px"}</span>
+  </p>
 
   <p class="figure">
     <span class="count">{count}</span>
@@ -78,6 +86,35 @@ const count = meta.count.toLocaleString(isZh ? "zh-CN" : "en-GB");
     font-size: var(--text-3xl);
     font-variant-numeric: tabular-nums;
     line-height: 1;
+  }
+
+  /* 密度标签：跟着鼠标，不挡鼠标事件 */
+  .density-tip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--showcase-line);
+    border-radius: var(--radius-control);
+    background: rgb(7 10 18 / 78%);
+    color: var(--showcase-text-muted);
+    font-size: var(--text-xs);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .density-tip[hidden] {
+    display: none;
+  }
+
+  .density-tip .value {
+    color: var(--showcase-text);
+    font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
   }
 
   .slide[data-ready][data-wide] .figure {

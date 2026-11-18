@@ -4,7 +4,9 @@
   "density": {
     "file": "density.png",
     "width": 576,
-    "height": 384
+    "height": 384,
+    "peakPer10k": 25.4318,
+    "cellSize": 5.3333
   },
   "photo": {
     "file": "photo.jpg",

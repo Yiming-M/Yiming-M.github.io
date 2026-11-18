@@ -38,7 +38,8 @@ const localizedText = z.object({
  *     - name: "Tanaya Guha"
  *       corresponding: true         # 可选：通讯作者，显示 †
  *   links:
- *     paper: "https://arxiv.org/abs/2506.19955"
+ *     paper: "https://doi.org/10.1109/TIP.2026.3752245"  # 已发表的指向出版社（DOI）；预印本就是 arXiv
+ *     arxiv: "https://arxiv.org/abs/2506.19955"         # 可选：已发表论文的 arXiv 版（免费可读）
  *     code: "…"                     # 可选
  *     demo: "…"                     # 可选
  *     project: "…"                  # 可选
@@ -76,6 +77,7 @@ const publications = defineCollection({
         .min(1),
       links: z.object({
         paper: z.string().url(),
+        arxiv: z.string().url().optional(),
         code: z.string().url().optional(),
         demo: z.string().url().optional(),
         project: z.string().url().optional(),

@@ -1,10 +1,12 @@
 # 论文数据。字段含义见 src/content.config.ts；添加论文的步骤见 AGENTS.md「添加论文」。
-# 从旧网站转换而来（2026-11-17），只转了格式；摘要、venue 全称和官方 BibTeX 待填写真实内容时补充。
+# 来源：IEEE Xplore 10208640（CVPRW 2023）：摘要（去掉末尾的脚注编号）、BibTeX、venue 全称；arXiv 2304.06370：首次公开日期
+# 方法图是论文的 Figure 1（从旧网站继承；2026-11-18 裁掉了图里带着的图注文字）。
 title: "Robust Multiview Multimodal Driver Monitoring System Using Masked Multi-Head Self-Attention"
 date: 2023-04-13
 type: workshop
 venue:
   short: "CVPRW 2023"
+  full: "2023 IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops (CVPRW)"
 authors:
   - name: "Yiming Ma"
   - name: "Victor Sanchez"
@@ -13,9 +15,21 @@ authors:
   - name: "Bhushan Atote"
   - name: "Tanaya Guha"
 links:
-  paper: "https://arxiv.org/abs/2304.06370"
+  paper: "https://doi.org/10.1109/CVPRW59228.2023.00260"
+  arxiv: "https://arxiv.org/abs/2304.06370"
   code: "https://github.com/Yiming-M/MHSA"
 image: ./overview.png
 tldr:
-  en: "Fuse top/front and depth/infrared features with source-aware self-attention, and randomly mask feature patches during training to simulate missing views or modalities."
-  zh: "用带信息源标识的自注意力融合顶视/前视与深度/红外特征，并在训练中随机遮挡特征块以模拟视角或模态缺失。"
+  en: "Multi-sensor driver monitoring systems fuse their data at the decision level and may not fully exploit how the sensors complement each other; fusing views and modalities at the feature level with multi-head self-attention reaches 97.0% AUC-ROC, ahead of all baselines, and training with patch masking makes the system robust when a view or modality fails."
+  zh: "多传感器的驾驶员监控系统在决策层融合数据，可能没有充分利用各传感器之间的互补性；改用多头自注意力在特征层融合多个视角和模态，AUC-ROC 达到 97.0%，优于所有基线；训练时加入块遮挡，让系统在某个视角或模态失效时依然稳健。"
+abstract:
+  en: "Driver Monitoring Systems (DMSs) are crucial for safe hand-over actions in Level-2+ self-driving vehicles. State-of-the-art DMSs leverage multiple sensors mounted at different locations to monitor the driver and the vehicle’s interior scene and employ decision-level fusion to integrate these heterogenous data. However, this fusion method may not fully utilize the complementarity of different data sources and may overlook their relative importance. To address these limitations, we propose a novel multi-view multimodal driver monitoring system based on feature-level fusion through multi-head self-attention (MHSA). We demonstrate its effectiveness by comparing it against four alternative fusion strategies (Sum, Conv, SE, and AFF). We also present a novel GPU-friendly supervised contrastive learning framework SuMoCo to learn better representations. Furthermore, We fine-grained the test split of the DAD dataset to enable the multi-class recognition of drivers’ activities. Experiments on this enhanced database demonstrate that 1) the proposed MHSA-based fusion method (AUC-ROC: 97.0%) outperforms all baselines and previous approaches, and 2) training MHSA with patch masking can improve its robustness against modality/view collapses. The code and annotations are publicly available."
+  zh: "驾驶员监控系统（DMS）对 L2 级以上自动驾驶车辆的安全接管至关重要。最先进的 DMS 利用安装在不同位置的多个传感器监控驾驶员和车内场景，并采用决策层融合来整合这些异构数据。然而，这种融合方式可能无法充分利用不同数据源之间的互补性，也可能忽视它们的相对重要性。为解决这些局限，我们提出一种新的多视角多模态驾驶员监控系统，它通过多头自注意力（MHSA）进行特征层融合。我们将其与四种其他融合策略（Sum、Conv、SE 和 AFF）比较，证明了它的有效性。我们还提出一个新的、对 GPU 友好的有监督对比学习框架 SuMoCo，以学习更好的表示。此外，我们细化了 DAD 数据集测试集的标注，使其能用于驾驶员活动的多类别识别。在这个增强后的数据库上的实验表明：1）所提出的基于 MHSA 的融合方法（AUC-ROC：97.0%）优于所有基线和以往方法；2）用块遮挡训练 MHSA 可以提高它在模态或视角失效时的鲁棒性。代码和标注已公开。"
+bibtex: |
+  @INPROCEEDINGS{10208640,
+    author={Ma, Yiming and Sanchez, Victor and Nikan, Soodeh and Upadhyay, Devesh and Atote, Bhushan and Guha, Tanaya},
+    booktitle={2023 IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops (CVPRW)},
+    title={Robust Multiview Multimodal Driver Monitoring System Using Masked Multi-Head Self-Attention},
+    year={2023},
+    pages={2617-2625},
+    doi={10.1109/CVPRW59228.2023.00260}}

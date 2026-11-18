@@ -12,7 +12,9 @@
     density.png  地形的高度图：灰度 8 位，GRID_WIDTH 宽，与照片同比例；0–255 对应高度 0–1
     photo.jpg    地形下面的照片（3D 场景的贴图）
     static.jpg   静态图：照片叠加平面的热力图和等高线（手机、减少动态效果、不支持 WebGL2 时显示）
-    meta.json    人数、各文件的尺寸、数据来源
+    meta.json    人数、各文件的尺寸、数据来源。density.peakPer10k 是高度 1 对应的密度（原照片每 100×100
+                 像素的人数），某格的密度 = 高度² × peakPer10k；density.cellSize 是一个网格像素对应原照片
+                 多少像素。网页上鼠标处的密度取周围 100×100 原照片像素的平均
 
 密度图的做法（与人群计数论文里生成训练标签的常用做法一致）：
     每个人头放一个面积为 1 的高斯核，核的大小随透视变化：sigma = BETA × 到最近 K 个人头的平均距离
@@ -90,10 +92,14 @@ def density_map(heads, original_size, grid_size):
     return density
 
 
+def density_peak(density):
+    """高度 1 对应的密度（每个网格像素的人数）：HEIGHT_PERCENTILE 分位数。"""
+    return np.percentile(density[density > 0], HEIGHT_PERCENTILE)
+
+
 def terrain_height(density):
     """密度 → 地形高度（0–1）。"""
-    top = np.percentile(density[density > 0], HEIGHT_PERCENTILE)
-    return np.clip(density / top, 0, 1) ** HEIGHT_GAMMA
+    return np.clip(density / density_peak(density), 0, 1) ** HEIGHT_GAMMA
 
 
 def main():
@@ -104,7 +110,12 @@ def main():
 
     os.makedirs(OUT_DIR, exist_ok=True)
     grid = (GRID_WIDTH, round(GRID_WIDTH * photo.height / photo.width))
-    height = terrain_height(density_map(heads, original_size, grid))
+    density = density_map(heads, original_size, grid)
+    height = terrain_height(density)
+    # 高度 h 处的密度 = h² × peak（每个网格像素的人数，HEIGHT_GAMMA = 0.5）。一个网格像素是原照片的
+    # (原宽 / 网格宽)² 个像素，换算成原照片每 100×100 像素的人数，网页上显示用
+    assert HEIGHT_GAMMA == 0.5, "网页按 高度² 还原密度，改了 HEIGHT_GAMMA 要同步改 crowd-scene.js"
+    peak_per_10k = density_peak(density) * (grid[0] / original_size[0]) ** 2 * 100 * 100
     Image.fromarray(np.round(height * 255).astype(np.uint8), mode="L").save(os.path.join(OUT_DIR, "density.png"), optimize=True)
 
     texture = photo.resize((PHOTO_WIDTH, round(PHOTO_WIDTH * photo.height / photo.width)), Image.LANCZOS)
@@ -134,7 +145,13 @@ def main():
     meta = {
         "_comment": "由 scripts/crowd/build_crowd.py 生成，不要手改。格式见该脚本开头。",
         "count": int(len(heads)),
-        "density": {"file": "density.png", "width": grid[0], "height": grid[1]},
+        "density": {
+            "file": "density.png",
+            "width": grid[0],
+            "height": grid[1],
+            "peakPer10k": round(float(peak_per_10k), 4),
+            "cellSize": round(original_size[0] / grid[0], 4),
+        },
         "photo": {"file": "photo.jpg", "width": texture.width, "height": texture.height},
         "static": {"file": "static.jpg", "width": still.width, "height": still.height},
         "source": {

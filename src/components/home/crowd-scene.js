@@ -15,13 +15,15 @@
  *   到最下方照片放得最平，看到一座座山峰。
  * - 鼠标左右移动：绕屏幕的竖直轴旋转。上下、左右互不影响：只上下移动时只改变放倒的角度，不会左右转。
  * - 鼠标离开页面：回到默认状态。
+ * - 鼠标停在照片或地形上：鼠标旁边的标签（[data-density-tip]）显示该处的人群密度，
+ *   即鼠标碰到的那一点周围 100×100 原照片像素里的人数。做法见 pickCell() 和 windowDensity()。
  * 只在画面需要变化时渲染。
  *
  * 数据（scripts/crowd/build_crowd.py 生成，放在 public/home/crowd/，格式见该脚本开头）：
- * density.png（地形的高度图）、photo.jpg（照片）、meta.json。
+ * density.png（地形的高度图）、photo.jpg（照片）、meta.json（其中 density.peakPer10k、cellSize 用来把高度换算回密度）。
  * 配色、等高线条数、照片调暗的亮度与 build_crowd.py 一致（静态图用同样的配色），改动时两边一起改。
  */
-import { AdditiveBlending, Color, DoubleSide, GLSL3, Group, LinearFilter, Mesh, PerspectiveCamera, PlaneGeometry, Scene, ShaderMaterial, TextureLoader, Vector2, WebGLRenderer } from "three";
+import { AdditiveBlending, Color, DoubleSide, GLSL3, Group, LinearFilter, Matrix4, Mesh, PerspectiveCamera, PlaneGeometry, Raycaster, Scene, ShaderMaterial, TextureLoader, Vector2, Vector3, WebGLRenderer } from "three";
 
 // —— 可调参数 ——
 /** 照片在场景里的宽度（场景单位）；高度按照片比例。 */
@@ -57,6 +59,13 @@ const MAX_PIXEL_RATIO = 2;
  * 按时间而不是按帧缓动，屏幕刷新率不同时开场的长短也一样。 */
 const INTRO_HOLD_MS = 1000;
 const INTRO_MS = 3600;
+/** 找鼠标碰到的地形时，从地形最高处到照片平面之间分成多少步：步数越多越准，256 步在网格上已不到一格。 */
+const PICK_STEPS = 256;
+/** 鼠标处的密度取周围多大一块（原照片像素，正方形边长）的平均，与标签上的单位一致。
+ * 密度图是一个个人头的小峰叠成的，逐点读数会随鼠标挪动一两个像素大起大落，取一块的平均才平稳。 */
+const DENSITY_WINDOW_PX = 100;
+/** 密度标签相对鼠标的偏移（像素），免得挡住鼠标指着的地方。 */
+const TIP_OFFSET = 16;
 
 // 地形：顶点着色器按高度图把平面网格抬起来，并用相邻高度差算出法线
 const terrainVertex = /* glsl */ `
@@ -139,6 +148,32 @@ const photoFragment = /* glsl */ `
   }
 `;
 
+/** 读出高度图每个像素的灰度（0–255），第 0 行是图片顶部。 */
+function readHeights(image) {
+  const canvas = document.createElement("canvas");
+  canvas.width = image.width;
+  canvas.height = image.height;
+  const context = canvas.getContext("2d", { willReadFrequently: true });
+  context.drawImage(image, 0, 0);
+  const rgba = context.getImageData(0, 0, image.width, image.height).data;
+  const values = new Uint8Array(image.width * image.height);
+  for (let i = 0; i < values.length; i++) values[i] = rgba[4 * i];
+  return values;
+}
+
+/** 高度² 的累加表：第 (r, c) 项是第 0..r-1 行、0..c-1 列所有格的高度² 之和，任意方块的和只需四次加减。 */
+function summedSquares(heights, width, height) {
+  const stride = width + 1;
+  const sums = new Float64Array(stride * (height + 1));
+  for (let row = 0; row < height; row++) {
+    for (let column = 0; column < width; column++) {
+      const h = heights[row * width + column] / 255;
+      sums[(row + 1) * stride + column + 1] = h * h + sums[row * stride + column + 1] + sums[(row + 1) * stride + column] - sums[row * stride + column];
+    }
+  }
+  return sums;
+}
+
 function cssColor(element, name) {
   return new Color(getComputedStyle(element).getPropertyValue(name).trim());
 }
@@ -148,7 +183,8 @@ function cssColor(element, name) {
  * @param {HTMLCanvasElement} canvas 绘制用的画布
  * @param {object} options
  * @param {string} options.base 数据目录，如 "/home/crowd/"
- * @param {HTMLElement} options.root 这一页的元素：读取颜色变量，宽屏时加 data-wide，开场时更新其中 .count 的人数
+ * @param {HTMLElement} options.root 这一页的元素：读取颜色变量，宽屏时加 data-wide，开场时更新其中 .count 的人数，
+ *   鼠标处的密度写进其中的 [data-density-tip]
  * @param {() => void} [options.onReady] 第一帧画完后调用
  * @returns {Promise<{ setActive: (active: boolean) => void, destroy: () => void }>}
  */
@@ -163,6 +199,9 @@ export async function startCrowdScene(canvas, { base, root, onReady }) {
 
   const { width: gridWidth, height: gridHeight } = meta.density;
   const planeHeight = (PLANE_WIDTH * gridHeight) / gridWidth;
+  const heights = readHeights(heightMap.image); // 同一张高度图在 CPU 上的副本，用来找鼠标碰到的地形和读密度
+  const squareSums = summedSquares(heights, gridWidth, gridHeight);
+  const windowCells = Math.max(1, Math.round(DENSITY_WINDOW_PX / meta.density.cellSize));
   const background = cssColor(root, "--showcase-bg");
 
   const photoMaterial = new ShaderMaterial({
@@ -263,8 +302,83 @@ export async function startCrowdScene(canvas, { base, root, onReady }) {
     requestRender();
   }
 
+  // —— 鼠标处的密度 ——
+  const tip = root.querySelector("[data-density-tip]");
+  const tipValue = tip?.querySelector("[data-value]");
+  const raycaster = new Raycaster();
+  const ndc = new Vector2();
+  const toLocal = new Matrix4();
+  const origin = new Vector3();
+  const direction = new Vector3();
+  let pointer = null; // 鼠标的页面坐标；null = 不显示密度（鼠标不在画面上，或停在链接、按钮上）
+
+  /** 地形网格上 (x, y)（场景单位，原点在照片中心）落在高度图的哪一格：[列, 行]，第 0 行是照片顶部。 */
+  function cellOf(x, y) {
+    return [Math.round((x / PLANE_WIDTH + 0.5) * (gridWidth - 1)), Math.round((0.5 - y / planeHeight) * (gridHeight - 1))];
+  }
+
+  /**
+   * 以 (column, row) 为中心、边长 windowCells 格（即 DENSITY_WINDOW_PX 原照片像素）的方块里的平均密度，
+   * 单位是原照片每 100×100 像素的人数。高度 = (密度 / 上限)^0.5（build_crowd.py 的 HEIGHT_GAMMA），
+   * 所以每格的密度 = 高度² × peakPer10k；方块超出照片的部分不算。
+   */
+  function windowDensity(column, row) {
+    const half = Math.floor(windowCells / 2);
+    const c0 = Math.max(0, column - half);
+    const c1 = Math.min(gridWidth, column - half + windowCells);
+    const r0 = Math.max(0, row - half);
+    const r1 = Math.min(gridHeight, row - half + windowCells);
+    const stride = gridWidth + 1;
+    const sum = squareSums[r1 * stride + c1] - squareSums[r0 * stride + c1] - squareSums[r1 * stride + c0] + squareSums[r0 * stride + c0];
+    return (sum / ((c1 - c0) * (r1 - r0))) * meta.density.peakPer10k;
+  }
+
+  /**
+   * 鼠标碰到的地形表面那一点在高度图的哪一格（[列, 行]）；没碰到照片时返回 null。
+   * 把鼠标的视线换到地形的局部坐标里（照片在 z = 0 平面，地形向 +z 升起），从地形最高处的高度
+   * 一步步往下走，第一次低于地形表面的地方就是碰到的点：地形升起时会先碰到前面的山峰，而不是后面的平地。
+   */
+  function pickCell() {
+    const rect = canvas.getBoundingClientRect();
+    ndc.set(((pointer.x - rect.left) / rect.width) * 2 - 1, -((pointer.y - rect.top) / rect.height) * 2 + 1);
+    raycaster.setFromCamera(ndc, camera);
+    toLocal.copy(terrainMesh.matrixWorld).invert();
+    origin.copy(raycaster.ray.origin).applyMatrix4(toLocal);
+    direction.copy(raycaster.ray.direction).transformDirection(toLocal);
+    if (direction.z >= 0) return null; // 视线没有朝向照片
+    const top = terrainMaterial.uniforms.uHeight.value;
+    const enter = (top - origin.z) / direction.z;
+    const exit = -origin.z / direction.z;
+    const steps = top > 0 ? PICK_STEPS : 1;
+    for (let i = 1; i <= steps; i++) {
+      const t = enter + ((exit - enter) * i) / steps;
+      const x = origin.x + direction.x * t;
+      const y = origin.y + direction.y * t;
+      if (Math.abs(x) > PLANE_WIDTH / 2 || Math.abs(y) > planeHeight / 2) continue;
+      const cell = cellOf(x, y);
+      if (origin.z + direction.z * t <= (heights[cell[1] * gridWidth + cell[0]] / 255) * top || i === steps) return cell;
+    }
+    return null;
+  }
+
+  /** 按当前的视角重新找鼠标处的密度，更新标签的文字和位置。 */
+  function updateTip() {
+    if (!tip) return;
+    const cell = pointer && active && introStart < 0 ? pickCell() : null;
+    tip.hidden = cell === null;
+    canvas.style.cursor = cell === null ? "" : "crosshair";
+    if (cell === null) return;
+    const density = windowDensity(cell[0], cell[1]);
+    tipValue.textContent = density.toLocaleString(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const box = root.getBoundingClientRect();
+    tip.style.transform = `translate(${pointer.x - box.left + TIP_OFFSET}px, ${pointer.y - box.top + TIP_OFFSET}px)`;
+  }
+
   function onPointerMove(event) {
     if (!active || event.pointerType !== "mouse") return;
+    // 停在页头、小方块等链接和按钮上时不显示密度
+    pointer = event.target instanceof Element && event.target.closest("a, button, header, nav") ? null : { x: event.clientX, y: event.clientY };
+    updateTip();
     introStart = -1; // 鼠标一动就结束开场，从当前状态平滑地跟随鼠标
     const p = Math.min(1, Math.max(0, (event.clientY / window.innerHeight - MOUSE_EDGE) / (1 - 2 * MOUSE_EDGE))); // 页面上方 = 原照片
     const yaw = ((event.clientX / window.innerWidth) * 2 - 1) * MOUSE_YAW_DEGREES; // 只由水平位置决定
@@ -272,6 +386,8 @@ export async function startCrowdScene(canvas, { base, root, onReady }) {
     requestRender();
   }
   function onPointerLeave() {
+    pointer = null;
+    updateTip();
     Object.assign(target, rest);
     requestRender();
   }
@@ -299,6 +415,7 @@ export async function startCrowdScene(canvas, { base, root, onReady }) {
     photoMaterial.uniforms.uEdge.value = 0.08 * state.rise;
     showCount(introStart >= 0 ? state.rise : 1);
     renderer.render(scene, camera);
+    if (pointer) updateTip(); // 视角在变，鼠标下的那一点也在变
     if (first) {
       first = false;
       onReady?.();
@@ -326,6 +443,8 @@ export async function startCrowdScene(canvas, { base, root, onReady }) {
       cancelAnimationFrame(frame);
       frame = 0;
       showCount(1);
+      pointer = null;
+      updateTip();
     }
   }
 

@@ -78,10 +78,10 @@
    - `title`、`authors`：按论文署名的顺序。共同一作加 `equal: true`，通讯作者加 `corresponding: true`。
    - `date`：论文首次公开的日期（通常是 arXiv 第一版）。
    - `type`、`venue.short`：例如 `conference` 和 `"ICME 2025"`。`venue.full` 只在能核对会议或期刊官方全称时才填。
-   - `links`：`paper` 必填，`code`、`demo`、`project` 有就填。
-   - `tldr`：一句话总结，中英文各一句，内容必须能在论文摘要或正文里找到依据。
+   - `links`：`paper` 必填：已正式发表的指向出版社页面（DOI 链接），并把 arXiv 版填进 `arxiv`；预印本的 `paper` 就是 arXiv，不填 `arxiv`。`code`、`demo`、`project` 有就填。
+   - `tldr`：一句话总结，中英文各一句，按“研究空白 → 解决方案 → 效果（一个关键数字）”来写；每一处都必须能在论文摘要或正文里找到依据。论文有正式出版版本时以它为准（出版版本的摘要和数字可能和 arXiv 版不同）。
    - `abstract`：英文从论文原文原样复制；中文按 AGENTS.md 的翻译规则翻译。
-   - `bibtex`：优先粘贴官方 BibTeX（会议论文集、出版社页面或 Google Scholar 导出）。不填时，如果论文链接是 arXiv，网站会自动生成一条 arXiv 引用。
+   - `bibtex`：优先粘贴官方 BibTeX（IEEE Xplore 等出版社页面的 Cite This 导出），去掉空字段和 keywords。不填时，如果有 arXiv 版，网站会自动生成一条 arXiv 引用。期刊的 Early Access 论文以后分配了卷号、期号，要回来更新 BibTeX。
 4. **方法图（可选）**：放进同一文件夹，命名为 `overview.png`，并在 YAML 里写 `image: ./overview.png`。只用论文里的原图，不自己画。
 5. **验证**：`npm run build` 通过后，在本地预览里检查 `/publications/` 和 `/publications/<slug>/` 的中英文两个版本，然后交给作者确认。
 
@@ -197,7 +197,7 @@
 | `src/lib/albums.ts` | 相册读取：本地照片的图片对象、EXIF、链接图片的尺寸探测、排序和格式化 |
 | `src/components/albums/` | 相册组件：索引页的全屏封面 `AlbumsCovers`、相册页的叙事排版 `AlbumStory`、单张照片 `AlbumPhoto`、灯箱 `AlbumLightbox`（PhotoSwipe）、封面强调色 `cover-accent.ts`、封面悬停扭曲 `liquid.ts` |
 | `scripts/check-dist-size.mjs` | 构建结束时打印 `dist/` 总大小，超过 800 MB 警告 |
-| `src/content/publications/<slug>/` | 每篇论文一个文件夹：`index.yaml` 和可选的 `overview.png`。目前的 6 篇是从旧网站转换的模板测试数据 |
+| `src/content/publications/<slug>/` | 每篇论文一个文件夹：`index.yaml` 和可选的 `overview.png`。2026-11-18 按出版版本核对过全部 7 篇（摘要、BibTeX、venue） |
 | `scripts/fonts/split-lxgw-bright.mjs` | 把霞鹜文楷 Bright GB 切分成网页字体，见上方“重新生成网页字体” |
 | `public/fonts/lxgw-bright-gb/` | 切分后的网页字体、`fonts.css` 和许可证；由脚本生成，不要手改 |
 | `public/cv/` | 作者提供的中英文 CV PDF；覆盖同名文件即可更新 |
