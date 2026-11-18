@@ -5,6 +5,7 @@
  * 页面（按顺序，第一页始终是当前的研究方向）：
  *   1. MriSlide   前列腺癌主动监测（3D：mri-scene.js）
  *   2. CrowdSlide 人群计数（3D：crowd-scene.js）
+ *   3. DmsSlide   驾驶员监控（3D：dms-scene.js）
  * 新增一页：写一个 XxxSlide.astro（根元素 <article class="slide" data-slide="xxx">，含 .slide-title、
  * .still 静态图、canvas.scene、.credit），在下面的 slides 和脚本里的 loaders 各加一项。
  *
@@ -18,6 +19,7 @@
  * 都以 .showcase 开头，不会影响网站其他部分；各页独有的样式写在各自的组件里。
  */
 import CrowdSlide from "./CrowdSlide.astro";
+import DmsSlide from "./DmsSlide.astro";
 import MriSlide from "./MriSlide.astro";
 import type { Locale } from "../../lib/site";
 
@@ -32,12 +34,14 @@ const isZh = locale === "zh";
 const slides = [
   { key: "mri", label: isZh ? "前列腺癌主动监测" : "Prostate cancer active surveillance" },
   { key: "crowd", label: isZh ? "人群计数" : "Crowd counting" },
+  { key: "dms", label: isZh ? "驾驶员监控" : "Driver monitoring" },
 ];
 ---
 
 <section class="showcase" data-showcase aria-roledescription={isZh ? "项目展示" : "project showcase"} aria-label={isZh ? "研究项目" : "Research projects"}>
   <MriSlide locale={locale} />
   <CrowdSlide locale={locale} />
+  <DmsSlide locale={locale} />
 
   <nav class="pager" aria-label={isZh ? "切换研究项目" : "Switch research project"}>
     <ol role="list">
@@ -94,6 +98,8 @@ const slides = [
         ),
       crowd: (slide, canvas, onReady) =>
         import("./crowd-scene.js").then(({ startCrowdScene }) => startCrowdScene(canvas, { base: "/home/crowd/", root: slide, onReady })),
+      dms: (slide, canvas, onReady) =>
+        import("./dms-scene.js").then(({ startDmsScene }) => startDmsScene(canvas, { base: "/home/dms/", root: slide, onReady })),
     };
 
     const controllers = new Map<string, Controller>();

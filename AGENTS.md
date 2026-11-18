@@ -95,13 +95,23 @@ Phase 5 补全。
 
 - **现有各页**：
   - `MriSlide.astro` + `mri-scene.js`：前列腺癌主动监测，数据在 `public/home/mri/`，换数据见下一节；
-  - `CrowdSlide.astro` + `crowd-scene.js`：人群计数，数据在 `public/home/crowd/`。
+  - `CrowdSlide.astro` + `crowd-scene.js`：人群计数，数据在 `public/home/crowd/`；
+  - `DmsSlide.astro` + `dms-scene.js`：驾驶员监控，数据在 `public/home/dms/`。
 - **人群计数页换图片**（画面是“密度地形”：由人头标注生成的密度图从平放的照片上升起，成为发光的地形）：
   1. 选图：演唱会、体育馆这类场景；人数适中（几百到一两千），透视明显，前排稀疏、后排密集，地形才有起伏。整片均匀密集的远景不合适：人太小，地形会变成一块平台。不要选军训、集会、宗教、政治类场景。
   2. 图片在作者服务器 `Server-5900X-Auto` 的 `~/Code/ZIP-dev/data/nwpu/val/images/`，标注在 `~/Code/ZIP/data/nwpu/val/labels/`（`.npy`，int16 的 (x, y) 像素坐标）。
   3. 把图片和标注拷到本机仓库外的目录，运行 `python3 -I scripts/crowd/build_crowd.py <标注.npy> <照片.jpg>`。
   4. 更新 `CrowdSlide.astro` 开头的说明和图片 alt；照片不是 3:2 时，改 `.still` 的宽度公式。
   5. 地形太尖或太平时，调 `build_crowd.py` 的 `SIGMA_MIN_PX`（越大越圆润）和 `crowd-scene.js` 的 `TERRAIN_HEIGHT`。
+- **驾驶员监控页换图片**（画面是“夜间座舱”：深度图抬成点云，平时显示很暗的夜间彩色，鼠标处的镜头里显示红外和按深度着色的等深线）：
+  1. 准备九张图：前方、侧方、上方三个机位，每个机位彩色、红外、深度各一张，命名为 `<机位>_<模态>.<扩展名>`（机位 `front` / `side` / `top`，模态 `rgb` / `ir` / `depth`），比例 4:3。深度图是灰度，越亮越近。
+     - 同一机位的三张必须逐像素对齐（构图完全一样）。现在的图是作者用 ChatGPT 生成的：真实的 DAD 数据集许可禁止发布。生成新图时，以同一机位的红外图为参考图，要求人物、姿态、座椅、方向盘的位置和大小不变。
+     - 生成后先检查对齐：把深度图和彩色图的边缘叠在红外图上，偏差应在几个像素以内。
+  2. 把九张图放到仓库外的一个文件夹，运行 `python3 -I scripts/dms/build_dms.py <文件夹>`。
+  3. 重新量每个机位脸的位置（占图宽、图高的比例），改 `build_dms.py` 的 `FACE` 后再运行一次。镜头默认停在脸上，点云也绕脸所在的深度转动。
+  4. 调整时注意两处一起改：镜头的大小、分区、配色、等深线在 `build_dms.py`（静态图）和 `dms-scene.js`（3D）各有一份。彩色图统一调暗到 `NIGHT_MEAN`。
+  5. 转动时轮廓上有拉丝一样的飞点：调小 `build_dms.py` 的 `EDGE_GRADIENT`；露出被遮挡的空洞：调小 `dms-scene.js` 的 `MOUSE_YAW_DEGREES`、`MOUSE_PITCH_DEGREES`。
+  6. 更新 `DmsSlide.astro` 里静态图的 alt。
 - **新增一页**：
   1. 写 `XxxSlide.astro`，根元素是 `<article class="slide" data-slide="xxx">`，包含 `.slide-title`、`.still`（静态图）、`canvas.scene`、`.credit`；
   2. 写 `xxx-scene.js`，导出 `startXxxScene(canvas, options)`，返回 `{ setActive, destroy }`，可以照着 `crowd-scene.js` 写；
@@ -152,10 +162,11 @@ Phase 5 补全。
 | `src/pages/[...locale]/publications/` | 论文列表 `index.astro` 和详情页 `[slug].astro` |
 | `src/components/` | 页头 `SiteHeader`、页脚 `SiteFooter`、主题与语言切换、搜索按钮和搜索对话框（Pagefind）、图标、栏目占位页；论文用的作者列表、链接和 Cite 块；关系图 `GraphView` |
 | `src/lib/publications.ts` | 论文排序、分组、BibTeX 生成规则、citation meta 和 JSON-LD |
-| `src/components/home/` | 首页展示区：`HomeShowcase.astro`（多页切换、共用版式）、各项目页 `MriSlide.astro` / `CrowdSlide.astro`，以及对应的 3D 场景 `mri-scene.js` / `crowd-scene.js` |
+| `src/components/home/` | 首页展示区：`HomeShowcase.astro`（多页切换、共用版式）、各项目页 `MriSlide.astro` / `CrowdSlide.astro` / `DmsSlide.astro`，以及对应的 3D 场景 `mri-scene.js` / `crowd-scene.js` / `dms-scene.js` |
 | `scripts/mri/` | 首页 MRI 数据：下载 PI-CAI 单个病例 `fetch_picai_case.py`、生成网页数据 `build_scene.py` |
-| `public/home/mri/`、`public/home/crowd/` | 首页各项目页的数据；由 `scripts/mri/`、`scripts/crowd/` 里的脚本生成，不要手改 |
+| `public/home/mri/`、`public/home/crowd/`、`public/home/dms/` | 首页各项目页的数据；由 `scripts/mri/`、`scripts/crowd/`、`scripts/dms/` 里的脚本生成，不要手改 |
 | `scripts/crowd/` | 首页人群计数页的数据：`build_crowd.py`（生成密度地形的高度图、照片贴图和静态图） |
+| `scripts/dms/` | 首页驾驶员监控页的数据：`build_dms.py`（把九张车内图像处理成点云用的深度、红外、夜间彩色贴图和静态图） |
 | `src/pages/[...locale]/posts/` | 文章索引 `index.astro`、文章页 `[slug].astro`、全站关系图 `graph.astro` |
 | `src/lib/posts.ts` | 文章读取与校验、分类、系列、阅读时长、反向链接、关系图数据 |
 | `src/lib/obsidian/` | Obsidian 写法的构建插件 `remark-obsidian.mjs`、笔记索引与双链解析 `notes.mjs`、标题锚点规则 `slug.mjs` |

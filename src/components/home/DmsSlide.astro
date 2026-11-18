@@ -1,0 +1,231 @@
+---
+/**
+ * 首页第 3 页：驾驶员监控（博士期间的研究）。
+ *
+ * 这里只放这一页的标记和样式；切页、3D 场景的加载由 HomeShowcase.astro 统一负责，
+ * 3D 场景本身在 dms-scene.js。两种显示方式：
+ * - 3D（桌面）：“夜间座舱”。深度图抬成点云，平时是夜间彩色相机看到的样子（很暗）；
+ *   鼠标处的镜头里，中心是红外，外圈按深度着色。左侧三个按钮切换前方、侧方、上方机位；
+ * - 静态（手机、减少动态效果、不支持 WebGL2）：前方机位的夜间彩色图，脸上叠加同样的镜头（public/home/dms/static.jpg）。
+ *
+ * 数据由 scripts/dms/build_dms.py 生成。图像是作者用 ChatGPT 生成的示意图（真实的 DAD 数据集许可不允许发布），
+ * 右下角写明。图例的颜色与 build_dms.py、dms-scene.js 的配色一致。
+ */
+import fs from "node:fs";
+import path from "node:path";
+import type { Locale } from "../../lib/site";
+
+interface Props {
+  locale: Locale;
+}
+
+const isZh = Astro.props.locale === "zh";
+
+/** 构建时读取静态图的尺寸。 */
+const meta = JSON.parse(fs.readFileSync(path.join(process.cwd(), "public/home/dms/meta.json"), "utf8")) as {
+  static: { file: string; width: number; height: number };
+};
+
+const modalities = [
+  { key: "night", label: isZh ? "彩色相机（夜间）" : "Colour camera (at night)" },
+  { key: "ir", label: isZh ? "红外" : "Infrared" },
+  { key: "depth", label: isZh ? "深度" : "Depth" },
+];
+
+/** 机位：顺序与 dms-scene.js 的 VIEW_ORDER 一致。 */
+const views = [
+  { key: "front", label: isZh ? "前方" : "Front" },
+  { key: "side", label: isZh ? "侧方" : "Side" },
+  { key: "top", label: isZh ? "上方" : "Overhead" },
+];
+---
+
+<article class="slide" data-slide="dms" aria-label={isZh ? "驾驶员监控" : "Driver monitoring"}>
+  <h2 class="slide-title">{isZh ? "驾驶员监控" : "Driver monitoring"}</h2>
+
+  <img
+    class="still"
+    src={`/home/dms/${meta.static.file}`}
+    width={meta.static.width}
+    height={meta.static.height}
+    alt={isZh
+      ? "夜间车内前方相机看到的驾驶员：彩色画面很暗；脸上的圆形区域中心是清楚的红外图像，外圈按深度着色并画出等深线"
+      : "A driver seen by a front-facing in-cabin camera at night: the colour image is very dark; a circular lens over the face shows a clear infrared image in the centre and depth colours with contour lines around it"}
+    loading="lazy"
+    decoding="async"
+  />
+  <canvas class="scene" aria-hidden="true"></canvas>
+  <div class="lens" data-lens aria-hidden="true"></div>
+
+  <div class="panel">
+    <ul class="legend" role="list">
+      {
+        modalities.map((item) => (
+          <li>
+            <span class:list={["swatch", item.key]} aria-hidden="true" />
+            {item.label}
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="views" role="group" aria-label={isZh ? "机位" : "Camera position"}>
+      {
+        views.map((view, index) => (
+          <button type="button" data-view={view.key} aria-pressed={index === 0 ? "true" : "false"}>
+            {view.label}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  <p class="hint" aria-hidden="true">
+    {isZh ? "移动鼠标：镜头跟着鼠标，画面随之转动" : "Move the mouse: the lens follows it and the view turns"}
+  </p>
+
+  <p class="credit">
+    {isZh ? "图像由 AI（ChatGPT）生成，仅作示意" : "Images generated with AI (ChatGPT), for illustration only"}
+  </p>
+</article>
+
+<style>
+  /* 静态图：按原比例（4:3）显示，宽度不超过画面的 92%、高度不超过 72%。 */
+  .still {
+    width: min(92vw, calc(72svh * 4 / 3));
+    height: auto;
+    border-radius: var(--radius-surface);
+  }
+
+  /* 镜头的圆环：只在 3D 时显示，位置和大小由 dms-scene.js 每帧设置。
+   * 实线是镜头边缘；里面的虚线圈是红外区的边界（直径的 62%，与 dms-scene.js 的 LENS_CORE 一致）。 */
+  .lens {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    border: 1.5px solid #5ce6d2;
+    border-radius: 50%;
+    box-shadow:
+      0 0 14px rgb(92 230 210 / 45%),
+      inset 0 0 14px rgb(92 230 210 / 25%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .lens::after {
+    content: "";
+    position: absolute;
+    inset: 19%;
+    border: 1px dashed rgb(92 230 210 / 50%);
+    border-radius: 50%;
+  }
+
+  .slide[data-ready] .lens {
+    display: block;
+  }
+
+  /* 左侧面板：三种模态的图例和机位按钮。默认在标题下方（窄屏在左下角），宽屏 3D 时在左侧垂直居中。 */
+  .panel {
+    position: absolute;
+    left: var(--gutter);
+    top: calc(var(--header-height) + var(--space-16));
+    display: grid;
+    gap: var(--space-6);
+    font-size: var(--text-xs);
+    line-height: 1.5;
+  }
+
+  .slide[data-ready][data-wide] .panel {
+    top: 50%;
+    left: clamp(var(--gutter), 6vw, 7rem);
+    gap: var(--space-8);
+    font-size: var(--text-sm);
+    transform: translateY(-50%);
+  }
+
+  .legend {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .legend li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--showcase-text);
+  }
+
+  .swatch {
+    flex: none;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 3px;
+  }
+
+  /* 与 build_dms.py 的配色一致：夜间彩色很暗，所以加一圈细边才看得见 */
+  .swatch.night {
+    background: #2a2723;
+    box-shadow: inset 0 0 0 1px var(--showcase-line);
+  }
+
+  .swatch.ir {
+    background: #d4dcdc;
+  }
+
+  .swatch.depth {
+    background: linear-gradient(90deg, #3a5bd9, #5ce6d2, #f0fffc);
+  }
+
+  /* 机位按钮：只在 3D 时显示（静态图只有前方机位） */
+  .views {
+    display: none;
+    gap: var(--space-1);
+  }
+
+  .slide[data-ready] .views {
+    display: flex;
+  }
+
+  .views button {
+    min-height: 2.25rem;
+    padding: 0 var(--space-3);
+    border: 1px solid var(--showcase-line);
+    border-radius: var(--radius-control);
+    background: transparent;
+    color: var(--showcase-text-muted);
+    font: inherit;
+    cursor: pointer;
+    transition:
+      color var(--duration) var(--ease),
+      border-color var(--duration) var(--ease),
+      background-color var(--duration) var(--ease);
+  }
+
+  .views button:hover {
+    color: var(--showcase-text);
+    border-color: var(--showcase-text-muted);
+  }
+
+  .views button[aria-pressed="true"] {
+    border-color: var(--showcase-text);
+    background: var(--showcase-text);
+    color: var(--showcase-bg);
+  }
+
+  /* 署名比其他页长：放宽，免得换成两行后和上方的操作提示叠在一起 */
+  .slide .credit {
+    max-width: min(30rem, 60%);
+  }
+
+  @media (max-width: 599.98px) {
+    .slide .credit {
+      max-width: none;
+    }
+
+    .panel {
+      top: auto;
+      bottom: calc(var(--space-6) + 2.5rem);
+    }
+  }
+</style>

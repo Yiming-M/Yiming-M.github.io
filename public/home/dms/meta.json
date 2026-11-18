@@ -1,0 +1,45 @@
+{
+  "_comment": "由 scripts/dms/build_dms.py 生成，不要手改。格式见该脚本开头。",
+  "grid": {
+    "width": 480,
+    "height": 360
+  },
+  "views": {
+    "front": {
+      "depth": "front-depth.png",
+      "ir": "front-ir.jpg",
+      "rgb": "front-rgb.jpg",
+      "face": [
+        0.51,
+        0.31,
+        0.45
+      ]
+    },
+    "side": {
+      "depth": "side-depth.png",
+      "ir": "side-ir.jpg",
+      "rgb": "side-rgb.jpg",
+      "face": [
+        0.33,
+        0.22,
+        0.5176
+      ]
+    },
+    "top": {
+      "depth": "top-depth.png",
+      "ir": "top-ir.jpg",
+      "rgb": "top-rgb.jpg",
+      "face": [
+        0.49,
+        0.25,
+        0.8175
+      ]
+    }
+  },
+  "static": {
+    "file": "static.jpg",
+    "width": 1200,
+    "height": 900
+  },
+  "source": "ChatGPT 生成的示意图像"
+}
