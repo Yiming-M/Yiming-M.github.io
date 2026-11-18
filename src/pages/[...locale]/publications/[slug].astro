@@ -197,8 +197,11 @@ const jsonLd = scholarlyArticleJsonLd(pub, pageUrl, shareImageUrl);
     height: auto;
   }
 
+  /* 列宽用 minmax(0, 1fr)：默认的列宽会被 BibTeX 最长的一行撑开，手机上整页出现横向滚动；
+   * 限定后代码框在自己内部横向滚动。 */
   .body {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-12);
     margin-top: var(--space-12);
   }

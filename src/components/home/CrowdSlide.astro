@@ -32,11 +32,10 @@ const count = meta.count.toLocaleString(isZh ? "zh-CN" : "en-GB");
 
   <img
     class="still"
-    src={`/home/crowd/${meta.static.file}`}
+    data-src={`/home/crowd/${meta.static.file}`}
     width={meta.static.width}
     height={meta.static.height}
     alt={isZh ? `从舞台后方看演唱会的观众，叠加人群密度热力图和等高线，共标注了 ${count} 个人头` : `A concert audience seen from behind the performer, with a crowd-density heatmap and contour lines; ${count} heads annotated`}
-    loading="lazy"
     decoding="async"
   />
   <canvas class="scene" aria-hidden="true"></canvas>

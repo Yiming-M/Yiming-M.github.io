@@ -5,10 +5,12 @@
  * 设计（设计文档 §4）：全屏的研究项目展示（第一页是当前的前列腺 MRI，右侧小方块切换到过去的项目）
  * + 左上角站名 + 四个栏目标签 + 语言和主题控件，不放简介、论文、搜索。
  * 各页内容、3D 场景、静态图降级和数据署名都在 HomeShowcase 及其各页组件里。
+ * 页面上没有可见的大标题（各项目名是 <h2>），所以放一个只给屏幕阅读器和搜索引擎的 <h1>。
  */
 import HomeShowcase from "../../components/home/HomeShowcase.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { localeStaticPaths } from "../../lib/routes";
+import { localize, site } from "../../lib/site";
 
 export const getStaticPaths = localeStaticPaths;
 
@@ -24,5 +26,8 @@ const isZh = locale === "zh";
     ? "马一铭，伦敦国王学院博士后，研究前列腺癌主动监测中的医学影像 AI。"
     : "Yiming Ma, postdoctoral researcher at King's College London working on medical imaging AI for prostate cancer active surveillance."}
 >
+  <h1 class="visually-hidden">
+    {isZh ? `${localize(locale, site.title)}：${site.nameZh}的研究项目` : `${localize(locale, site.title)}: research projects by ${site.name}`}
+  </h1>
   <HomeShowcase locale={locale} />
 </BaseLayout>

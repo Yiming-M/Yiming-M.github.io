@@ -177,7 +177,10 @@ const sizesFor: Record<Row["kind"], string> = {
     pointer-events: none;
   }
 
+  /* 上下加内边距：点击区域至少 24 像素高（WCAG 2.2 的目标尺寸要求） */
   .crumb a {
+    display: inline-block;
+    padding: var(--space-1) 0;
     color: rgb(243 241 234 / 78%);
     font-size: var(--text-sm);
     pointer-events: auto;

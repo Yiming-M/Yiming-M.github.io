@@ -7,7 +7,9 @@
  *   2. CrowdSlide 人群计数（3D：crowd-scene.js）
  *   3. DmsSlide   驾驶员监控（3D：dms-scene.js）
  * 新增一页：写一个 XxxSlide.astro（根元素 <article class="slide" data-slide="xxx">，含 .slide-title、
- * .still 静态图、canvas.scene、.credit），在下面的 slides 和脚本里的 loaders 各加一项。
+ * .still 静态图、canvas.scene，需要注明数据来源时加 .credit），在下面的 slides 和脚本里的 loaders 各加一项。
+ * 除第一页外，各页的静态图写 data-src 而不是 src：切到那一页时才填上 src 开始下载。几页叠在同一个位置，
+ * 浏览器的懒加载会认为它们都在视野里，一打开首页就全部下载（手机上多下几百 KB）。
  *
  * 切换方式：右侧竖排的小方块（点击）、鼠标滚轮或触控板、键盘 ↑ ↓ / PageUp PageDown、手机上下滑动。
  * 当前页写进网址的 # 后面（如 /#crowd），可以直接分享某一页。
@@ -132,6 +134,12 @@ const slides = [
       slides.forEach((slide, i) => {
         const isActive = i === next;
         slide.toggleAttribute("data-active", isActive);
+        // 切到这一页时才开始下载它的静态图（见文件开头）
+        const still = slide.querySelector<HTMLImageElement>("img.still[data-src]");
+        if (isActive && still) {
+          still.src = still.dataset.src!;
+          still.removeAttribute("data-src");
+        }
         // 隐藏的页面不能被键盘 Tab 到，也不会被屏幕阅读器读出
         slide.inert = !isActive;
         controllers.get(keys[i])?.setActive(isActive);

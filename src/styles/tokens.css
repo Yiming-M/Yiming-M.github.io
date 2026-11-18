@@ -43,7 +43,7 @@
   /* —— 颜色：首页展示区 ——
    * 首页 3D 区域不随主题变化（设计文档 §3.2），所以单独一组变量，深浅主题下取值相同。
    * Phase 4 渲染出 MRI 后再定最终的背景色。 */
-  --showcase-bg: #070a12; /* 与 public/home/mri/static.png 的背景一致，改动时要重新生成静态图 */
+  --showcase-bg: #070a12; /* 与 scripts/mri/build_scene.py 的 BACKGROUND 一致（静态图的边缘按它淡出），改动时两处一起改并重新生成静态图 */
   --showcase-text: #f3f1ea;
   --showcase-text-muted: rgb(243 241 234 / 62%);
   --showcase-line: rgb(243 241 234 / 18%);

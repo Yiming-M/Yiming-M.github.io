@@ -7,7 +7,7 @@
  * - 滚到某个相册时，封面在 COVER_PUSH_SECONDS 秒内缓慢推近到 1.06 倍。
  * - 左下角：序号、相册名、地点 · 时间 · 张数。序号和底部渐变的颜色取自封面（cover-accent.ts，在浏览器里提取）。
  * - 桌面端鼠标悬停：封面像液面一样流动，鼠标周围泛起涟漪（liquid.ts，WebGL）。
- * - 开启“减少动态效果”：不推近、不扭曲（base.css 关掉所有过渡；liquid.ts 自己检查）。
+ * - 开启“减少动态效果”：不推近（本组件样式末尾的规则）、不扭曲（liquid.ts 自己检查）。
  * - 占位相册在右上角标“占位图”。
  */
 import { Picture } from "astro:assets";
@@ -135,6 +135,13 @@ const total = String(albums.length).padStart(2, "0");
   .cover[data-inview] .media {
     transform: scale(1.06);
     transition: transform 12s cubic-bezier(0.25, 0, 0.3, 1);
+  }
+
+  /* 减少动态效果：base.css 已经关掉过渡，这里再取消放大，否则封面会直接跳到 1.06 倍 */
+  @media (prefers-reduced-motion: reduce) {
+    .cover[data-inview] .media {
+      transform: none;
+    }
   }
 
   .media :global(img),

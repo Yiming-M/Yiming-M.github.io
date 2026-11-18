@@ -72,7 +72,8 @@ const chineseUrl = new URL(localePath("zh", path), Astro.site);
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex" />}
 
-    <link rel="canonical" href={canonical} />
+    {/* 不收录的页面（如 404）没有规范地址：GitHub Pages 在任何不存在的地址上都返回它 */}
+    {!noindex && <link rel="canonical" href={canonical} />}
     {
       hasAlternate && (
         <>
@@ -88,7 +89,7 @@ const chineseUrl = new URL(localePath("zh", path), Astro.site);
     <meta property="og:site_name" content={siteName} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
+    {!noindex && <meta property="og:url" content={canonical} />}
     <meta property="og:locale" content={isZh ? "zh_CN" : "en_GB"} />
 
     <link rel="icon" href="/favicon.ico" sizes="any" />

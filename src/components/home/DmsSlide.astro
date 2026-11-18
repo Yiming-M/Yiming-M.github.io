@@ -8,8 +8,8 @@
  *   鼠标处的镜头里，中心是红外，外圈按深度着色。左侧三个按钮切换前方、侧方、上方机位；
  * - 静态（手机、减少动态效果、不支持 WebGL2）：前方机位的夜间彩色图，脸上叠加同样的镜头（public/home/dms/static.jpg）。
  *
- * 数据由 scripts/dms/build_dms.py 生成。图像是作者用 ChatGPT 生成的示意图（真实的 DAD 数据集许可不允许发布），
- * 右下角写明。图例的颜色与 build_dms.py、dms-scene.js 的配色一致。
+ * 数据由 scripts/dms/build_dms.py 生成。图像是作者用 ChatGPT 生成的（真实的 DAD 数据集许可不允许发布）；
+ * 页面上不标注来源（2026-11-18 作者决定，个人网站不需要）。图例的颜色与 build_dms.py、dms-scene.js 的配色一致。
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -27,7 +27,7 @@ const meta = JSON.parse(fs.readFileSync(path.join(process.cwd(), "public/home/dm
 };
 
 const modalities = [
-  { key: "night", label: isZh ? "彩色相机（夜间）" : "Colour camera (at night)" },
+  { key: "night", label: isZh ? "彩色相机" : "Colour camera" },
   { key: "ir", label: isZh ? "红外" : "Infrared" },
   { key: "depth", label: isZh ? "深度" : "Depth" },
 ];
@@ -45,13 +45,12 @@ const views = [
 
   <img
     class="still"
-    src={`/home/dms/${meta.static.file}`}
+    data-src={`/home/dms/${meta.static.file}`}
     width={meta.static.width}
     height={meta.static.height}
     alt={isZh
       ? "夜间车内前方相机看到的驾驶员：彩色画面很暗；脸上的圆形区域中心是清楚的红外图像，外圈按深度着色并画出等深线"
       : "A driver seen by a front-facing in-cabin camera at night: the colour image is very dark; a circular lens over the face shows a clear infrared image in the centre and depth colours with contour lines around it"}
-    loading="lazy"
     decoding="async"
   />
   <canvas class="scene" aria-hidden="true"></canvas>
@@ -82,10 +81,6 @@ const views = [
 
   <p class="hint" aria-hidden="true">
     {isZh ? "移动鼠标：镜头跟着鼠标，画面随之转动" : "Move the mouse: the lens follows it and the view turns"}
-  </p>
-
-  <p class="credit">
-    {isZh ? "图像由 AI（ChatGPT）生成，仅作示意" : "Images generated with AI (ChatGPT), for illustration only"}
   </p>
 </article>
 
@@ -213,19 +208,11 @@ const views = [
     color: var(--showcase-bg);
   }
 
-  /* 署名比其他页长：放宽，免得换成两行后和上方的操作提示叠在一起 */
-  .slide .credit {
-    max-width: min(30rem, 60%);
-  }
-
+  /* 手机上放到左下角（这一页没有署名，直接贴底） */
   @media (max-width: 599.98px) {
-    .slide .credit {
-      max-width: none;
-    }
-
     .panel {
       top: auto;
-      bottom: calc(var(--space-6) + 2.5rem);
+      bottom: var(--space-6);
     }
   }
 </style>

@@ -6,7 +6,7 @@
  * 3D 场景本身在 mri-scene.js。三种显示方式：
  * - 3D 宽屏：模型偏右，左侧三条标注用引线连到模型（mri-scene.js 会给本页加 data-wide）；
  * - 3D 不够宽：没有引线，标注变成左下角的图例；
- * - 静态图：手机、减少动态效果、不支持 WebGL2 时显示 public/home/mri/static.png。
+ * - 静态图：手机、减少动态效果、不支持 WebGL2 时显示 public/home/mri/static.webp（背景透明，透出页面背景）。
  *
  * 颜色（--mri-pz / --mri-tz / --mri-lesion）定义在 tokens.css；静态图里的同样颜色写在
  * scripts/mri/build_scene.py 的 COLORS，改颜色时两处一起改。右下角署名是 PI-CAI 数据许可的要求。
@@ -31,7 +31,7 @@ const callouts = [
 
   <img
     class="still"
-    src="/home/mri/static.png"
+    src="/home/mri/static.webp"
     width="688"
     height="688"
     alt={isZh

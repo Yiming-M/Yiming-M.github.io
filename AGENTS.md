@@ -8,7 +8,7 @@
 - 网站正在按 `docs/design/` 推倒重建。设计文档是实现的唯一依据：
   - [`docs/design/00-overall-design.md`](docs/design/00-overall-design.md)：总体设计
   - [`docs/design/01-implementation-plan.md`](docs/design/01-implementation-plan.md)：分阶段计划与验收标准
-- 当前进度：**Phase 5（Albums）已完成，待作者预览确认；下一步是 Phase 6（全站验收）。现在的三个相册是占位图，等作者提供照片后替换。`src/content/albums/test-*/` 是网上下载的本地测试相册，已在 .gitignore 里排除，不要提交。** 每完成一个阶段，更新这一行。
+- 当前进度：**Phase 6（全站验收）进行中：路由、链接、站点地图、404、各宽度、主题、键盘、减少动态效果、Lighthouse 已检查并修复；Safari、Firefox 和真机待作者检查。现在的三个相册是占位图，等作者提供照片后替换。`src/content/albums/test-*/` 是网上下载的本地测试相册，已在 .gitignore 里排除，不要提交。** 每完成一个阶段，更新这一行。
 
 ## 规则
 
@@ -125,7 +125,7 @@
   5. 转动时轮廓上有拉丝一样的飞点：调小 `build_dms.py` 的 `EDGE_GRADIENT`；露出被遮挡的空洞：调小 `dms-scene.js` 的 `MOUSE_YAW_DEGREES`、`MOUSE_PITCH_DEGREES`。
   6. 更新 `DmsSlide.astro` 里静态图的 alt。
 - **新增一页**：
-  1. 写 `XxxSlide.astro`，根元素是 `<article class="slide" data-slide="xxx">`，包含 `.slide-title`、`.still`（静态图）、`canvas.scene`、`.credit`；
+  1. 写 `XxxSlide.astro`，根元素是 `<article class="slide" data-slide="xxx">`，包含 `.slide-title`、`.still`（静态图，写 `data-src` 而不是 `src`：切到这一页时才加载）、`canvas.scene`，需要注明数据来源时加 `.credit`；
   2. 写 `xxx-scene.js`，导出 `startXxxScene(canvas, options)`，返回 `{ setActive, destroy }`，可以照着 `crowd-scene.js` 写；
   3. 在 `HomeShowcase.astro` 的 `slides` 列表和脚本里的 `loaders` 各加一项。
 
@@ -139,7 +139,7 @@
 2. **取得原始数据**，放在仓库外的新目录：
    - PI-CAI 换病例：`python3 -I scripts/mri/fetch_picai_case.py <目录> [--case 病例号]`。脚本只按字节范围读取约 20 MB，不下载 5 GB 的整包。
    - 其他数据集：需要一份 3D 影像，以及与它体素一一对应的分割标注。
-3. **生成网页数据**：`python3 -I scripts/mri/build_scene.py <目录> <病例号>`，输出 `slices.bin.gz`（切片）、`labels.bin.gz`（切片上的标签和轮廓）、`meshes.bin.gz`（三个曲面）、`meta.json`、`static.png`（手机等情况下显示的静态横断面）。
+3. **生成网页数据**：`python3 -I scripts/mri/build_scene.py <目录> <病例号>`，输出 `slices.bin.gz`（切片）、`labels.bin.gz`（切片上的标签和轮廓）、`meshes.bin.gz`（三个曲面）、`meta.json`、`static.webp`（手机等情况下显示的静态横断面，背景透明）。
    - 换数据集时，修改脚本里的读取函数和三个结构的掩码。输出格式保持不变，格式说明写在脚本开头和 `meta.json` 里。
    - 改颜色时，三处要一起改：`tokens.css` 的 `--mri-pz` / `--mri-tz` / `--mri-lesion`（3D 场景从这里读取）、`build_scene.py` 的 `COLORS`（静态图）、`--showcase-bg` 和脚本里的 `BACKGROUND`（背景）。改完要重新生成静态图。
    - 切片的着色规则在两处：`build_scene.py` 的 `render_static()` 和 `mri-scene.js` 的切片着色器，改动时两边一起改。

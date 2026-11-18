@@ -12,24 +12,26 @@
                     4 = 外周带轮廓，8 = 移行带轮廓，16 = 病灶轮廓
     meshes.bin.gz   外周带、移行带、病灶的平滑三维曲面：顶点坐标 int16（单位 0.01 mm）+ 三角形索引 uint16
     meta.json       尺寸、坐标换算、曲面在 meshes.bin 里的位置、标注锚点、数据来源与许可
-    static.png      静态图：病灶所在层面的横断面，叠加三个区域的彩色轮廓（手机、减少动态效果等情况使用）
+    static.webp     静态图：病灶所在层面的横断面，叠加三个区域的彩色轮廓（手机、减少动态效果等情况使用）。
+                    与背景色 BACKGROUND 完全相同的像素存成透明，让页面背景透出来：有损压缩会让背景偏一两级，
+                    在深色背景上会看出一个方框。
 
 坐标约定（三维场景里，单位 mm，原点在腺体中心）：
     X 向患者左侧，Y 向头侧（上），Z 向腹侧（前）。从正前方看，患者右侧在屏幕左侧，与放射科习惯一致。
 
 用法：
     python3 -I scripts/mri/build_scene.py <原始数据目录> <病例号>
-依赖：numpy、scipy（平滑和重采样）、nibabel（读取 .nii.gz）。
+依赖：numpy、scipy（平滑和重采样）、nibabel（读取 .nii.gz）、Pillow（编码 WebP）。
 """
 import gzip
 import json
 import os
-import struct
 import sys
 import zlib
 
 import nibabel as nib
 import numpy as np
+from PIL import Image
 from scipy import ndimage
 
 OUT_DIR = os.path.join("public", "home", "mri")
@@ -230,21 +232,6 @@ def upscale_bilinear(image, factor):
     return top * (1 - wy)[:, None, None] + bottom * wy[:, None, None]
 
 
-def write_png(path, rgb):
-    """用标准库写一张 8 位 RGB PNG（避免引入图像库依赖）。"""
-    height, width, _ = rgb.shape
-    raw = b"".join(b"\x00" + rgb[row].tobytes() for row in range(height))
-
-    def chunk(kind, data):
-        return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data) & 0xFFFFFFFF)
-
-    with open(path, "wb") as file:
-        file.write(b"\x89PNG\r\n\x1a\n")
-        file.write(chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0)))
-        file.write(chunk(b"IDAT", zlib.compress(raw, 9)))
-        file.write(chunk(b"IEND", b""))
-
-
 def render_static(intensity, labels):
     """
     静态图：一张横断面切片 + 三个区域的彩色轮廓，四周渐隐到背景色。
@@ -371,7 +358,9 @@ def main():
         json.dump(meta, file, ensure_ascii=False, indent=2)
 
     static = render_static(intensity[lesion_slice], labels[lesion_slice])
-    write_png(os.path.join(OUT_DIR, "static.png"), np.round(upscale_bilinear(static, 2) * 255).astype(np.uint8))
+    rgb = np.round(upscale_bilinear(static, 2) * 255).astype(np.uint8)
+    alpha = np.where(np.all(rgb == np.round(BACKGROUND * 255).astype(np.uint8), axis=-1), 0, 255).astype(np.uint8)
+    Image.fromarray(np.dstack([rgb, alpha]), mode="RGBA").save(os.path.join(OUT_DIR, "static.webp"), quality=90, method=6)
 
     sizes = {name: f"{os.path.getsize(os.path.join(OUT_DIR, name)) / 1024:.0f} KB" for name in sorted(os.listdir(OUT_DIR))}
     print(f"切片 {width}×{height}×{depth}（{spacing[0]:.2f} mm），病灶层 {lesion_slice}")
