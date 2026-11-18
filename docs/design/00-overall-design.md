@@ -339,6 +339,7 @@ photos:
 | photoswipe | 灯箱 |
 | d3-force | 关系图布局 |
 | mermaid | 流程图，按需加载 |
+| d3-transition | 和 Mermaid 一起加载，补上流程图悬停提示用到的过渡动画（2026-11-18 加入，见文章页脚本的注释） |
 | rehype-mathjax | 公式，替换 rehype-katex / katex |
 | pagefind | 构建后建立搜索索引 |
 | exifr | 读取 EXIF |

@@ -335,7 +335,10 @@ const tagLabel = (tag: string) => tag.split("/").at(-1)!;
       (document.documentElement.dataset.theme !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
 
     const renderDiagrams = async () => {
-      const { default: mermaid } = await import("mermaid");
+      // 同时加载 d3-transition：它在加载时给 d3 选择集装上 .transition()，Mermaid 的流程图悬停提示要用。
+      // Mermaid 经由 d3 总包间接引入它，但 d3 总包声明“没有副作用”，打包时这一步被摇树优化删掉了，
+      // 鼠标移到流程图节点上就会报 “transition is not a function”。所以这里直接导入一次。
+      const [{ default: mermaid }] = await Promise.all([import("mermaid"), import("d3-transition")]);
       mermaid.initialize({
         startOnLoad: false,
         theme: isDark() ? "dark" : "neutral",
