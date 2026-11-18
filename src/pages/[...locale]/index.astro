@@ -2,10 +2,11 @@
 /**
  * 首页：英文 /，中文 /zh/。
  *
- * 设计（设计文档 §4）：全屏 3D 前列腺 MRI + 左上角站名 + 四个栏目标签 + 语言和主题控件，
- * 不放简介、论文、搜索。3D 场景、静态图降级和数据署名都在 MriShowcase 里。
+ * 设计（设计文档 §4）：全屏的研究项目展示（第一页是当前的前列腺 MRI，右侧小方块切换到过去的项目）
+ * + 左上角站名 + 四个栏目标签 + 语言和主题控件，不放简介、论文、搜索。
+ * 各页内容、3D 场景、静态图降级和数据署名都在 HomeShowcase 及其各页组件里。
  */
-import MriShowcase from "../../components/home/MriShowcase.astro";
+import HomeShowcase from "../../components/home/HomeShowcase.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { localeStaticPaths } from "../../lib/routes";
 
@@ -23,5 +24,5 @@ const isZh = locale === "zh";
     ? "马一铭，伦敦国王学院博士后，研究前列腺癌主动监测中的医学影像 AI。"
     : "Yiming Ma, postdoctoral researcher at King's College London working on medical imaging AI for prostate cancer active surveillance."}
 >
-  <MriShowcase locale={locale} />
+  <HomeShowcase locale={locale} />
 </BaseLayout>

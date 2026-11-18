@@ -1,0 +1,24 @@
+{
+  "_comment": "由 scripts/crowd/build_crowd.py 生成，不要手改。格式见该脚本开头。",
+  "count": 639,
+  "density": {
+    "file": "density.png",
+    "width": 576,
+    "height": 384
+  },
+  "photo": {
+    "file": "photo.jpg",
+    "width": 1600,
+    "height": 1067
+  },
+  "static": {
+    "file": "static.jpg",
+    "width": 1400,
+    "height": 933
+  },
+  "source": {
+    "dataset": "NWPU-Crowd（验证集）",
+    "image": "251.jpg",
+    "datasetUrl": "https://gjy3035.github.io/NWPU-Crowd-Sample-Code/"
+  }
+}

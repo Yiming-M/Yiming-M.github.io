@@ -1,7 +1,7 @@
 /**
  * 首页 3D 前列腺 MRI 场景（设计文档 §4，方案 C：解剖模型 + 切面）。
  *
- * 由 MriShowcase.astro 在浏览器端按需动态加载（手机、减少动态效果、不支持 WebGL2 时不会加载本文件）。
+ * 由 HomeShowcase.astro 在浏览器端按需动态加载：第一次切到这一页、且设备适合显示 3D 时才加载（手机、减少动态效果、不支持 WebGL2 时不会加载本文件）。
  *
  * 画面：
  * - 三个半透明的三维曲面：外周带（青绿）、移行带（淡紫）、病灶（橙）。“X 光玻璃”质感：
@@ -177,7 +177,8 @@ function cssColor(element, name) {
  * @param {Record<string, SVGPathElement>} options.leaders 引线元素，键同上
  * @param {HTMLElement} [options.readout] 显示“当前第几层”的元素
  * @param {() => void} [options.onReady] 第一帧画完后调用
- * @returns {Promise<() => void>} 停止并释放资源的函数
+ * @returns {Promise<{ setActive: (active: boolean) => void, destroy: () => void }>}
+ *          setActive：切到 / 离开这一页时调用；destroy：停止并释放资源
  */
 export async function startMriScene(canvas, { base, root, callouts, leaders, readout, onReady }) {
   const meta = await (await fetch(`${base}meta.json`)).json();
@@ -308,8 +309,11 @@ export async function startMriScene(canvas, { base, root, callouts, leaders, rea
   const state = { yaw: (INTRO_YAW_DEGREES * Math.PI) / 180, slice: depth - 1 };
   const target = { yaw: 0, slice: restSlice };
 
+  /** 这一页是否正在显示。首页有多个项目页，切到别的页时不响应鼠标、不渲染。 */
+  let active = true;
+
   function onPointerMove(event) {
-    if (event.pointerType !== "mouse") return;
+    if (!active || event.pointerType !== "mouse") return;
     target.yaw = ((event.clientX / window.innerWidth) * 2 - 1) * maxYaw;
     target.slice = (1 - event.clientY / window.innerHeight) * (depth - 1); // 屏幕上方 = 头侧
     requestRender();
@@ -370,7 +374,7 @@ export async function startMriScene(canvas, { base, root, callouts, leaders, rea
     if (moving) requestRender();
   }
   function requestRender() {
-    if (!frame) frame = requestAnimationFrame(render);
+    if (active && !frame) frame = requestAnimationFrame(render);
   }
 
   const resizeObserver = new ResizeObserver(resize);
@@ -379,7 +383,18 @@ export async function startMriScene(canvas, { base, root, callouts, leaders, rea
   document.documentElement.addEventListener("pointerleave", onPointerLeave);
   resize();
 
-  return () => {
+  /** 切换页时由 HomeShowcase 调用：离开时停止渲染；回来时从正面和病灶层面开始。 */
+  function setActive(value) {
+    active = value;
+    if (active) {
+      onPointerLeave();
+    } else {
+      cancelAnimationFrame(frame);
+      frame = 0;
+    }
+  }
+
+  function destroy() {
     cancelAnimationFrame(frame);
     resizeObserver.disconnect();
     window.removeEventListener("pointermove", onPointerMove);
@@ -393,5 +408,7 @@ export async function startMriScene(canvas, { base, root, callouts, leaders, rea
     sliceMaterial.uniforms.uSlices.value.dispose();
     sliceMaterial.uniforms.uLabels.value.dispose();
     renderer.dispose();
-  };
+  }
+
+  return { setActive, destroy };
 }

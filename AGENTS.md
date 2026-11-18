@@ -89,6 +89,24 @@
 
 Phase 5 补全。
 
+### 首页的项目页
+
+首页是一组全屏的项目页，右侧小方块切换，也可以用滚轮、↑ ↓ 键或在手机上滑动切换（`src/components/home/HomeShowcase.astro`）。第一页始终是当前的研究方向。
+
+- **现有各页**：
+  - `MriSlide.astro` + `mri-scene.js`：前列腺癌主动监测，数据在 `public/home/mri/`，换数据见下一节；
+  - `CrowdSlide.astro` + `crowd-scene.js`：人群计数，数据在 `public/home/crowd/`。
+- **人群计数页换图片**（画面是“密度地形”：由人头标注生成的密度图从平放的照片上升起，成为发光的地形）：
+  1. 选图：演唱会、体育馆这类场景；人数适中（几百到一两千），透视明显，前排稀疏、后排密集，地形才有起伏。整片均匀密集的远景不合适：人太小，地形会变成一块平台。不要选军训、集会、宗教、政治类场景。
+  2. 图片在作者服务器 `Server-5900X-Auto` 的 `~/Code/ZIP-dev/data/nwpu/val/images/`，标注在 `~/Code/ZIP/data/nwpu/val/labels/`（`.npy`，int16 的 (x, y) 像素坐标）。
+  3. 把图片和标注拷到本机仓库外的目录，运行 `python3 -I scripts/crowd/build_crowd.py <标注.npy> <照片.jpg>`。
+  4. 更新 `CrowdSlide.astro` 开头的说明和图片 alt；照片不是 3:2 时，改 `.still` 的宽度公式。
+  5. 地形太尖或太平时，调 `build_crowd.py` 的 `SIGMA_MIN_PX`（越大越圆润）和 `crowd-scene.js` 的 `TERRAIN_HEIGHT`。
+- **新增一页**：
+  1. 写 `XxxSlide.astro`，根元素是 `<article class="slide" data-slide="xxx">`，包含 `.slide-title`、`.still`（静态图）、`canvas.scene`、`.credit`；
+  2. 写 `xxx-scene.js`，导出 `startXxxScene(canvas, options)`，返回 `{ setActive, destroy }`，可以照着 `crowd-scene.js` 写；
+  3. 在 `HomeShowcase.astro` 的 `slides` 列表和脚本里的 `loaders` 各加一项。
+
 ### 更换首页 3D 数据
 
 首页展示的是一例前列腺 MRI 的三维解剖模型加切面：外周带、移行带、病灶三个平滑曲面，以及一张可以上下扫动的原始分辨率横断面（设计文档 §4）。研究方向变化、想换病例或换成别的影像时，按以下步骤操作。
@@ -134,9 +152,10 @@ Phase 5 补全。
 | `src/pages/[...locale]/publications/` | 论文列表 `index.astro` 和详情页 `[slug].astro` |
 | `src/components/` | 页头 `SiteHeader`、页脚 `SiteFooter`、主题与语言切换、搜索按钮和搜索对话框（Pagefind）、图标、栏目占位页；论文用的作者列表、链接和 Cite 块；关系图 `GraphView` |
 | `src/lib/publications.ts` | 论文排序、分组、BibTeX 生成规则、citation meta 和 JSON-LD |
-| `src/components/home/` | 首页展示区 `MriShowcase.astro`（3D / 静态图切换、标注与引线、署名）和 3D 场景 `mri-scene.js`（three.js：曲面 + 切面） |
+| `src/components/home/` | 首页展示区：`HomeShowcase.astro`（多页切换、共用版式）、各项目页 `MriSlide.astro` / `CrowdSlide.astro`，以及对应的 3D 场景 `mri-scene.js` / `crowd-scene.js` |
 | `scripts/mri/` | 首页 MRI 数据：下载 PI-CAI 单个病例 `fetch_picai_case.py`、生成网页数据 `build_scene.py` |
-| `public/home/mri/` | 首页 MRI 的体数据、标签、元信息和静态图；由脚本生成，不要手改 |
+| `public/home/mri/`、`public/home/crowd/` | 首页各项目页的数据；由 `scripts/mri/`、`scripts/crowd/` 里的脚本生成，不要手改 |
+| `scripts/crowd/` | 首页人群计数页的数据：`build_crowd.py`（生成密度地形的高度图、照片贴图和静态图） |
 | `src/pages/[...locale]/posts/` | 文章索引 `index.astro`、文章页 `[slug].astro`、全站关系图 `graph.astro` |
 | `src/lib/posts.ts` | 文章读取与校验、分类、系列、阅读时长、反向链接、关系图数据 |
 | `src/lib/obsidian/` | Obsidian 写法的构建插件 `remark-obsidian.mjs`、笔记索引与双链解析 `notes.mjs`、标题锚点规则 `slug.mjs` |

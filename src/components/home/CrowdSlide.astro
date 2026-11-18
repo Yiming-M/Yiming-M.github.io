@@ -1,0 +1,96 @@
+---
+/**
+ * 首页第 2 页：人群计数（博士期间的研究，对应 CLIP-EBC、ZIP、FusionCount 等论文）。
+ *
+ * 这里只放这一页的标记和样式；切页、3D 场景的加载由 HomeShowcase.astro 统一负责，
+ * 3D 场景本身在 crowd-scene.js。两种显示方式：
+ * - 3D（桌面）：“密度地形”，人群密度图从平放的照片上升起成发光的地形，左侧人数随之从 0 数到总数；
+ * - 静态（手机、减少动态效果、不支持 WebGL2）：照片叠加平面的热力图和等高线（public/home/crowd/static.jpg）。
+ *
+ * 数据由 scripts/crowd/build_crowd.py 生成。照片来自 NWPU-Crowd 验证集（第 251 张，从舞台后方拍的演唱会观众）。
+ */
+import fs from "node:fs";
+import path from "node:path";
+import type { Locale } from "../../lib/site";
+
+interface Props {
+  locale: Locale;
+}
+
+const isZh = Astro.props.locale === "zh";
+
+/** 构建时读取人数，显示在左侧。 */
+const meta = JSON.parse(fs.readFileSync(path.join(process.cwd(), "public/home/crowd/meta.json"), "utf8")) as {
+  count: number;
+  static: { file: string; width: number; height: number };
+};
+const count = meta.count.toLocaleString(isZh ? "zh-CN" : "en-GB");
+---
+
+<article class="slide" data-slide="crowd" aria-label={isZh ? "人群计数" : "Crowd counting"}>
+  <h2 class="slide-title">{isZh ? "人群计数" : "Crowd counting"}</h2>
+
+  <img
+    class="still"
+    src={`/home/crowd/${meta.static.file}`}
+    width={meta.static.width}
+    height={meta.static.height}
+    alt={isZh ? `从舞台后方看演唱会的观众，叠加人群密度热力图和等高线，共标注了 ${count} 个人头` : `A concert audience seen from behind the performer, with a crowd-density heatmap and contour lines; ${count} heads annotated`}
+    loading="lazy"
+    decoding="async"
+  />
+  <canvas class="scene" aria-hidden="true"></canvas>
+
+  <p class="figure">
+    <span class="count">{count}</span>
+    <span>{isZh ? "个人头标注" : "annotated heads"}</span>
+  </p>
+
+  <p class="hint" aria-hidden="true">
+    {isZh ? "鼠标移到上方看原照片，往下移让密度地形升起；左右移动旋转" : "Move the mouse up to see the original photo, down to raise the density terrain; sideways to rotate"}
+  </p>
+
+  <p class="credit">
+    {isZh ? "数据：" : "Data: "}
+    <a href="https://gjy3035.github.io/NWPU-Crowd-Sample-Code/">NWPU-Crowd</a>
+  </p>
+</article>
+
+<style>
+  /* 静态图：照片按原比例（3:2）显示，宽度不超过画面的 92%、高度不超过 72%。 */
+  .still {
+    width: min(92vw, calc(72svh * 1.5));
+    height: auto;
+    border-radius: var(--radius-surface);
+  }
+
+  /* 人数：标题下方（窄屏在左下角），宽屏时在左侧垂直居中。 */
+  .figure {
+    position: absolute;
+    left: var(--gutter);
+    top: calc(var(--header-height) + var(--space-16));
+    display: grid;
+    gap: var(--space-1);
+    font-size: var(--text-sm);
+  }
+
+  .count {
+    color: var(--showcase-text);
+    font-size: var(--text-3xl);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .slide[data-ready][data-wide] .figure {
+    top: 50%;
+    left: clamp(var(--gutter), 6vw, 7rem);
+    transform: translateY(-50%);
+  }
+
+  @media (max-width: 599.98px) {
+    .figure {
+      top: auto;
+      bottom: calc(var(--space-6) + 2.5rem);
+    }
+  }
+</style>

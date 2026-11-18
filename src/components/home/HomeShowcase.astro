@@ -1,0 +1,433 @@
+---
+/**
+ * 首页的全屏展示区：多个研究项目，一次显示一页（设计文档 §4）。
+ *
+ * 页面（按顺序，第一页始终是当前的研究方向）：
+ *   1. MriSlide   前列腺癌主动监测（3D：mri-scene.js）
+ *   2. CrowdSlide 人群计数（3D：crowd-scene.js）
+ * 新增一页：写一个 XxxSlide.astro（根元素 <article class="slide" data-slide="xxx">，含 .slide-title、
+ * .still 静态图、canvas.scene、.credit），在下面的 slides 和脚本里的 loaders 各加一项。
+ *
+ * 切换方式：右侧竖排的小方块（点击）、鼠标滚轮或触控板、键盘 ↑ ↓ / PageUp PageDown、手机上下滑动。
+ * 当前页写进网址的 # 后面（如 /#crowd），可以直接分享某一页。
+ *
+ * 3D 场景按需加载：只有切到某一页、且设备适合显示 3D（有鼠标、宽度 ≥ 768px、支持 WebGL2、
+ * 没有开启“减少动态效果”）时，才加载那一页的 three.js 场景；离开时暂停渲染。其余情况显示各页的静态图。
+ *
+ * 本文件的 <style is:global> 是各页共用的版式（标题、静态图与画布的切换、操作提示、署名），
+ * 都以 .showcase 开头，不会影响网站其他部分；各页独有的样式写在各自的组件里。
+ */
+import CrowdSlide from "./CrowdSlide.astro";
+import MriSlide from "./MriSlide.astro";
+import type { Locale } from "../../lib/site";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const isZh = locale === "zh";
+
+/** 分页按钮的顺序和名称，必须与下面各页的顺序、data-slide 一致。 */
+const slides = [
+  { key: "mri", label: isZh ? "前列腺癌主动监测" : "Prostate cancer active surveillance" },
+  { key: "crowd", label: isZh ? "人群计数" : "Crowd counting" },
+];
+---
+
+<section class="showcase" data-showcase aria-roledescription={isZh ? "项目展示" : "project showcase"} aria-label={isZh ? "研究项目" : "Research projects"}>
+  <MriSlide locale={locale} />
+  <CrowdSlide locale={locale} />
+
+  <nav class="pager" aria-label={isZh ? "切换研究项目" : "Switch research project"}>
+    <ol role="list">
+      {
+        slides.map((slide, index) => (
+          <li>
+            <button type="button" data-goto={slide.key} aria-current={index === 0 ? "true" : undefined}>
+              <span class="pager-label">{slide.label}</span>
+              <span class="pager-dot" aria-hidden="true" />
+            </button>
+          </li>
+        ))
+      }
+    </ol>
+  </nav>
+</section>
+
+<script>
+  /** 切页后的冷却时间（毫秒）：触控板一次滑动会连续产生很多滚轮事件，冷却期内只切一页。 */
+  const COOLDOWN_MS = 900;
+  /** 滚轮累计到这么多像素才切页，避免轻微碰到触控板就切换。 */
+  const WHEEL_THRESHOLD = 40;
+  /** 手机上下滑动超过这么多像素才切页。 */
+  const SWIPE_THRESHOLD = 50;
+
+  type Controller = { setActive: (active: boolean) => void; destroy: () => void };
+
+  const root = document.querySelector<HTMLElement>("[data-showcase]");
+  if (root) setup(root);
+
+  function setup(root: HTMLElement) {
+    const slides = [...root.querySelectorAll<HTMLElement>("[data-slide]")];
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>("[data-goto]")];
+    const keys = slides.map((slide) => slide.dataset.slide!);
+
+    const canAnimate =
+      window.matchMedia("(pointer: fine)").matches &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
+      window.innerWidth >= 768 &&
+      Boolean(document.createElement("canvas").getContext("webgl2"));
+
+    /** 每一页的 3D 场景加载方式。键是 data-slide 的值。 */
+    const loaders: Record<string, (slide: HTMLElement, canvas: HTMLCanvasElement, onReady: () => void) => Promise<Controller>> = {
+      mri: (slide, canvas, onReady) =>
+        import("./mri-scene.js").then(({ startMriScene }) =>
+          startMriScene(canvas, {
+            base: "/home/mri/",
+            root: slide,
+            callouts: Object.fromEntries([...slide.querySelectorAll<HTMLElement>("[data-callout]")].map((el) => [el.dataset.callout!, el])),
+            leaders: Object.fromEntries([...slide.querySelectorAll<SVGPathElement>("[data-leader]")].map((el) => [el.dataset.leader!, el])),
+            readout: slide.querySelector<HTMLElement>("[data-readout]") ?? undefined,
+            onReady,
+          }),
+        ),
+      crowd: (slide, canvas, onReady) =>
+        import("./crowd-scene.js").then(({ startCrowdScene }) => startCrowdScene(canvas, { base: "/home/crowd/", root: slide, onReady })),
+    };
+
+    const controllers = new Map<string, Controller>();
+    const loading = new Set<string>();
+    let current = -1;
+    let lastSwitch = 0;
+
+    /** 第一次切到某页时加载它的 3D 场景；加载失败时保留静态图。 */
+    function ensureScene(index: number) {
+      const key = keys[index];
+      if (!canAnimate || controllers.has(key) || loading.has(key) || !loaders[key]) return;
+      const slide = slides[index];
+      const canvas = slide.querySelector<HTMLCanvasElement>("canvas.scene");
+      if (!canvas) return;
+      loading.add(key);
+      loaders[key](slide, canvas, () => slide.setAttribute("data-ready", ""))
+        .then((controller) => {
+          controllers.set(key, controller);
+          controller.setActive(keys[current] === key);
+        })
+        .catch(() => {})
+        .finally(() => loading.delete(key));
+    }
+
+    function goTo(index: number) {
+      const next = (index + slides.length) % slides.length;
+      if (next === current) return;
+      current = next;
+      lastSwitch = performance.now();
+      slides.forEach((slide, i) => {
+        const isActive = i === next;
+        slide.toggleAttribute("data-active", isActive);
+        // 隐藏的页面不能被键盘 Tab 到，也不会被屏幕阅读器读出
+        slide.inert = !isActive;
+        controllers.get(keys[i])?.setActive(isActive);
+      });
+      buttons.forEach((button) => {
+        if (button.dataset.goto === keys[next]) button.setAttribute("aria-current", "true");
+        else button.removeAttribute("aria-current");
+      });
+      ensureScene(next);
+      // 网址里记下当前页（第一页不加 #，保持网址干净）
+      const hash = next === 0 ? "" : `#${keys[next]}`;
+      if (window.location.hash !== hash) history.replaceState(null, "", `${window.location.pathname}${hash}`);
+    }
+
+    const step = (direction: number) => {
+      if (performance.now() - lastSwitch < COOLDOWN_MS) return;
+      goTo(current + direction);
+    };
+
+    // 小方块
+    buttons.forEach((button) => button.addEventListener("click", () => goTo(keys.indexOf(button.dataset.goto!))));
+
+    // 鼠标滚轮 / 触控板：累计到阈值才切换；首页本身不需要滚动，所以阻止默认滚动
+    let wheelSum = 0;
+    root.addEventListener(
+      "wheel",
+      (event) => {
+        event.preventDefault();
+        if (performance.now() - lastSwitch < COOLDOWN_MS) {
+          wheelSum = 0;
+          return;
+        }
+        wheelSum += event.deltaY;
+        if (Math.abs(wheelSum) >= WHEEL_THRESHOLD) {
+          step(Math.sign(wheelSum));
+          wheelSum = 0;
+        }
+      },
+      { passive: false },
+    );
+
+    // 键盘：焦点不在输入框或菜单里时，↑ ↓ / PageUp PageDown 切页
+    document.addEventListener("keydown", (event) => {
+      const target = event.target as HTMLElement;
+      if (target.closest("input, textarea, [popover], dialog")) return;
+      if (event.key === "ArrowDown" || event.key === "PageDown") {
+        event.preventDefault();
+        step(1);
+      } else if (event.key === "ArrowUp" || event.key === "PageUp") {
+        event.preventDefault();
+        step(-1);
+      }
+    });
+
+    // 手机：上下滑动切页
+    let touchY: number | null = null;
+    root.addEventListener("touchstart", (event) => (touchY = event.touches[0].clientY), { passive: true });
+    root.addEventListener(
+      "touchend",
+      (event) => {
+        if (touchY === null) return;
+        const dy = touchY - event.changedTouches[0].clientY;
+        if (Math.abs(dy) > SWIPE_THRESHOLD) step(Math.sign(dy));
+        touchY = null;
+      },
+      { passive: true },
+    );
+
+    // 初始页：网址里有 #crowd 之类时直接打开那一页
+    const initial = keys.indexOf(window.location.hash.slice(1));
+    goTo(initial >= 0 ? initial : 0);
+  }
+</script>
+
+<style is:global>
+  /* —— 展示区与各页共用的版式 —— */
+  .showcase {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100svh;
+    overflow: hidden;
+    background: var(--showcase-bg);
+    color: var(--showcase-text-muted);
+  }
+
+  /* 每一页铺满展示区，叠在一起；当前页淡入，其余隐藏。 */
+  .showcase .slide {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 600ms var(--ease),
+      visibility 0s 600ms;
+  }
+
+  .showcase .slide[data-active] {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 600ms var(--ease);
+  }
+
+  /* 3D 画布在最底层，页面上的文字（标题、标注、提示、署名）都叠在它上面。 */
+  .showcase .slide > :not(.scene) {
+    z-index: 1;
+  }
+
+  /* 项目名：页头下方左侧。 */
+  .showcase .slide-title {
+    position: absolute;
+    top: calc(var(--header-height) + var(--space-4));
+    left: var(--gutter);
+    max-width: min(26rem, 70vw);
+    color: var(--showcase-text);
+    font-size: var(--text-2xl);
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .showcase .slide[data-ready][data-wide] .slide-title {
+    left: clamp(var(--gutter), 6vw, 7rem);
+  }
+
+  /* 3D 画布铺满整页；第一帧渲染完成（data-ready）后淡入，静态图随之隐藏。
+   * 就绪之前画布完全隐藏（visibility: hidden），不参与绘制，静态图始终可见。 */
+  .showcase .scene {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 700ms var(--ease),
+      visibility 0s 700ms;
+  }
+
+  .showcase .slide[data-ready] .scene {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 700ms var(--ease);
+  }
+
+  .showcase .slide[data-ready] .still {
+    visibility: hidden;
+  }
+
+  /* 操作提示：只在 3D 时显示，底部居中。 */
+  .showcase .hint {
+    position: absolute;
+    left: 50%;
+    bottom: var(--space-6);
+    display: none;
+    gap: var(--space-3);
+    font-size: var(--text-xs);
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+
+  .showcase .slide[data-ready] .hint {
+    display: flex;
+  }
+
+  .showcase .readout {
+    font-variant-numeric: tabular-nums;
+    opacity: 0.8;
+  }
+
+  /* 数据署名：右下角。 */
+  .showcase .credit {
+    position: absolute;
+    right: var(--gutter);
+    bottom: var(--space-6);
+    max-width: 40%;
+    font-size: var(--text-xs);
+    line-height: 1.6;
+    text-align: right;
+  }
+
+  .showcase .credit a {
+    color: inherit;
+  }
+
+  .showcase .credit a:hover {
+    color: var(--showcase-text);
+  }
+
+  /* 3D 但不够宽时（如 768–1100px），操作提示放到署名上方，避免与左下角图例、署名挤在一行。 */
+  @media (max-width: 1099.98px) {
+    .showcase .hint {
+      left: auto;
+      right: var(--gutter);
+      bottom: calc(var(--space-6) + 1.8rem);
+      transform: none;
+    }
+  }
+
+  @media (max-width: 599.98px) {
+    /* 项目名右边给横排的小方块留位置（按最多 3 页预留） */
+    .showcase .slide-title {
+      max-width: calc(100vw - var(--gutter) - 10rem);
+      font-size: var(--text-xl);
+    }
+
+    /* 很窄时（例如桌面上把窗口拖窄）不显示操作提示，避免和左下角的文字重叠 */
+    .showcase .slide[data-ready] .hint {
+      display: none;
+    }
+
+    .showcase .credit {
+      left: var(--gutter);
+      max-width: none;
+      text-align: left;
+    }
+  }
+
+  /* —— 分页小方块：右侧竖排，当前页实心，其余空心；悬停或键盘聚焦时在左侧显示项目名 —— */
+  .showcase .pager {
+    position: absolute;
+    top: 50%;
+    right: max(var(--space-2), calc(var(--gutter) - var(--space-3)));
+    z-index: 2;
+    transform: translateY(-50%);
+  }
+
+  .showcase .pager ol {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .showcase .pager button {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--showcase-text);
+    cursor: pointer;
+  }
+
+  .showcase .pager-dot {
+    width: 0.625rem;
+    height: 0.625rem;
+    border: 1.5px solid var(--showcase-text-muted);
+    border-radius: 2px;
+    transition:
+      background-color var(--duration) var(--ease),
+      border-color var(--duration) var(--ease),
+      transform var(--duration) var(--ease);
+  }
+
+  .showcase .pager button:hover .pager-dot {
+    border-color: var(--showcase-text);
+  }
+
+  .showcase .pager button[aria-current] .pager-dot {
+    border-color: var(--showcase-text);
+    background: var(--showcase-text);
+    transform: scale(1.15);
+  }
+
+  .showcase .pager-label {
+    position: absolute;
+    right: 100%;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-control);
+    background: rgb(7 10 18 / 70%);
+    font-size: var(--text-xs);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration) var(--ease);
+  }
+
+  .showcase .pager button:hover .pager-label,
+  .showcase .pager button:focus-visible .pager-label {
+    opacity: 1;
+  }
+
+  /* 手机上静态图几乎占满宽度，右侧竖排的小方块会压在图上：改为横排，放在右上角，
+   * 与项目名的第一行对齐（按钮高 2.75rem，项目名第一行高约 1.5rem，所以上移两者之差的一半）。
+   * 必须写在小方块的基础样式之后，才能覆盖它们。 */
+  @media (max-width: 599.98px) {
+    .showcase .pager {
+      top: calc(var(--header-height) + var(--space-4) - 0.625rem);
+      transform: none;
+    }
+
+    .showcase .pager ol {
+      grid-auto-flow: column;
+    }
+
+    /* 项目名已经写在左边，不再弹出标签（触屏点按后 :hover 会一直保留，标签会压住项目名）。
+     * 只调透明度，标签仍是按钮的无障碍名称。 */
+    .showcase .pager button:hover .pager-label,
+    .showcase .pager button:focus-visible .pager-label {
+      opacity: 0;
+    }
+  }
+</style>

@@ -1,0 +1,185 @@
+---
+/**
+ * 首页第 1 页：前列腺癌主动监测（当前的研究方向）。三维解剖模型 + 切面（设计文档 §4，方案 C）。
+ *
+ * 这里只放这一页的标记和样式；切页、3D 场景的加载由 HomeShowcase.astro 统一负责，
+ * 3D 场景本身在 mri-scene.js。三种显示方式：
+ * - 3D 宽屏：模型偏右，左侧三条标注用引线连到模型（mri-scene.js 会给本页加 data-wide）；
+ * - 3D 不够宽：没有引线，标注变成左下角的图例；
+ * - 静态图：手机、减少动态效果、不支持 WebGL2 时显示 public/home/mri/static.png。
+ *
+ * 颜色（--mri-pz / --mri-tz / --mri-lesion）定义在 tokens.css；静态图里的同样颜色写在
+ * scripts/mri/build_scene.py 的 COLORS，改颜色时两处一起改。右下角署名是 PI-CAI 数据许可的要求。
+ */
+import type { Locale } from "../../lib/site";
+
+interface Props {
+  locale: Locale;
+}
+
+const isZh = Astro.props.locale === "zh";
+
+const callouts = [
+  { key: "pz", title: isZh ? "外周带" : "Peripheral zone", detail: isZh ? "PZ · 大多数前列腺癌起源于此" : "PZ · where most prostate cancers arise" },
+  { key: "tz", title: isZh ? "移行带" : "Transition zone", detail: isZh ? "TZ · 环绕尿道，随年龄增大" : "TZ · surrounds the urethra, enlarges with age" },
+  { key: "lesion", title: isZh ? "病灶" : "Lesion", detail: isZh ? "临床显著性癌 · ISUP 2 级" : "Clinically significant cancer · ISUP grade 2" },
+];
+---
+
+<article class="slide" data-slide="mri" aria-label={isZh ? "前列腺癌主动监测" : "Prostate cancer active surveillance"}>
+  <h2 class="slide-title">{isZh ? "前列腺癌主动监测" : "Prostate cancer active surveillance"}</h2>
+
+  <img
+    class="still"
+    src="/home/mri/static.png"
+    width="688"
+    height="688"
+    alt={isZh
+      ? "前列腺 T2 加权 MRI 横断面：青绿色轮廓为外周带，淡紫色轮廓为移行带，橙色区域为一处临床显著性癌病灶"
+      : "Axial T2-weighted prostate MRI: the peripheral zone outlined in teal, the transition zone in lavender, and a clinically significant cancer lesion in orange"}
+    decoding="async"
+    fetchpriority="high"
+  />
+  <canvas class="scene" aria-hidden="true"></canvas>
+  <svg class="leaders" aria-hidden="true">
+    {callouts.map((item) => <path data-leader={item.key} class={item.key} />)}
+  </svg>
+
+  <ol class="callouts" role="list">
+    {
+      callouts.map((item) => (
+        <li data-callout={item.key}>
+          <span class:list={["swatch", item.key]} aria-hidden="true" />
+          <span class="text">
+            <strong>{item.title}</strong>
+            <span>{item.detail}</span>
+          </span>
+        </li>
+      ))
+    }
+  </ol>
+
+  <p class="hint" aria-hidden="true">
+    {isZh ? "左右移动鼠标旋转，上下移动扫过切面" : "Move the mouse sideways to rotate, up and down to sweep the slice"}
+    <span class="readout">{isZh ? "层面 " : "Slice "}<span data-readout></span></span>
+  </p>
+
+  <p class="credit">
+    {isZh ? "数据：" : "Data: "}
+    <a href="https://pi-cai.grand-challenge.org/">PI-CAI</a>
+    {isZh ? "公开数据集，" : " public dataset, "}
+    <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a>
+  </p>
+</article>
+
+<style>
+  /* 静态图：居中，占画面高度的约 78%。 */
+  .still {
+    width: min(78svh, 94vw);
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  /* —— 引线：只在 3D 且宽屏时显示 —— */
+  .leaders {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .slide[data-ready][data-wide] .leaders {
+    display: block;
+  }
+
+  .leaders path {
+    fill: none;
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+    opacity: 0.75;
+  }
+
+  .leaders .pz {
+    stroke: var(--mri-pz);
+  }
+
+  .leaders .tz {
+    stroke: var(--mri-tz);
+  }
+
+  .leaders .lesion {
+    stroke: var(--mri-lesion);
+  }
+
+  /* —— 标注 ——
+   * 默认（静态图、不够宽）：左下角的紧凑图例。3D 宽屏：左侧竖排的大号标注，引线连到模型。 */
+  .callouts {
+    position: absolute;
+    left: var(--gutter);
+    bottom: calc(var(--space-6) + 2.5rem);
+    display: grid;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    line-height: 1.5;
+  }
+
+  .callouts li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .callouts .text {
+    display: grid;
+  }
+
+  .callouts strong {
+    color: var(--showcase-text);
+    font-weight: 500;
+  }
+
+  .callouts .text > span {
+    display: none;
+  }
+
+  .swatch {
+    flex: none;
+    width: 0.7rem;
+    height: 0.7rem;
+    margin-top: 0.3em;
+    border-radius: 3px;
+  }
+
+  .swatch.pz {
+    background: var(--mri-pz);
+  }
+
+  .swatch.tz {
+    background: var(--mri-tz);
+  }
+
+  .swatch.lesion {
+    background: var(--mri-lesion);
+  }
+
+  .slide[data-ready][data-wide] .callouts {
+    top: 50%;
+    bottom: auto;
+    left: clamp(var(--gutter), 6vw, 7rem);
+    gap: var(--space-8);
+    max-width: 18rem;
+    font-size: var(--text-sm);
+    transform: translateY(-50%);
+  }
+
+  .slide[data-ready][data-wide] .callouts strong {
+    font-size: var(--text-lg);
+  }
+
+  .slide[data-ready][data-wide] .callouts .text > span {
+    display: block;
+  }
+</style>
