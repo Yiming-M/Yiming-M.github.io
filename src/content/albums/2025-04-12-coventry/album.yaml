@@ -1,0 +1,34 @@
+# 考文垂战争纪念公园的鸟（2025 年 4 月 2 日、12 日拍摄，佳能 EOS R8）。
+# 2026-11-18 从作者提供的 15 张里选出 11 张，原图未做任何处理（IMG_0051、IMG_0055 带 GPS）。
+# 文件夹名用大多数照片的拍摄日期（11 张里 9 张拍于 4 月 12 日）。
+# 封面由作者指定（竖幅，索引页和相册开场会裁成横向全屏）。
+# photos 的顺序按 AlbumStory.astro 的版式安排：横幅轮流宽幅、满幅；相邻两张竖幅并排，落单的竖幅靠一侧。
+# 图注写鸟的种类（中文名、英文名加学名），显示在照片下方相机参数的上面；种类由 agent 按照片辨认，
+# 雪花姬地鸠的中文名取自 Birds of the World 的多语种名称表。
+title: { zh: "战争纪念公园的鸟", en: "Birds of War Memorial Park" }
+date: 2025-04
+place: { zh: "英格兰考文垂，战争纪念公园", en: "War Memorial Park, Coventry, England" }
+cover: IMG_0473.jpeg
+photos:
+  - src: IMG_0473.jpeg
+    caption: { zh: "玄凤鹦鹉（Nymphicus hollandicus）", en: "Cockatiel (Nymphicus hollandicus)" }
+  - src: IMG_0055.jpeg
+    caption: { zh: "绿颊锥尾鹦鹉（Pyrrhura molinae）", en: "Green-cheeked conure (Pyrrhura molinae)" }
+  - src: IMG_0051.jpeg
+    caption: { zh: "虎皮鹦鹉（Melopsittacus undulatus）", en: "Budgerigar (Melopsittacus undulatus)" }
+  - src: IMG_0387.jpeg
+    caption: { zh: "玄凤鹦鹉，黄化（Nymphicus hollandicus）", en: "Cockatiel, lutino (Nymphicus hollandicus)" }
+  - src: IMG_0223.jpeg
+    caption: { zh: "虎皮鹦鹉（Melopsittacus undulatus）", en: "Budgerigars (Melopsittacus undulatus)" }
+  - src: IMG_0180.jpeg
+    caption: { zh: "雪花姬地鸠（Geopelia cuneata）", en: "Diamond dove (Geopelia cuneata)" }
+  - src: IMG_0324.jpeg
+    caption: { zh: "虎皮鹦鹉（Melopsittacus undulatus）", en: "Budgerigar (Melopsittacus undulatus)" }
+  - src: IMG_0175.jpeg
+    caption: { zh: "东玫瑰鹦鹉（Platycercus eximius）", en: "Eastern rosella (Platycercus eximius)" }
+  - src: IMG_0377.jpeg
+    caption: { zh: "玄凤鹦鹉（Nymphicus hollandicus）", en: "Cockatiels (Nymphicus hollandicus)" }
+  - src: IMG_0361.jpeg
+    caption: { zh: "山齿鹑（Colinus virginianus）", en: "Northern bobwhite (Colinus virginianus)" }
+  - src: IMG_0462.jpeg
+    caption: { zh: "虎皮鹦鹉（Melopsittacus undulatus）", en: "Budgerigars (Melopsittacus undulatus)" }

@@ -146,7 +146,7 @@ const posts = defineCollection({
 /**
  * 相册。每个相册一个文件夹，文件夹名就是网址里的 slug；照片放在同一个文件夹里：
  *
- *   src/content/albums/2025-scotland/
+ *   src/content/albums/2025-08-12-scotland/   # 文件夹名用“拍摄日期-地点”
  *     album.yaml
  *     IMG_0001.jpg
  *     IMG_0002.jpg

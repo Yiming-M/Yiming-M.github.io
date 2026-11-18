@@ -8,7 +8,7 @@
 - 网站正在按 `docs/design/` 推倒重建。设计文档是实现的唯一依据：
   - [`docs/design/00-overall-design.md`](docs/design/00-overall-design.md)：总体设计
   - [`docs/design/01-implementation-plan.md`](docs/design/01-implementation-plan.md)：分阶段计划与验收标准
-- 当前进度：**Phase 6（全站验收）进行中：路由、链接、站点地图、404、各宽度、主题、键盘、减少动态效果、Lighthouse 已检查并修复；Safari、Firefox 和真机待作者检查。现在的三个相册是占位图，等作者提供照片后替换。`src/content/albums/test-*/` 是网上下载的本地测试相册，已在 .gitignore 里排除，不要提交。** 每完成一个阶段，更新这一行。
+- 当前进度：**Phase 6（全站验收）进行中：路由、链接、站点地图、404、各宽度、主题、键盘、减少动态效果、Lighthouse 已检查并修复；Safari、Firefox 和真机待作者检查。占位相册已在 2026-11-18 换成作者的第一个相册 `2025-04-12-coventry`。** 每完成一个阶段，更新这一行。
 
 ## 规则
 
@@ -89,7 +89,7 @@
 
 数据格式见 `src/content.config.ts` 的 `albums` 注释，读取逻辑在 `src/lib/albums.ts`，设计依据见设计文档 §8。
 
-1. **确定 slug**：小写字母、数字、连字符，建议“年份-地点”，如 `2025-scotland`。它会出现在网址里，发布后不要再改。
+1. **确定 slug**：小写字母、数字、连字符，用“拍摄日期-地点”，即 `YYYY-MM-DD-地点`，如 `2025-08-12-scotland`：同一个地方一年可能去好几次，只写年份会重名。照片跨了几天时，用大多数照片的拍摄日期。它会出现在网址里，发布后不要再改。
    - 只想在本机试版式、不发布的相册（如网上下载的测试照片），文件夹名用 `test-` 开头：`.gitignore` 已排除，不会被提交。
 2. **建文件夹** `src/content/albums/<slug>/`，把照片放进去（jpg、jpeg、png、webp、avif），文件名不变。
    - 原图会原样发布（灯箱里的“原图”按钮），不压缩、不限分辨率，EXIF 里的 GPS 也在。作者不想公开拍摄地点时，由作者自己先处理照片；agent 不改照片，除非作者明确要求。
@@ -99,7 +99,6 @@
    - 相册页按照片的横竖安排版式（`AlbumStory.astro` 的 `layoutRows`）：横幅轮流用宽幅和满幅，相邻两张竖幅并排，落单的竖幅左右错开。排顺序时可以利用这一点，比如把想并排的两张竖幅放在一起。
    - 链接图片写完整网址，尺寸会在构建时联网探测；探测失败时构建报错，按提示写 `width`、`height`。链接图片读不到 EXIF，需要时在 `exif` 里手写。
 4. **验证**：`npm run build`。构建会检查数据格式、照片文件是否存在、封面是否在 `photos` 里，结束时打印 `dist/` 的总大小（超过 800 MB 警告，GitHub Pages 上限 1 GB）。然后在本地预览里检查索引页和相册页的中英文版本：EXIF 是否正确、灯箱能否用键盘（← → 切换、Esc 关闭）和“原图”按钮。
-5. **占位相册**：现在的 `placeholder-highlands`、`placeholder-coast`、`placeholder-night` 是模板阶段的占位图（程序生成）。作者提供第一批照片后删除这三个文件夹（已提交的文件，删除前先征得同意）。
 
 ### 首页的项目页
 
@@ -193,7 +192,7 @@
 | `src/lib/routes.ts` | 四个栏目的名称和路径（导航和 sitemap 都读这里） |
 | `src/lib/site.ts` | 站点信息与语言工具函数 |
 | `src/content.config.ts` | 内容集合定义（数据格式和字段说明） |
-| `src/content/albums/<slug>/` | 每个相册一个文件夹：`album.yaml` 和照片。`placeholder-*` 是模板阶段的占位相册 |
+| `src/content/albums/<slug>/` | 每个相册一个文件夹：`album.yaml` 和照片 |
 | `src/lib/albums.ts` | 相册读取：本地照片的图片对象、EXIF、链接图片的尺寸探测、排序和格式化 |
 | `src/components/albums/` | 相册组件：索引页的全屏封面 `AlbumsCovers`、相册页的叙事排版 `AlbumStory`、单张照片 `AlbumPhoto`、灯箱 `AlbumLightbox`（PhotoSwipe）、封面强调色 `cover-accent.ts`、封面悬停扭曲 `liquid.ts` |
 | `scripts/check-dist-size.mjs` | 构建结束时打印 `dist/` 总大小，超过 800 MB 警告 |
