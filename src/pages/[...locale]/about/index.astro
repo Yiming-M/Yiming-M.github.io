@@ -26,20 +26,24 @@ const { locale } = Astro.props;
 const isZh = locale === "zh";
 const section = sections.find((item) => item.key === "about")!;
 
-/** 页面文案（中英文）。 */
+/** 页面文案（中英文）。中文是原文（作者 2026-11-18 润色），英文对应翻译。 */
 const copy = {
+  /** 职位：职位名加粗占一行，单位固定分成两行（宽屏时头像的大小按这几行的总高度算，见样式里 .masthead 的说明）。 */
   position: {
-    en: "Research Associate, School of Biomedical Engineering & Imaging Sciences, King's College London",
-    zh: "Research Associate · 伦敦国王学院生物医学工程与影像科学学院",
+    role: "Research Associate",
+    org: [
+      { en: "School of Biomedical Engineering & Imaging Sciences", zh: "伦敦国王学院" },
+      { en: "King's College London", zh: "生物医学工程与影像科学学院" },
+    ],
   },
   intro: [
     {
-      en: "I work on AI for prostate cancer active surveillance at King's College London. I build patient-level multimodal representations that combine longitudinal prostate MRI with clinicopathological variables, demographic information and radiology reports, and use them to predict disease progression despite incomplete follow-up, missing modalities and differences between sites. My recent work, [[tacit|TACIT]] (ECCVW 2026), adds synthetic training images only when frozen validators confirm that they keep the task label and reach the target domain; it raises the accuracy of clinically significant prostate cancer detection on PI-CAI prostate MRI from 69.71% to 75.14%.",
-      zh: "我目前在伦敦国王学院研究前列腺癌主动监测中的 AI。我把纵向的前列腺 MRI 与临床病理指标、人口学信息和影像报告结合起来，建立患者层面的多模态表征，用来预测疾病进展；难点在于随访不完整、模态缺失，以及不同中心之间的数据差异。我最近的工作 [[tacit|TACIT]]（ECCVW 2026）只在冻结的验证器确认“标签没变、确实到了目标域”时才加入合成的训练图像，把 PI-CAI 前列腺 MRI 上临床显著性前列腺癌检测的准确率从 69.71% 提高到 75.14%。",
+      zh: "我目前在伦敦国王学院（KCL）从事前列腺癌主动监测与医学人工智能研究，将纵向的前列腺 MRI 与临床病理指标、人口学信息及影像报告相结合，构建患者层面的多模态表征，用于预测疾病进展。核心挑战在于应对随访不完整、模态缺失以及多中心数据差异。近期工作 [[tacit|TACIT]]（ECCVW 2026）提出一种由验证器筛选的数据增强方法：只有当冻结的验证器确认生成样本保持任务标签不变、且确实到达目标域时，才将其加入训练；该方法把 PI-CAI 数据集上临床显著性前列腺癌（csPCa）检测的准确率从 69.71% 提升至 75.14%。",
+      en: "At King's College London (KCL), I work on prostate cancer active surveillance and medical AI. I combine longitudinal prostate MRI with clinicopathological variables, demographic information and radiology reports to build patient-level multimodal representations that predict disease progression. The core challenges are incomplete follow-up, missing modalities and differences between centres. My recent work, [[tacit|TACIT]] (ECCVW 2026), proposes a validator-filtered augmentation method: a synthetic sample is added to training only when frozen validators confirm that it keeps the task label and reaches the target domain. It improves the accuracy of clinically significant prostate cancer (csPCa) detection on the PI-CAI dataset from 69.71% to 75.14%.",
     },
     {
-      en: "I completed my PhD in Mathematics of Systems at the University of Warwick (2021–2025), supervised by Prof. Victor Sanchez and Prof. Tanaya Guha. My doctoral research focused on crowd counting — [[fusioncount|FusionCount]] (ICIP 2022), [[clip-ebc|CLIP-EBC]] (ICME 2025) and [[zip|ZIP]] (IEEE TIP 2026) — and on multiview, multimodal [[dms2|driver monitoring]] (CVPRW 2023).",
-      zh: "我在华威大学获得系统数学博士学位（2021–2025），导师是 Victor Sanchez 教授和 Tanaya Guha 教授。博士期间主要研究人群计数（[[fusioncount|FusionCount]]，ICIP 2022；[[clip-ebc|CLIP-EBC]]，ICME 2025；[[zip|ZIP]]，IEEE TIP 2026）和多视角多模态的[[dms2|驾驶员监控]]（CVPRW 2023）。",
+      zh: "在此之前，我在华威大学获得系统数学博士学位（2021–2025），师从 Victor Sanchez 教授和 Tanaya Guha 教授。博士期间主要研究人群计数（[[fusioncount|FusionCount]]，ICIP 2022；[[clip-ebc|CLIP-EBC]]，ICME 2025；[[zip|ZIP]]，IEEE TIP 2026）以及多视角多模态的[[dms2|驾驶员监控]]（CVPRW 2023）。",
+      en: "Before that, I completed my PhD in Mathematics of Systems at the University of Warwick (2021–2025), supervised by Prof. Victor Sanchez and Prof. Tanaya Guha. My doctoral research focused on crowd counting — [[fusioncount|FusionCount]] (ICIP 2022), [[clip-ebc|CLIP-EBC]] (ICME 2025) and [[zip|ZIP]] (IEEE TIP 2026) — and on multiview, multimodal [[dms2|driver monitoring]] (CVPRW 2023).",
     },
   ],
   interests: [
@@ -51,27 +55,43 @@ const copy = {
     { en: "Generative models", zh: "生成式模型" },
     { en: "Computer vision", zh: "计算机视觉" },
   ],
-  /** 经历与教育：按开始时间倒序。 */
+  /** 经历与教育：按开始时间倒序。title 是职位或学位（加粗），place 是单位。 */
   timeline: [
-    { years: "2026–", en: "Research Associate, King's College London", zh: "Research Associate，伦敦国王学院" },
-    { years: "2022–2023", en: "Research Assistant, University of Warwick", zh: "研究助理，华威大学" },
-    { years: "2021–2025", en: "PhD in Mathematics of Systems, University of Warwick", zh: "系统数学博士，华威大学" },
-    { years: "2020–2021", en: "MSc in Mathematics of Systems (Distinction), University of Warwick", zh: "系统数学硕士（优等），华威大学" },
     {
-      years: "2016–2020",
-      en: "BSc in Mathematics and Applied Mathematics, Southern University of Science and Technology",
-      zh: "数学与应用数学学士，南方科技大学",
+      years: { en: "2026–Present", zh: "2026–至今" },
+      title: { en: "Research Associate", zh: "Research Associate" },
+      place: { en: "King's College London", zh: "伦敦国王学院（King's College London）" },
+    },
+    {
+      years: { en: "2022–2023", zh: "2022–2023" },
+      title: { en: "Research Assistant", zh: "研究助理" },
+      place: { en: "University of Warwick", zh: "华威大学（University of Warwick）" },
+    },
+    {
+      years: { en: "2021–2025", zh: "2021–2025" },
+      title: { en: "PhD in Mathematics of Systems", zh: "系统数学博士" },
+      place: { en: "University of Warwick", zh: "华威大学" },
+    },
+    {
+      years: { en: "2020–2021", zh: "2020–2021" },
+      title: { en: "MSc in Mathematics of Systems (Distinction)", zh: "系统数学硕士（优等）" },
+      place: { en: "University of Warwick", zh: "华威大学" },
+    },
+    {
+      years: { en: "2016–2020", zh: "2016–2020" },
+      title: { en: "BSc in Mathematics and Applied Mathematics", zh: "数学与应用数学学士" },
+      place: { en: "Southern University of Science and Technology", zh: "南方科技大学（SUSTech）" },
     },
   ],
   reviewing: {
     en: "Reviewer for TNNLS, TMM, SPL, ECCV, ACM MM, CVPRW, ICME, WACV, BMVC and ICIP.",
-    zh: "审稿：TNNLS、TMM、SPL、ECCV、ACM MM、CVPRW、ICME、WACV、BMVC、ICIP。",
+    zh: "审稿人：TNNLS、TMM、SPL、ECCV、ACM MM、CVPRW、ICME、WACV、BMVC、ICIP。",
   },
 } satisfies {
-  position: LocalizedText;
+  position: { role: string; org: LocalizedText[] };
   intro: LocalizedText[];
   interests: LocalizedText[];
-  timeline: ({ years: string } & LocalizedText)[];
+  timeline: { years: LocalizedText; title: LocalizedText; place: LocalizedText }[];
   reviewing: LocalizedText;
 };
 
@@ -89,11 +109,12 @@ const plainIntro = localize(locale, copy.intro[0]).replace(/\[\[[a-z0-9-]+\|([^\
 const cvHref = `/cv/Yiming-Ma-CV-${locale}.pdf`;
 const cvKb = Math.round(fs.statSync(path.join(process.cwd(), "public", cvHref)).size / 1024);
 
+/** 联系方式：名称、显示的文字、链接地址（地址见 src/lib/site.ts）。 */
 const links = [
-  { label: "Email", value: site.email, href: `mailto:${site.email}` },
-  { label: "Google Scholar", href: site.scholar },
-  { label: "GitHub", href: site.github },
-  { label: "LinkedIn", href: site.linkedin },
+  { label: "Email", text: site.email, href: `mailto:${site.email}` },
+  { label: "Google Scholar", text: isZh ? "个人主页" : "Profile", href: site.scholar },
+  { label: "GitHub", text: "Yiming-M", href: site.github },
+  { label: "LinkedIn", text: site.name, href: site.linkedin },
 ];
 
 /** schema.org Person：告诉搜索引擎这个网站属于谁。 */
@@ -124,21 +145,27 @@ const personJsonLd = {
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(personJsonLd)} />
 
   <article class="about" data-pagefind-body>
-    <div class="portrait">
-      <img
-        src="/images/profile.jpg"
-        width="400"
-        height="400"
-        alt={isZh ? `${site.nameZh}的头像` : `Portrait of ${site.name}`}
-        loading="eager"
-        decoding="async"
-      />
-    </div>
-
     <div class="content">
-      <header>
-        <h1>{isZh ? site.nameZh : site.name}</h1>
-        <p class="position">{localize(locale, copy.position)}</p>
+      <!-- 标题区：宽屏时左边是名字、职位、单位，右边的头像与这一整块同高、上下对齐；手机上头像在名字上方（见样式里 .masthead 的说明） -->
+      <header class="masthead">
+        <div class="identity">
+          <!-- 中文页在中文名后面附英文名，小一号、浅色，不加括号：免得全角括号在窄处断到下一行 -->
+          <h1>{isZh ? <><span class="zh-name">{site.nameZh}</span><span class="alt-name" lang="en">{site.name}</span></> : site.name}</h1>
+          <!-- 每一行是一个块级元素；行之间加空格，读屏软件读出来不会连成一个词 -->
+          <p class="position">
+            <strong>{copy.position.role}</strong>{" "}
+            {copy.position.org.map((line) => <span>{localize(locale, line)} </span>)}
+          </p>
+        </div>
+        <img
+          class="portrait"
+          src="/images/profile.jpg"
+          width="400"
+          height="400"
+          alt={isZh ? `${site.nameZh}的头像` : `Portrait of ${site.name}`}
+          loading="eager"
+          decoding="async"
+        />
       </header>
 
       <div class="intro">
@@ -158,13 +185,21 @@ const personJsonLd = {
           {
             copy.timeline.map((item) => (
               <li>
-                <span class="years">{item.years}</span>
-                <span>{localize(locale, item)}</span>
+                <span class="years">{localize(locale, item.years)}</span>
+                <span>
+                  <strong>{localize(locale, item.title)}</strong>
+                  {isZh ? "，" : ", "}
+                  {localize(locale, item.place)}
+                </span>
               </li>
             ))
           }
         </ol>
-        <p class="reviewing">{localize(locale, copy.reviewing)}</p>
+      </section>
+
+      <section aria-labelledby="service-heading">
+        <h2 id="service-heading">{isZh ? "学术服务" : "Professional service"}</h2>
+        <p class="service">{localize(locale, copy.reviewing)}</p>
       </section>
 
       <section aria-labelledby="contact-heading">
@@ -174,7 +209,7 @@ const personJsonLd = {
             links.map((link) => (
               <li>
                 <span class="link-label">{link.label}</span>
-                <a href={link.href}>{link.value ?? link.href.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")}</a>
+                <a href={link.href}>{link.text}</a>
               </li>
             ))
           }
@@ -190,46 +225,82 @@ const personJsonLd = {
 </BaseLayout>
 
 <style>
-  /* 窄屏：头像在上、文字在下；宽屏（≥900px）：头像在左栏并吸附，文字在右栏。 */
+  /* 单栏：正文宽度居中。头像在标题区右侧（2026-11-18 作者要求：原来的左栏头像下面一大片空白）。 */
   .about {
-    display: grid;
-    gap: var(--space-8);
-    max-width: calc(var(--measure) + 18rem);
+    max-width: calc(var(--measure) + 2 * var(--gutter));
     margin: 0 auto;
     padding: var(--space-12) var(--gutter) 0;
   }
 
   @media (min-width: 900px) {
     .about {
-      grid-template-columns: 14rem 1fr;
-      gap: var(--space-12);
       padding-top: var(--space-16);
-    }
-
-    .portrait {
-      position: sticky;
-      top: calc(var(--header-height) + var(--space-8));
-      align-self: start;
-    }
-  }
-
-  .portrait img {
-    width: 9rem;
-    aspect-ratio: 1;
-    border-radius: var(--radius-surface);
-    object-fit: cover;
-  }
-
-  @media (min-width: 900px) {
-    .portrait img {
-      width: 100%;
     }
   }
 
   .content {
     display: grid;
     gap: var(--space-12);
-    max-width: var(--measure);
+  }
+
+  /* 标题区。
+   * 手机（默认）：头像在上，下面是名字、职位、单位，全部左对齐。手机上放不下“与文字块同高”的头像：
+   * 文字块至少四行，头像约 160px 见方，左边只剩不到 160px，单位名会被折成五六行。
+   * 宽屏（≥ 768px）：左边是名字（一行）、职位（一行）、单位（两行），右边的头像边长等于这几行的总高度，
+   * 上下沿与文字块对齐。高度按字号和行高算出来（--identity-h），所以这里把 h1 和职位的行高写死；
+   * 单位的每一行在宽屏上都放得下，不会再折行（768px 时最长的英文那行也有余量）。 */
+  .masthead {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .portrait {
+    order: -1;
+    width: 6rem;
+    height: 6rem;
+    border-radius: var(--radius-surface);
+    object-fit: cover;
+  }
+
+  .masthead h1 {
+    line-height: 1.2;
+  }
+
+  .position {
+    line-height: 1.6;
+  }
+
+  .position strong,
+  .position span {
+    display: block;
+  }
+
+  @media (min-width: 768px) {
+    .masthead {
+      --identity-h: calc(var(--text-3xl) * 1.2 + var(--space-2) + 3 * var(--text-lg) * 1.6);
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
+    }
+
+    .portrait {
+      order: 0;
+      width: var(--identity-h);
+      height: var(--identity-h);
+    }
+  }
+
+  /* 中文名不在字中间断行；窄屏放不下时，英文名整体换到下一行 */
+  .zh-name {
+    white-space: nowrap;
+  }
+
+  .alt-name {
+    display: inline-block;
+    margin-left: 0.4em;
+    color: var(--text-secondary);
+    font-size: 0.55em;
+    font-weight: 400;
+    white-space: nowrap;
   }
 
   h1 {
@@ -278,10 +349,15 @@ const personJsonLd = {
     font-variant-numeric: tabular-nums;
   }
 
-  .reviewing {
-    margin-top: var(--space-4);
-    color: var(--text-secondary);
-    font-size: var(--text-sm);
+  .service {
+    margin-top: var(--space-3);
+  }
+
+  /* 职位行和时间线里加粗的职位、学位：用中等字重，和正文的文楷协调 */
+  .position strong,
+  .timeline strong {
+    color: var(--text-primary);
+    font-weight: 500;
   }
 
   @media (max-width: 479.98px) {
